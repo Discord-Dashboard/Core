@@ -1,0 +1,2 @@
+Static is the folder where you put your css files etc. used in HTML.
+Images placed here can also be easily obtained by accessing them by entering the domain name, / and the file name with the extension, e.g. localhost/logo.png
