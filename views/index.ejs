@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>uPros</title>
+
+    <%- include('partials/css.ejs') %>
+</head>
+<body>
+    <%- include('partials/navbar.ejs') %>
+    <br>
+    <div class="container">
+    <%if(!req.session.user){%>
+        <div class="jumbotron">
+            <h1 class="display-3">Hello!</h1>
+            <p class="lead">Welcome to the <strong>uPros </strong>bot page!</p>
+            <hr class="my-4">
+            <p>To start your adventure, you must first <storng>log in</storng>. It's nothing hard.</p><p class="lead">
+              <a class="btn btn-primary btn-lg" href="/authorize" role="button">Do it now</a>
+            </p>
+          </div>
+    <%} else{%>
+        <div class="jumbotron">
+            <h1 class="display-3">Hello!</h1>
+            <p class="lead">
+                I am a multifunctional Discord bot. This page will help you set up me.</p>
+            <hr class="my-4">To edit any of my functions, you must go to <a href="/user">your profile</a> or <a href="/user/guilds">select the server</a> you want to edit. Then press, type... and it's ready! Fast, simple, easy.</p>
+          </div>
+        <%}%>
+    </div>
+
+</body>
+</html>

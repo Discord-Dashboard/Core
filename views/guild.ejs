@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>uPros - Manage <%=bot.guilds.cache.get(req.params.id).name%></title>
+        <%- include('partials/css.ejs') %>
+    </head>
+    <body>
+        <%- include('partials/navbar.ejs') %>
+        <div class="container">
+            <br>
+            <div class="media">
+                <div class="media-left">
+                  <a href="#">
+                    <img style="height:100;width:100;border-radius: 50%;"class="media-object" onerror="this.src = 'https://discordapp.com/assets/322c936a8c8be1b803cd94861bdfa868.png';" src="https://cdn.discordapp.com/icons/<%=bot.guilds.cache.get(req.params.id).id%>/<%=bot.guilds.cache.get(req.params.id).icon%>.png" alt="...">
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading" style="margin-left: 10px;"><%=bot.guilds.cache.get(req.params.id).name%></h4>
+                </div>
+              </div>
+            
+<p>
+    
+Below you can change <em>server's bot settings</em>. It is extremely <strong>simple and easy</strong>.</p>
+    <hr>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#setup">Setup</a>
+      </li>
+      </ul>
+      <div id="myTabContent" class="tab-content">
+
+
+
+
+
+        <div class="tab-pane fade active show" id="setup">
+          <br>
+          <form action="/edit/setup/<%=req.params.id%>" method="POST">
+
+        <div class="form-group">
+          <% 
+          let lang = db.get(`${req.params.id}.lang`);
+          if(!lang)lang = "en";
+          let prefix = db.get(`${req.params.id}.prefix`);
+          if(!prefix)prefix = "!";
+          %> 
+          
+          <div class="form-group">
+            <label for="exampleTextarea">Bot prefix</label>
+            <textarea minlength="1" maxlength="8" class="form-control" id="prefix" name="prefix" rows="1" required><%=prefix%></textarea>
+            <br>
+          <label for="lang">Bot language</label>
+          <select class="custom-select" name="lang" required>
+            <%if(lang == "en"){%>
+                  <option value="en" selected="">English</option>
+                  <option value="pl">Polish</option>
+            <%}else{%>
+                  <option value="en">English</option>
+                  <option value="pl" selected="">Polish</option>
+                  <%}%>
+          </select>
+          </div>
+          <input class="btn btn-secondary" type="submit" value="Submit">
+        </form>
+
+        </div>
+        </div>
+
+      </div>
+    </div>
+    </body>
+</html>

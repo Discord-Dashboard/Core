@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>uPros - <%=req.session.user.username%></title>
+        <%- include('partials/css.ejs') %>
+    </head>
+    <body>
+        <%- include('partials/navbar.ejs') %>
+        <div class="container">
+            <br>
+            <div class="media">
+                <div class="media-left">
+                  <a href="#">
+                    <img style="height:100;width:100;border-radius: 50%;"class="media-object" onerror="this.src = 'https://discordapp.com/assets/322c936a8c8be1b803cd94861bdfa868.png';" src=<%=req.session.user.avatarURL%> alt="...">
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading" style="margin-left: 10px;"><%=req.session.user.username%></h4>
+                </div>
+              </div>
+            
+<p>
+    
+Below you can change <em>user settings</em>. It is extremely <strong>simple and easy</strong>.</p>
+    <hr>
+    <form action="/token/regenerate" method="POST"> 
+    <div class="form-group">
+      <fieldset>
+        <label class="control-label" for="readOnlyInput">User Auth token</label>
+      <input class="form-control" id="readOnlyInput" type="text" readonly="readonly" value=<%=db.get(`${req.session.user.id}_token`)%>>
+      <small id="emailHelp" class="form-text text-muted">Don't show it to anyone, it's too powerful. You will use it as a header when you request the API.</small>
+      <small id="emailHelp" class="form-text text-muted"> </small>
+      <button type="submit" class="btn btn-secondary">Regenerate</button>
+      </fieldset>
+    </div>
+  </form>
+        </div>
+    </body>
+</html>
