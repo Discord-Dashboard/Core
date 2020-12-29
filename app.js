@@ -54,7 +54,7 @@ require('./router')(app); // There is a router for Discord.js there, thanks to w
   });
   
 // If we want to display information about an already selected server, create its house for it.
-  app.get('/guild/:id', function (req, res) { // Param ":id" means something that can be your own, customizable. In this case it will be the server ID. For example: /guild/671767027240796176 is uPros guild manage page.
+  app.get('/guild/:id', async function (req, res) { // Param ":id" means something that can be your own, customizable. In this case it will be the server ID. For example: /guild/671767027240796176 is uPros guild manage page.
     if(!req.session.user)return res.redirect('/'); // If the user is not logged in, let him do so.
     if(!bot.guilds.cache.get(req.params.id))return res.redirect('/user/guilds'); // If the bot is not on the server with the given ID, let's get the user back.
     const userObj = await bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id);
