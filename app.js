@@ -107,6 +107,10 @@ require('./router')(app); // There is a router for Discord.js there, thanks to w
   });
 
 
+  app.get('/invite', (req, res)=>{
+    res.redirect(config.inviteLink);
+  });
+
 // \|/
 // API - for more advanced projects, in which the user can make a request from another project to yours and obtain / transfer information.
 // /|\
