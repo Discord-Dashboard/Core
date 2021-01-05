@@ -6,5 +6,6 @@
     "scopes": ["identify", "guilds"],
     "redirectUri": "http://localhost:80/authorize/callback",
 
-    "token": "BOT_TOKEN"
+    "token": "BOT_TOKEN",
+    "inviteLink": "linkToInviteBot"
 }
