@@ -7,4 +7,4 @@ We present a fully functional, developed and explained dashboard for the Discord
 **#simplifyYourself**
 
 
-BETTER VERSION, DASHBOARD V2 COMMING SOON
+BETTER VERSION, DISCORD.JS WEB DASHBOARD V2 COMMING SOON
