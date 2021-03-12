@@ -5,3 +5,6 @@ We present a fully functional, developed and explained dashboard for the Discord
 
 # More information coming soon.
 **#simplifyYourself**
+
+
+BETTER VERSION, DASHBOARD V2 COMMING SOON
