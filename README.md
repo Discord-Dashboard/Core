@@ -13,3 +13,7 @@ edit `config.json` file
 
 
 BETTER VERSION, DISCORD.JS WEB DASHBOARD V2 COMMING SOON
+
+V2 - no editing files, just setup your Dashboard Client and you're done. Support for themes. Comming soon.
+
+![image](https://user-images.githubusercontent.com/62174194/123544235-a0ccd280-d752-11eb-894a-1fbc676933c8.png)
