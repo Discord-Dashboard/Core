@@ -1,6 +1,6 @@
 {
   "name": "discord-dashboard",
-  "version": "1.0.1",
+  "version": "1.0.5-md",
   "description": "Discord.js bot dashboard.",
   "main": "index.js",
   "directories": {
@@ -22,5 +22,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "breftejk",
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://assistants.ga/dbd-docs/",
+  "keywords": ["discord", "discord.js", "discordjs", "discord dashboard", "discord web dashboard", "web dashboard", "dashboard"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/breftejk/Discord.js-Web-Dashboard.git"
+  }
 }
