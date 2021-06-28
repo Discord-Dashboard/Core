@@ -180,6 +180,19 @@ Below you can change <em>server's bot settings</em>. It is extremely <strong>sim
                   ioooooo++;
                 })%>
             </select>
+            <%}else if(option.optionType.type =="rolesSelect"){%>
+              <h4><%=option.optionName%></h4>
+              <%=option.optionDescription%><br>
+              <select <%if(option.optionType.disabled){%>disabled<%}%> name="<%=option.optionId%>" style="width: 200px;">
+                <%
+                let iooooooo = 0;
+                let functiona = option.optionType.function(bot, guildid);
+                functiona.values.forEach(value=>{%>
+                  <option value="<%=value%>" <%if(actual[s.categoryId][option.optionId] == value){%>selected<%}%>><%=functiona.keys[iooooooo]%></option>
+                  <%
+                    iooooooo++;
+                  })%>
+              </select>
             <%}%>
 
         <%})
@@ -197,211 +210,3 @@ Below you can change <em>server's bot settings</em>. It is extremely <strong>sim
     </div>
     </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-
-    <title>Hello, world!</title>
-
-    <style>
-      body{
-    background: #f5f5f5;
-    margin-top:20px;
-}
-
-.ui-w-80 {
-    width: 80px !important;
-    height: auto;
-}
-
-.btn-default {
-    border-color: rgba(24,28,33,0.1);
-    background: rgba(0,0,0,0);
-    color: #4E5155;
-}
-
-label.btn {
-    margin-bottom: 0;
-}
-
-.btn-outline-primary {
-    border-color: #26B4FF;
-    background: transparent;
-    color: #26B4FF;
-}
-
-.btn {
-    cursor: pointer;
-}
-
-.text-light {
-    color: #babbbc !important;
-}
-
-.btn-facebook {
-    border-color: rgba(0,0,0,0);
-    background: #3B5998;
-    color: #fff;
-}
-
-.btn-instagram {
-    border-color: rgba(0,0,0,0);
-    background: #000;
-    color: #fff;
-}
-
-.card {
-    background-clip: padding-box;
-    box-shadow: 0 1px 4px rgba(24,28,33,0.012);
-}
-
-.row-bordered {
-    overflow: hidden;
-}
-
-.account-settings-fileinput {
-    position: absolute;
-    visibility: hidden;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-}
-.account-settings-links .list-group-item.active {
-    font-weight: bold !important;
-}
-html:not(.dark-style) .account-settings-links .list-group-item.active {
-    background: transparent !important;
-}
-.account-settings-multiselect ~ .select2-container {
-    width: 100% !important;
-}
-.light-style .account-settings-links .list-group-item {
-    padding: 0.85rem 1.5rem;
-    border-color: rgba(24, 28, 33, 0.03) !important;
-}
-.light-style .account-settings-links .list-group-item.active {
-    color: #4e5155 !important;
-}
-.material-style .account-settings-links .list-group-item {
-    padding: 0.85rem 1.5rem;
-    border-color: rgba(24, 28, 33, 0.03) !important;
-}
-.material-style .account-settings-links .list-group-item.active {
-    color: #4e5155 !important;
-}
-.dark-style .account-settings-links .list-group-item {
-    padding: 0.85rem 1.5rem;
-    border-color: rgba(255, 255, 255, 0.03) !important;
-}
-.dark-style .account-settings-links .list-group-item.active {
-    color: #fff !important;
-}
-.light-style .account-settings-links .list-group-item.active {
-    color: #4E5155 !important;
-}
-.light-style .account-settings-links .list-group-item {
-    padding: 0.85rem 1.5rem;
-    border-color: rgba(24,28,33,0.03) !important;
-}
-
-
-    </style>
-  </head>
-  <body>
-    <section>
-      <div class="container light-style flex-grow-1 container-p-y">
-
-        <h4 class="font-weight-bold py-3 mb-4">
-          Account settings
-        </h4>
-    
-        <div class="card overflow-hidden">
-          <div class="row no-gutters row-bordered row-border-light">
-            <div class="col-md-3 pt-0">
-              <div class="list-group list-group-flush account-settings-links">
-                <%
-                let i = 0;
-                settings.forEach(s=>{
-                  i++;%>
-                  <a class="list-group-item list-group-item-action<%if(i=1){%> active<%}%>" data-toggle="list" href="#<%=s.categoryId%>"><%=s.categoryName%></a>
-                <%})
-                %>
-              </div>
-            </div>
-            <div class="col-md-9">
-              <div class="tab-content">
-
-
-                <%
-                let i2 = 0;
-                settings.forEach(s=>{
-                  i2++;%>
-                
-                  <div class="tab-pane fade active show" id="<%=s.categoryId%>">
-
-                    <div class="card-body">
-
-                    <%
-
-                    s.categoryOptionsList.forEach(cat=>{
-                      if(cat.optionType.type == "select"){%>
-                        <label class="form-label"><%=cat.optionName%></label><br>
-                        <select class="custom-select">
-                          <%
-                          let ai = 0;
-                          cat.optionType.data.keys.forEach(k=>{%>
-                            <option id="<%=cat.optionType.data.values[ai]%>"><%=k%></option>
-                          <%
-                            ai++;
-                          })
-                          %>
-                        </select>
-                      <%}
-
-
-                    })
-
-                    %>
-      
-                  </div>
-
-                <%})
-                %>
-              </div>
-            </div>
-          </div>
-        </div>
-    
-        <div class="text-right mt-3">
-          <button type="button" class="btn btn-primary">Save changes</button>&nbsp;
-          <button type="button" class="btn btn-default">Cancel</button>
-        </div>
-    
-      </div>
-    </section>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-  </body>
-</html>-->
