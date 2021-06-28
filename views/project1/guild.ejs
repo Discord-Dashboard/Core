@@ -1,0 +1,403 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title><%=req.websiteTitle%> - Manage <%=bot.guilds.cache.get(req.params.id).name%></title>
+        <style>
+          .custom-select {
+  position: relative;
+  font-family: Arial;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element: */
+}
+
+.select-selected {
+  background-color: DodgerBlue;
+}
+
+/* Style the arrow inside the select element: */
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+/* Point the arrow upwards when the select box is open (active): */
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent #fff transparent;
+  top: 7px;
+}
+
+/* style the items (options), including the selected item: */
+.select-items div,.select-selected {
+  color: #ffffff;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+}
+
+/* Style items (options): */
+.select-items {
+  position: absolute;
+  background-color: DodgerBlue;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+/* Hide the items when the select box is closed: */
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+        </style>
+        <%- include('partials/css.ejs') %>
+    </head>
+    <body>
+        <%- include('partials/navbar.ejs') %>
+        <div class="container">
+            <br>
+            <div class="media">
+                <div class="media-left">
+                  <a href="#">
+                    <img style="height:100;width:100;border-radius: 50%;"class="media-object" onerror="this.src = 'https://discordapp.com/assets/322c936a8c8be1b803cd94861bdfa868.png';" src="https://cdn.discordapp.com/icons/<%=bot.guilds.cache.get(req.params.id).id%>/<%=bot.guilds.cache.get(req.params.id).icon%>.png" alt="...">
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading" style="margin-left: 10px;"><%=bot.guilds.cache.get(req.params.id).name%></h4>
+                </div>
+              </div>
+            
+<p>
+    
+Below you can change <em>server's bot settings</em>. It is extremely <strong>simple and easy</strong>.</p>
+    <hr>
+
+    <%if(req.query.success){%>
+      <div id="alert_success">
+        <div class="alert alert-dismissible alert-success" onclick="document.getElementById('alert_success').innerHTML=''">
+          <strong>Success!</strong> All changes saved! <u>Click to close</u>
+        </div>
+      </div>
+    <%}%>
+
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <%
+          let i22 = 0;
+          settings.forEach(s=>{
+          i22++;%>
+          <a class="nav-item nav-link<%if(i22==1){%> active<%}%>" id="<%=s.categoryId%>-tab" data-toggle="tab" href="#<%=s.categoryId%>" role="tab" aria-controls="<%=s.categoryId%>" aria-selected="true"><%=s.categoryName%></a>
+          <%})
+          %>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <%
+      let i222 = 0;
+      settings.forEach(s=>{
+      i222++;%>
+      <div class="tab-pane fade<%if(i222==1){%> show active<%}%>" id="<%=s.categoryId%>" role="tabpanel" aria-labelledby="<%=s.categoryId%>-tab">
+        <form method="POST" action="/settings/update/<%=req.params.id%>/<%=s.categoryId%>">
+      <%
+        s.categoryOptionsList.forEach(option=>{%>
+            <br><br>
+          <%
+          if(option.optionType.type == "select"){%>
+            <h4><%=option.optionName%></h4>
+            <%=option.optionDescription%><br>
+            <select <%if(option.optionType.disabled){%>disabled<%}%> name="<%=option.optionId%>" style="width: 200px;">
+              <%
+              let ioo = 0;
+                option.optionType.data.values.forEach(value=>{%>
+                <option value="<%=value%>" <%if(actual[s.categoryId][option.optionId] == value){%>selected<%}%>><%=option.optionType.data.keys[ioo]%></option>
+                <%
+                  ioo++;
+                })%>
+            </select>
+          <%}else if(option.optionType.type == "input"){
+          %>
+            <h4><%=option.optionName%></h4>
+            <%=option.optionDescription%><br>
+            <%
+            console.log(actual)
+            %>
+            <input name="<%=option.optionId%>" <%if(option.optionType.required){%>required<%}%> <%if(option.optionType.disabled){%>disabled<%}%> placeholder="<%=option.optionType.data%>" <%if(actual[s.categoryId][option.optionId]){%>value="<%=actual[s.categoryId][option.optionId]%>"<%}%> <%if(option.optionType.min){%>minlength="<%=option.optionType.min%>"<%}%> <%if(option.optionType.max){%>maxlength="<%=option.optionType.max%>"<%}%>/>
+          <%} else if(option.optionType.type == "textarea"){%>
+
+            <h4><%=option.optionName%></h4>
+            <%=option.optionDescription%><br>
+            <%
+            console.log(actual)
+            %>
+            <textarea name="<%=option.optionId%>" <%if(option.optionType.required){%>required<%}%> <%if(option.optionType.disabled){%>disabled<%}%> placeholder="<%=option.optionType.data%>" <%if(actual[s.categoryId][option.optionId]){%>value="<%=actual[s.categoryId][option.optionId]%>"<%}%> <%if(option.optionType.min){%>minlength="<%=option.optionType.min%>"<%}%> <%if(option.optionType.max){%>maxlength="<%=option.optionType.max%>"<%}%> rows="4" style="width:80%"><%if(actual[s.categoryId][option.optionId]){%><%=actual[s.categoryId][option.optionId]%><%}%></textarea>
+          
+          <%}else if(option.optionType.type == "switch"){%>
+
+            <h4><%=option.optionName%></h4>
+            <%=option.optionDescription%><br>
+            <%
+            console.log(actual)
+            %>
+            <div class="form-check form-switch">
+              <%if(actual[s.categoryId][option.optionId] == null || actual[s.categoryId][option.optionId] == undefined){%>
+                <%if(option.optionType.data == false && !option.optionType.disabled){%>
+                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="<%=option.optionId%>" />
+                <%} else if(option.optionType.data == true && !option.optionType.disabled){%>
+                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="<%=option.optionId%>" checked />
+                <%} else if(option.optionType.data == true && option.optionType.disabled){%>
+                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedDisabled" checked disabled />
+                <%} else if(option.optionType.data == false && option.optionType.disabled){%>
+                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDisabled" disabled />
+                <%}%>
+              <%}else{%>
+                <%if(actual[s.categoryId][option.optionId] == false && !option.optionType.disabled){%>
+                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="<%=option.optionId%>" />
+                <%} else if(actual[s.categoryId][option.optionId] == true && !option.optionType.disabled){%>
+                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="<%=option.optionId%>" checked />
+                <%} else if(actual[s.categoryId][option.optionId] == true && option.optionType.disabled){%>
+                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedDisabled" checked disabled />
+                <%} else if(actual[s.categoryId][option.optionId] == false && option.optionType.disabled){%>
+                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDisabled" disabled />
+                <%}%>
+              <%}%>
+            </div>
+          
+          <%}%>
+
+        <%})
+
+      %>
+      <br><br>
+      <button type="submit">Submit</button>
+        </form>
+      </div>
+      <%})
+      %>
+    </div>
+
+      </div>
+    </div>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <title>Hello, world!</title>
+
+    <style>
+      body{
+    background: #f5f5f5;
+    margin-top:20px;
+}
+
+.ui-w-80 {
+    width: 80px !important;
+    height: auto;
+}
+
+.btn-default {
+    border-color: rgba(24,28,33,0.1);
+    background: rgba(0,0,0,0);
+    color: #4E5155;
+}
+
+label.btn {
+    margin-bottom: 0;
+}
+
+.btn-outline-primary {
+    border-color: #26B4FF;
+    background: transparent;
+    color: #26B4FF;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+.text-light {
+    color: #babbbc !important;
+}
+
+.btn-facebook {
+    border-color: rgba(0,0,0,0);
+    background: #3B5998;
+    color: #fff;
+}
+
+.btn-instagram {
+    border-color: rgba(0,0,0,0);
+    background: #000;
+    color: #fff;
+}
+
+.card {
+    background-clip: padding-box;
+    box-shadow: 0 1px 4px rgba(24,28,33,0.012);
+}
+
+.row-bordered {
+    overflow: hidden;
+}
+
+.account-settings-fileinput {
+    position: absolute;
+    visibility: hidden;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+.account-settings-links .list-group-item.active {
+    font-weight: bold !important;
+}
+html:not(.dark-style) .account-settings-links .list-group-item.active {
+    background: transparent !important;
+}
+.account-settings-multiselect ~ .select2-container {
+    width: 100% !important;
+}
+.light-style .account-settings-links .list-group-item {
+    padding: 0.85rem 1.5rem;
+    border-color: rgba(24, 28, 33, 0.03) !important;
+}
+.light-style .account-settings-links .list-group-item.active {
+    color: #4e5155 !important;
+}
+.material-style .account-settings-links .list-group-item {
+    padding: 0.85rem 1.5rem;
+    border-color: rgba(24, 28, 33, 0.03) !important;
+}
+.material-style .account-settings-links .list-group-item.active {
+    color: #4e5155 !important;
+}
+.dark-style .account-settings-links .list-group-item {
+    padding: 0.85rem 1.5rem;
+    border-color: rgba(255, 255, 255, 0.03) !important;
+}
+.dark-style .account-settings-links .list-group-item.active {
+    color: #fff !important;
+}
+.light-style .account-settings-links .list-group-item.active {
+    color: #4E5155 !important;
+}
+.light-style .account-settings-links .list-group-item {
+    padding: 0.85rem 1.5rem;
+    border-color: rgba(24,28,33,0.03) !important;
+}
+
+
+    </style>
+  </head>
+  <body>
+    <section>
+      <div class="container light-style flex-grow-1 container-p-y">
+
+        <h4 class="font-weight-bold py-3 mb-4">
+          Account settings
+        </h4>
+    
+        <div class="card overflow-hidden">
+          <div class="row no-gutters row-bordered row-border-light">
+            <div class="col-md-3 pt-0">
+              <div class="list-group list-group-flush account-settings-links">
+                <%
+                let i = 0;
+                settings.forEach(s=>{
+                  i++;%>
+                  <a class="list-group-item list-group-item-action<%if(i=1){%> active<%}%>" data-toggle="list" href="#<%=s.categoryId%>"><%=s.categoryName%></a>
+                <%})
+                %>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <div class="tab-content">
+
+
+                <%
+                let i2 = 0;
+                settings.forEach(s=>{
+                  i2++;%>
+                
+                  <div class="tab-pane fade active show" id="<%=s.categoryId%>">
+
+                    <div class="card-body">
+
+                    <%
+
+                    s.categoryOptionsList.forEach(cat=>{
+                      if(cat.optionType.type == "select"){%>
+                        <label class="form-label"><%=cat.optionName%></label><br>
+                        <select class="custom-select">
+                          <%
+                          let ai = 0;
+                          cat.optionType.data.keys.forEach(k=>{%>
+                            <option id="<%=cat.optionType.data.values[ai]%>"><%=k%></option>
+                          <%
+                            ai++;
+                          })
+                          %>
+                        </select>
+                      <%}
+
+
+                    })
+
+                    %>
+      
+                  </div>
+
+                <%})
+                %>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <div class="text-right mt-3">
+          <button type="button" class="btn btn-primary">Save changes</button>&nbsp;
+          <button type="button" class="btn btn-default">Cancel</button>
+        </div>
+    
+      </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </body>
+</html>-->
