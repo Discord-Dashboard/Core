@@ -132,26 +132,17 @@ Below you can change <em>server's bot settings</em>. It is extremely <strong>sim
           %>
             <h4><%=option.optionName%></h4>
             <%=option.optionDescription%><br>
-            <%
-            console.log(actual)
-            %>
             <input name="<%=option.optionId%>" <%if(option.optionType.required){%>required<%}%> <%if(option.optionType.disabled){%>disabled<%}%> placeholder="<%=option.optionType.data%>" <%if(actual[s.categoryId][option.optionId]){%>value="<%=actual[s.categoryId][option.optionId]%>"<%}%> <%if(option.optionType.min){%>minlength="<%=option.optionType.min%>"<%}%> <%if(option.optionType.max){%>maxlength="<%=option.optionType.max%>"<%}%>/>
           <%} else if(option.optionType.type == "textarea"){%>
 
             <h4><%=option.optionName%></h4>
             <%=option.optionDescription%><br>
-            <%
-            console.log(actual)
-            %>
             <textarea name="<%=option.optionId%>" <%if(option.optionType.required){%>required<%}%> <%if(option.optionType.disabled){%>disabled<%}%> placeholder="<%=option.optionType.data%>" <%if(actual[s.categoryId][option.optionId]){%>value="<%=actual[s.categoryId][option.optionId]%>"<%}%> <%if(option.optionType.min){%>minlength="<%=option.optionType.min%>"<%}%> <%if(option.optionType.max){%>maxlength="<%=option.optionType.max%>"<%}%> rows="4" style="width:80%"><%if(actual[s.categoryId][option.optionId]){%><%=actual[s.categoryId][option.optionId]%><%}%></textarea>
           
           <%}else if(option.optionType.type == "switch"){%>
 
             <h4><%=option.optionName%></h4>
             <%=option.optionDescription%><br>
-            <%
-            console.log(actual)
-            %>
             <div class="form-check form-switch">
               <%if(actual[s.categoryId][option.optionId] == null || actual[s.categoryId][option.optionId] == undefined){%>
                 <%if(option.optionType.data == false && !option.optionType.disabled){%>
