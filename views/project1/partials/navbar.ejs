@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+    <a class="navbar-brand" href="/">
+        <img src="<%=req.iconUrl%>" width="30" height="30" class="d-inline-block align-top" alt="">
+          <%=req.websiteTitle%>
+      </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+        <%if(req.session.user){%>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!--<ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="/api">API</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#nie_skonczone">Commands</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#nie_skonczone">Report a bug</a>
+              </li>
+            </ul>-->
+            <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-right" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img style="border-radius: 50%;" onerror="this.src = 'https://discordapp.com/assets/322c936a8c8be1b803cd94861bdfa868.png';" src=<%=req.session.user.avatarURL%> width="25" height="25" class="d-inline-block align-top" alt=""> <%=req.session.user.username%></a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/manage">Manage servers</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/discord/logout">Log out</a>
+            </div>
+        </li>
+        <%}else{%>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/discord">Log in</a>
+                  </li>
+                <%}%>
+      </ul>
+    </div>
+    </div>
+  </nav>
