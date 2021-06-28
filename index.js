@@ -188,6 +188,17 @@ module.exports = {
                     return {values:Object.values(list),keys:Object.keys(list)};
                 }, 
                 disabled};
+        },
+        rolesSelect: (disabled) => {
+            return {type:"rolesSelect", function:
+                (client, guildid) => {
+                    let list = {};
+                    client.guilds.cache.get(guildid).roles.cache.forEach(role=>{
+                    list[role.name] = role.id;
+                    });
+                    return {values:Object.values(list),keys:Object.keys(list)};
+                }, 
+                disabled};
         }
     },
 }
