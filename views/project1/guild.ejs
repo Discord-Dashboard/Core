@@ -167,7 +167,20 @@ Below you can change <em>server's bot settings</em>. It is extremely <strong>sim
               <%}%>
             </div>
           
-          <%}%>
+          <%}else if(option.optionType.type == "channelsSelect"){%>
+            <h4><%=option.optionName%></h4>
+            <%=option.optionDescription%><br>
+            <select <%if(option.optionType.disabled){%>disabled<%}%> name="<%=option.optionId%>" style="width: 200px;">
+              <%
+              let ioooooo = 0;
+              let functiona = option.optionType.function(bot, guildid);
+              functiona.values.forEach(value=>{%>
+                <option value="<%=value%>" <%if(actual[s.categoryId][option.optionId] == value){%>selected<%}%>><%=functiona.keys[ioooooo]%></option>
+                <%
+                  ioooooo++;
+                })%>
+            </select>
+            <%}%>
 
         <%})
 
