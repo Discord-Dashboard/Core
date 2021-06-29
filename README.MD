@@ -123,6 +123,8 @@ If there are new themes, we'll write about them **here**, on [Discord Server](ht
 ...
 ```
 
+**PS**: *Themes in a Github project are located in the themes folder, you can also access them there. Themes in package with npm must be used as separate modules.*
+
 ### Settings Stuff
 
 Settings - that's what we called something that is basically the most important here. Settings are divided into Sections, and each Section has its own Options.
