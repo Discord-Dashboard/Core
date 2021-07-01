@@ -12,6 +12,90 @@ npm i discord-web-dashboard
 
 Better looking documentation with navigation: https://assistants.ga/dbd-docs/#/
 
+# Full Example
+
+```js
+const DBD = require('discord-dashboard');
+
+let langsSettings = {};
+
+let currencyNames = {};
+
+let botNicknames = {};
+
+const Discord = require('discord.js');
+const client = new Discord.Client();
+client.login("botToken");
+
+const Dashboard = new DBD.Dashboard({
+    port: 80,
+    client: {
+        id: '849972188786065458',
+        secret: 'clientSecret'
+    },
+    redirectUri: 'http://localhost/discord/callback',
+    domain: 'http://localhost',
+    bot: client,
+    settings: [
+        {
+            categoryId: 'setup',
+            categoryName: "Setup",
+            categoryDescription: "Setup your bot with default settings!",
+            categoryOptionsList: [
+                {
+                    optionId: 'lang',
+                    optionName: "Language",
+                    optionDescription: "Change bot's language easily",
+                    optionType: DBD.formTypes.select({"Polish": 'pl', "English": 'en', "French": 'fr'}),
+                    getActualSet: async ({guild}) => {
+                        return langsSettings[guild.id] || null;
+                    },
+                    setNew: async ({guild,newData}) => {
+                        langsSettings[guild.id] = newData;
+                        return;
+                    }
+                },
+                {
+                    optionId: 'nickname',
+                    optionName: "Nickname",
+                    optionDescription: "Bot's nickname on the guild",
+                    optionType: DBD.formTypes.input("Bot username", 1, 16, false, true),
+                    getActualSet: async ({guild}) => {
+                        return botNicknames[guild.id] || false;
+                    },
+                    setNew: async ({guild,newData}) => {
+                        botNicknames[guild.id] = newData;
+                        return;
+                    }
+                },
+            ]
+        },
+        {
+            categoryId: 'eco',
+            categoryName: "Economy",
+            categoryDescription: "Economy Module Settings",
+            categoryOptionsList: [
+                {
+                    optionId: 'currency_name',
+                    optionName: "Currency name",
+                    optionDescription: "Economy module Guild currency name",
+                    optionType: DBD.formTypes.input('Currency name', null, 10, false, true),
+                    getActualSet: async ({guild}) => {
+                        return currencyNames[guild.id] || null;
+                    },
+                    setNew: async ({guild,newData}) => {
+                        currencyNames[guild.id] = newData;
+                        return;
+                    }
+                },
+            ]
+        },
+    ]
+});
+
+Dashboard.init();
+```
+
 <hr>
 
 # Documentation
@@ -340,87 +424,3 @@ To get all of the required items listed below, you need to:
 * In place of Redirects, add your domain like http://domain.com/discord/callback or http://localhost/discord/callback (it can also be https, and if the port is other than 80 or 442 you must add it after the domain name [e.g. http://domain.com:245/discord/callback], 'domain.com' equals 'localhost' on local host)
 * Save changes
 * Redirect URI is this saved URL
-
-# Full Example
-
-```js
-const DBD = require('discord-dashboard');
-
-let langsSettings = {};
-
-let currencyNames = {};
-
-let botNicknames = {};
-
-const Discord = require('discord.js');
-const client = new Discord.Client();
-client.login("botToken");
-
-const Dashboard = new DBD.Dashboard({
-    port: 80,
-    client: {
-        id: '849972188786065458',
-        secret: 'clientSecret'
-    },
-    redirectUri: 'http://localhost/discord/callback',
-    domain: 'http://localhost',
-    bot: client,
-    settings: [
-        {
-            categoryId: 'setup',
-            categoryName: "Setup",
-            categoryDescription: "Setup your bot with default settings!",
-            categoryOptionsList: [
-                {
-                    optionId: 'lang',
-                    optionName: "Language",
-                    optionDescription: "Change bot's language easily",
-                    optionType: DBD.formTypes.select({"Polish": 'pl', "English": 'en', "French": 'fr'}),
-                    getActualSet: async ({guild}) => {
-                        return langsSettings[guild.id] || null;
-                    },
-                    setNew: async ({guild,newData}) => {
-                        langsSettings[guild.id] = newData;
-                        return;
-                    }
-                },
-                {
-                    optionId: 'nickname',
-                    optionName: "Nickname",
-                    optionDescription: "Bot's nickname on the guild",
-                    optionType: DBD.formTypes.input("Bot username", 1, 16, false, true),
-                    getActualSet: async ({guild}) => {
-                        return botNicknames[guild.id] || false;
-                    },
-                    setNew: async ({guild,newData}) => {
-                        botNicknames[guild.id] = newData;
-                        return;
-                    }
-                },
-            ]
-        },
-        {
-            categoryId: 'eco',
-            categoryName: "Economy",
-            categoryDescription: "Economy Module Settings",
-            categoryOptionsList: [
-                {
-                    optionId: 'currency_name',
-                    optionName: "Currency name",
-                    optionDescription: "Economy module Guild currency name",
-                    optionType: DBD.formTypes.input('Currency name', null, 10, false, true),
-                    getActualSet: async ({guild}) => {
-                        return currencyNames[guild.id] || null;
-                    },
-                    setNew: async ({guild,newData}) => {
-                        currencyNames[guild.id] = newData;
-                        return;
-                    }
-                },
-            ]
-        },
-    ]
-});
-
-Dashboard.init();
-```
