@@ -1,5 +1,7 @@
+const colors = require('colors');
+
 const err = (text) => {
-    return text + " Do you need help? Join our Discord server: https://discord.gg/CzfMGtrdaA";
+    return text + ` Do you need help? Join our Discord server: ${'https://discord.gg/CzfMGtrdaA'.blue}`;
 }
 
 class Dashboard {
@@ -32,7 +34,7 @@ class Dashboard {
 
         let sessionIs;
 
-        if(!config.sessionFileStore && config.sessionFileStore != false)config.sessionFileStore = true;
+        if(!config.sessionFileStore)config.sessionFileStore = false;
 
         if(config.sessionFileStore){
             sessionIs = session({
@@ -59,15 +61,16 @@ class Dashboard {
 
         app.use(sessionIs);
 
-        app.get('/docs', (req,res) => {
-            res.render('dwd_docs')
-        })
+        let themeConfig = {};
+        if(config.theme)themeConfig = config.theme.themeConfig;
 
         app.use((req,res,next)=>{
             if(!req.body)req.body={};
 
             req.client = config.client;
             req.redirectUri = config.redirectUri;
+
+            req.themeConfig = themeConfig;
 
             req.websiteTitle = config.websiteTitle || "Discord Web Dashboard";
             req.iconUrl = config.iconUrl || 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png';
@@ -77,12 +80,12 @@ class Dashboard {
         require('./router')(app);
 
         app.get('/', (req,res) => {
-            res.render('index', {req:req});
+            res.render('index', {req:req,themeConfig:req.themeConfig});
         });
 
         app.get('/manage', (req,res) => {
             if(!req.session.user)return res.redirect('/discord');
-            res.render('guilds', {req:req,bot:config.bot});
+            res.render('guilds', {req:req,bot:config.bot,themeConfig:req.themeConfig});
         });
 
         app.get('/guild/:id', async (req,res)=>{
@@ -102,7 +105,7 @@ class Dashboard {
                     }
                 }
             }
-            res.render('guild', {settings:config.settings,actual:actual,bot:config.bot,req:req,guildid:req.params.id});
+            res.render('guild', {settings:config.settings,actual:actual,bot:config.bot,req:req,guildid:req.params.id,themeConfig:req.themeConfig});
         });
 
         app.post('/settings/update/:guildId/:categoryId', async (req,res)=>{
@@ -136,7 +139,41 @@ class Dashboard {
             return res.redirect('/guild/'+req.params.guildId+'?success=true');
         });
 
-        app.listen(config.port);
+        if(!config.SSL)config.SSL = {};
+
+        if(config.SSL.enabled){
+            if(!config.SSL.key || !config.SSL.cert)console.log(err(`${'discord-dashboard issue:'.red} The SSL preference for Dashboard is selected (config.SSL.enabled), but config does not include key or cert (config.SSL.key, config.SSL.cert).`));
+            let options = {
+                key: config.SSL.key || "",
+                cert: config.SSL.cert || ""
+            };
+            const https = require('https');
+            https.createServer(options, app);
+        }else{
+            app.listen(config.port);
+        }
+
+        let pport = "";
+
+        if(config.port != 80 && config.port != 443){
+            pport = `:${config.port}`;
+        }
+
+        console.log(`
+██████╗ ██████╗ ██████╗ 
+██╔══██╗██╔══██╗██╔══██╗
+██║  ██║██████╔╝██║  ██║
+██║  ██║██╔══██╗██║  ██║
+██████╔╝██████╔╝██████╔╝
+╚═════╝ ╚═════╝ ╚═════╝ 
+Discord Bot Dashboard
+`.rainbow + `
+Thanks for using ${'discord-dashboard'.rainbow} module! The server is up and running, so head over to the ${`${(config.domain || "domain.com") + pport}`.blue} website and start your fun.
+
+Remember that there are ${'themes'.rainbow} available to make the Dashboard look better: ${'https://assistants.ga/dbd-docs/#/?id=themes'.blue}
+
+If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
+`);
     }
 }
 
