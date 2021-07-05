@@ -19,6 +19,11 @@ class Dashboard {
         const bodyParser = require('body-parser');
         const partials = require('express-partials');
 
+        let v13support = false;
+
+        const Discord = require('discord.js');
+        if(Discord.version.slice(0,2) == "13")v13support = true;
+
         app.use(bodyParser.urlencoded({extended : true}));
         app.use(bodyParser.json());
         app.use(partials());
@@ -64,6 +69,8 @@ class Dashboard {
         let themeConfig = {};
         if(config.theme)themeConfig = config.theme.themeConfig;
 
+        if(!config.invite)config.invite = {};
+
         app.use((req,res,next)=>{
             if(!req.body)req.body={};
 
@@ -83,6 +90,10 @@ class Dashboard {
             res.render('index', {req:req,themeConfig:req.themeConfig});
         });
 
+        app.get('/invite', (req,res) => {
+            res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=bot&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}`);
+        });
+
         app.get('/manage', (req,res) => {
             if(!req.session.user)return res.redirect('/discord');
             res.render('guilds', {req:req,bot:config.bot,themeConfig:req.themeConfig});
@@ -93,7 +104,11 @@ class Dashboard {
             let bot = config.bot;
             if(!bot.guilds.cache.get(req.params.id))return res.redirect('/manage?error=noPermsToManageGuild');
             await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
-            if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD'))return res.redirect('/manage?error=noPermsToManageGuild');
+            if(v13support){  
+                if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))return res.redirect('/manage?error=noPermsToManageGuild');
+            }else{
+                if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD'))return res.redirect('/manage?error=noPermsToManageGuild');
+            }
             let actual = {};
             for(const s of config.settings){
                 for(const c of s.categoryOptionsList){
@@ -113,7 +128,11 @@ class Dashboard {
             let bot = config.bot;
             if(!bot.guilds.cache.get(req.params.guildId))return res.redirect('/manage?error=noPermsToManageGuild');
             await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
-            if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD'))return res.redirect('/manage?error=noPermsToManageGuild');
+            if(v13support){  
+                if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))return res.redirect('/manage?error=noPermsToManageGuild');
+            }else{
+                if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD'))return res.redirect('/manage?error=noPermsToManageGuild');
+            }
 
             let cid = req.params.categoryId;
             let settings = config.settings;
