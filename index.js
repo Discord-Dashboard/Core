@@ -31,9 +31,19 @@ class Dashboard {
         if(config.theme){
             app.set('views', config.theme.viewsPath);
             app.use(express.static(config.theme.staticPath));
+            app.use('/', express.static(config.theme.staticPath));
+            app.use('/:a/', express.static(config.theme.staticPath));
+            app.use('/:a/:b/', express.static(config.theme.staticPath));
+            app.use('/:a/:b/:c/', express.static(config.theme.staticPath));
+            app.use('/:a/:b/:c/:d/', express.static(config.theme.staticPath));
         }else{
             app.set('views', require('path').join(__dirname, '/views/project1'));
             app.use(express.static(require('path').join(__dirname, '/static')));
+            app.use('/', express.static(require('path').join(__dirname, '/static')));
+            app.use('/:a/', express.static(require('path').join(__dirname, '/static')));
+            app.use('/:a/:b/', express.static(require('path').join(__dirname, '/static')));
+            app.use('/:a/:b/:c/', express.static(require('path').join(__dirname, '/static')));
+            app.use('/:a/:b/:c/:d/', express.static(require('path').join(__dirname, '/static')));
         }
         app.set('view engine','ejs');
 
