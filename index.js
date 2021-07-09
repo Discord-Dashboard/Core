@@ -112,7 +112,7 @@ class Dashboard {
         });
 
         app.get('/guild/:id', async (req,res)=>{
-            if(!req.session.user)return res.redirect('/discord');
+            if(!req.session.user)return res.redirect('/discord?r=/guild/' + req.params.id);
             let bot = config.bot;
             if(!bot.guilds.cache.get(req.params.id))return res.redirect('/manage?error=noPermsToManageGuild');
             await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
@@ -136,7 +136,7 @@ class Dashboard {
         });
 
         app.post('/settings/update/:guildId/:categoryId', async (req,res)=>{
-            if(!req.session.user)return res.redirect('/discord');
+            if(!req.session.user)return res.redirect('/discord?r=/guild/' + req.params.id);
             let bot = config.bot;
             if(!bot.guilds.cache.get(req.params.guildId))return res.redirect('/manage?error=noPermsToManageGuild');
             await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
