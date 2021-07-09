@@ -20,8 +20,6 @@ router.get('/', (req, res) => {
 });
 
 router.get('/callback', (req, res) => {
-    if (req.session.user) return res.redirect('/');
-
     const clientId = req.client.id;
     const clientSecret = req.client.secret;
     const redirectUri = req.redirectUri;
@@ -71,9 +69,10 @@ router.get('/callback', (req, res) => {
     });
 });
 
-router.get('/logout', forceAuth, (req, res) => {
+router.get('/logout', (req, res) => {
+    let r = req.query.r || '/';
     req.session.destroy();
-    res.redirect('/')
+    res.redirect(r);
 });
 
 module.exports = router;
