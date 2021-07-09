@@ -9,11 +9,11 @@ const forceAuth = (req, res, next) => {
 }
 
 router.get('/', (req, res) => {
-    if (req.session.user) return res.redirect('/');
-
     const clientId = req.client.id;
     const clientSecret = req.client.secret;
     const redirectUri = req.redirectUri;
+
+    req.session.r = req.query.r || '/';
 
     const authorizeUrl = `https://discordapp.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scopes.join('%20')}`;
     res.redirect(authorizeUrl);
@@ -66,7 +66,7 @@ router.get('/callback', (req, res) => {
         .then(res3 => res3.json())
         .then(userGuilds => {
             req.session.guilds = userGuilds;
-            res.redirect('/');
+            res.redirect(req.session.r || '/');
         });
     });
 });
