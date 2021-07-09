@@ -71,6 +71,8 @@ class Dashboard {
 
         if(!config.invite)config.invite = {};
 
+        if(config.theme)config.theme.init(app, this.config);
+
         app.use((req,res,next)=>{
             if(!req.body)req.body={};
 
@@ -87,7 +89,7 @@ class Dashboard {
         require('./router')(app);
 
         app.get('/', (req,res) => {
-            res.render('index', {req:req,themeConfig:req.themeConfig});
+            res.render('index', {req:req,themeConfig:req.themeConfig,bot:config.bot});
         });
 
         app.get('/invite', (req,res) => {
@@ -95,7 +97,7 @@ class Dashboard {
         });
 
         app.get('/manage', (req,res) => {
-            if(!req.session.user)return res.redirect('/discord');
+            if(!req.session.user)return res.redirect('/discord?r=/manage');
             res.render('guilds', {req:req,bot:config.bot,themeConfig:req.themeConfig});
         });
 
