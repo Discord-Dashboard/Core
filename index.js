@@ -185,15 +185,14 @@ class Dashboard {
             }else{
                 app.listen(config.port);
             }
-        }
 
-        let pport = "";
+            let pport = "";
 
-        if(config.port != 80 && config.port != 443){
-            pport = `:${config.port}`;
-        }
-
-        console.log(`
+            if(config.port != 80 && config.port != 443){
+                pport = `:${config.port}`;
+            }
+    
+            console.log(`
 ██████╗ ██████╗ ██████╗ 
 ██╔══██╗██╔══██╗██╔══██╗
 ██║  ██║██████╔╝██║  ██║
@@ -208,6 +207,23 @@ Remember that there are ${'themes'.rainbow} available to make the Dashboard look
 
 If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
 `);
+        }else{
+            console.log(`
+██████╗ ██████╗ ██████╗ 
+██╔══██╗██╔══██╗██╔══██╗
+██║  ██║██████╔╝██║  ██║
+██║  ██║██╔══██╗██║  ██║
+██████╔╝██████╔╝██████╔╝
+╚═════╝ ╚═════╝ ╚═════╝ 
+Discord Bot Dashboard
+`.rainbow + `
+Thanks for using ${'discord-dashboard'.rainbow} module! You chose the option not to start the server. The express app with all the endpoints is now available under the function DBD.getApp()
+        
+Remember that there are ${'themes'.rainbow} available to make the Dashboard look better: ${'https://assistants.ga/dbd-docs/#/?id=themes'.blue}
+         
+If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
+`);
+        }
 
     try{
         require('node-fetch')("https://assistants.ga/dbd-ping", {
@@ -291,6 +307,9 @@ module.exports = {
                     return {values:Object.values(list),keys:Object.keys(list)};
                 }, 
                 disabled};
+        },
+        colorSelect: (defaultState, disabled) => {
+            return {type:"colorSelect",data:defaultState,disabled};
         }
     },
 }
