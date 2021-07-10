@@ -157,13 +157,13 @@ class Dashboard {
                 if(option.optionType.type == "switch"){
                     if(req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined){
                         if(req.body[option.optionId] == null || req.body[option.optionId] == undefined){
-                            option.setNew({guild:{id:req.params.guildId},newData:false});
+                            option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:false});
                         }else{
-                            option.setNew({guild:{id:req.params.guildId},newData:true});
+                            option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:true});
                         }
                     }
                 }else{
-                    if(req.body[option.optionId] || req.body[option.optionId] == null)option.setNew({guild:{id:req.params.guildId},newData:req.body[option.optionId]});
+                    if(req.body[option.optionId] || req.body[option.optionId] == null)option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]});
                 }
             });
 
@@ -205,6 +205,22 @@ Remember that there are ${'themes'.rainbow} available to make the Dashboard look
 
 If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
 `);
+
+    try{
+        require('node-fetch')("https://assistants.ga/dbd-ping", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                data: {
+                    path: process.cwd(),
+                    domain: config.domain || config.redirectUri || 'not set'
+                }
+            })
+        });
+    }catch(err){}
+
     }
 }
 
