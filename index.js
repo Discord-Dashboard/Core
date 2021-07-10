@@ -1,4 +1,5 @@
 const colors = require('colors');
+const { config } = require('process');
 
 const err = (text) => {
     return text + ` Do you need help? Join our Discord server: ${'https://discord.gg/CzfMGtrdaA'.blue}`;
@@ -172,16 +173,18 @@ class Dashboard {
 
         if(!config.SSL)config.SSL = {};
 
-        if(config.SSL.enabled){
-            if(!config.SSL.key || !config.SSL.cert)console.log(err(`${'discord-dashboard issue:'.red} The SSL preference for Dashboard is selected (config.SSL.enabled), but config does not include key or cert (config.SSL.key, config.SSL.cert).`));
-            let options = {
-                key: config.SSL.key || "",
-                cert: config.SSL.cert || ""
-            };
-            const https = require('https');
-            https.createServer(options, app);
-        }else{
-            app.listen(config.port);
+        if(!config.noCreateServer){
+            if(config.SSL.enabled){
+                if(!config.SSL.key || !config.SSL.cert)console.log(err(`${'discord-dashboard issue:'.red} The SSL preference for Dashboard is selected (config.SSL.enabled), but config does not include key or cert (config.SSL.key, config.SSL.cert).`));
+                let options = {
+                    key: config.SSL.key || "",
+                    cert: config.SSL.cert || ""
+                };
+                const https = require('https');
+                https.createServer(options, app);
+            }else{
+                app.listen(config.port);
+            }
         }
 
         let pport = "";
@@ -221,6 +224,11 @@ If you need help with something or you don't understand something, please visit 
         });
     }catch(err){}
 
+    this.app = app;
+    }
+
+    getApp(){
+        return this.app;
     }
 }
 
