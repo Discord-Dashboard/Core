@@ -170,8 +170,15 @@ Config allows you to set server-stuff. All the options available here are:
     redirectUri: 'http://domain.com/ (website to redirect after inviting the bot - must be added to the trusted uris',
     permissions: 'permissions numer, by default 0',
     clientId: 'Client ID, by default is set to config.bot.user.id'
-  }
+  },
+  noCreateServer: false
 ...
+```
+
+To get express-app with all the endpoints, use:
+
+```js
+DBD.getApp();
 ```
 
 ### Discord Stuff
@@ -449,6 +456,20 @@ String
 **defaultState:** Boolean (true/false) - optional
 
 **disabled:** Boolean (true/false) - optional
+
+#### Color picker
+```js
+...
+  optionType: DBD.formTypes.colorSelect(defaultColor, disabled),
+...
+```
+
+**defaultColor:** Hex with the # - optional (if not set, will be white #ffffff by default)
+**disabled:** Boolean (true/false) - optional
+
+##### Returned data
+
+String (Hex color with the # - for example, #fff000)
 
 ##### Returned data
 
