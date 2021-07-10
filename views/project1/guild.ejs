@@ -5,6 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title><%=req.websiteTitle%> - Manage <%=bot.guilds.cache.get(req.params.id).name%></title>
         <style>
+
+          
           .custom-select {
   position: relative;
   font-family: Arial;
@@ -193,6 +195,11 @@ Below you can change <em>server's bot settings</em>. It is extremely <strong>sim
                     iooooooo++;
                   })%>
               </select>
+            <%}else if(option.optionType.type =="colorSelect"){%>
+              <h4><%=option.optionName%></h4>
+              <%=option.optionDescription%><br>
+              <input type="color" id="<%=option.optionId%>" name="<%=option.optionId%>"
+              value="<%=actual[s.categoryId][option.optionId] || option.optionType.data || "#ffffff"%>" <%if(option.optionType.disabled){%>disabled<%}%>>
             <%}%>
 
         <%})
