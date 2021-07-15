@@ -457,6 +457,10 @@ String
 
 **disabled:** Boolean (true/false) - optional
 
+##### Returned data
+
+Boolean (true/false)
+
 #### Color picker
 ```js
 ...
@@ -470,10 +474,6 @@ String
 ##### Returned data
 
 String (Hex color with the # - for example, #fff000)
-
-##### Returned data
-
-Boolean (true/false)
 
 #### Guild Channels Select
 ```js
