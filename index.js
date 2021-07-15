@@ -137,7 +137,7 @@ class Dashboard {
         });
 
         app.post('/settings/update/:guildId/:categoryId', async (req,res)=>{
-            if(!req.session.user)return res.redirect('/discord?r=/guild/' + req.params.id);
+            if(!req.session.user)return res.redirect('/discord?r=/guild/' + req.params.guildId);
             let bot = config.bot;
             if(!bot.guilds.cache.get(req.params.guildId))return res.redirect('/manage?error=noPermsToManageGuild');
             await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
