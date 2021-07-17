@@ -1,5 +1,4 @@
 const colors = require('colors');
-const { config } = require('process');
 
 const err = (text) => {
     return text + ` Do you need help? Join our Discord server: ${'https://discord.gg/CzfMGtrdaA'.blue}`;
