@@ -388,14 +388,19 @@ The important thing is that option Types are contained in the module itself, not
 const DBD = require('discord-dashboard');
 ...
 
+...
+  optionType: DBD.formTypes.input("Placeholder", 2, 5),
+...
+```
+
 For TypeScript:
 
 ```js
 import { formTypes } from 'discord-dashboard';
-```
+...
 
 ...
-  optionType: DBD.formTypes.input("Placeholder", 2, 5),
+  optionType: formTypes.input("Placeholder", 2, 5),
 ...
 ```
 
