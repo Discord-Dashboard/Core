@@ -132,6 +132,14 @@ const DBD = require('discord-dashboard');
 const Dashboard = new DBD.Dashboard(config);
 ```
 
+For TypeScript:
+
+```js
+import { Dashboard } from 'discord-dashboard';
+
+const DD = new Dashboard(config);
+```
+
 That's all. The server is ready to run. Before starting up, however, you must understand the options needed to start the server.
 
 #### What's config
@@ -379,6 +387,12 @@ The important thing is that option Types are contained in the module itself, not
 ```js
 const DBD = require('discord-dashboard');
 ...
+
+For TypeScript:
+
+```js
+import { formTypes } from 'discord-dashboard';
+```
 
 ...
   optionType: DBD.formTypes.input("Placeholder", 2, 5),
