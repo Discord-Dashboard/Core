@@ -81,8 +81,6 @@ class Dashboard {
 
         if(!config.invite)config.invite = {};
 
-        if(config.theme)config.theme.init(app, this.config);
-
         app.use((req,res,next)=>{
             if(!req.body)req.body={};
 
@@ -169,6 +167,8 @@ class Dashboard {
 
             return res.redirect('/guild/'+req.params.guildId+'?success=true');
         });
+
+        if(config.theme)config.theme.init(app, this.config);
 
         if(!config.SSL)config.SSL = {};
 
