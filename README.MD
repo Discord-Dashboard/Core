@@ -37,7 +37,7 @@ const Dashboard = new DBD.Dashboard({
     redirectUri: 'http://localhost/discord/callback',
     domain: 'http://localhost',
     bot: client,
-        theme: CaprihamTheme({
+    theme: CaprihamTheme({
         websiteName: "Assistants",
         iconURL: 'https://assistants.ga/ac_logo_v6.png',
         index: {
