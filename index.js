@@ -6,7 +6,14 @@ const err = (text) => {
 
 class Dashboard {
     constructor(config) {
-        if(!config.port)throw new Error(err("You need to define the dashboard server port."));
+        let notSetYetAndRequired = [];
+        if(!config.port)notSetYetAndRequired.push('port');
+        if(!config.client)notSetYetAndRequired.push('client');
+        if(!config.redirectUri)notSetYetAndRequired.push('redirectUri');
+        if(!config.bot)notSetYetAndRequired.push('bot');
+        if(!config.settings)notSetYetAndRequired.push('settings');
+        if(!config.domain)notSetYetAndRequired.push('domain');
+        if(notSetYetAndRequired[0])throw new Error(err(`You need to define some more things: ${notSetYetAndRequired.join(', ')}`));
         this.config = config;
     }
 
