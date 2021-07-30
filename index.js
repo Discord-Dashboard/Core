@@ -170,6 +170,11 @@ class Dashboard {
 
         if(config.theme)config.theme.init(app, this.config);
 
+        app.get('*', (req,res) => {
+            let text = config.html404 || require('./404pagedefault')(config.websiteTitle);
+            res.send(text.replace('{{websiteTitle}}', config.websiteTitle));
+        });
+
         if(!config.SSL)config.SSL = {};
 
         if(!config.noCreateServer){
