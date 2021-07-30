@@ -13,7 +13,7 @@ class Dashboard {
         if(!config.bot)notSetYetAndRequired.push('bot');
         if(!config.settings)notSetYetAndRequired.push('settings');
         if(!config.domain)notSetYetAndRequired.push('domain');
-        if(notSetYetAndRequired[0])throw new Error(err(`You need to define some more things: ${notSetYetAndRequired.join(', ')}`));
+        if(notSetYetAndRequired[0])throw new Error(err(`You need to define some more things: ${notSetYetAndRequired.join(', ')}.`));
         this.config = config;
     }
 
