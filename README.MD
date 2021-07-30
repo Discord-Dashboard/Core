@@ -270,6 +270,16 @@ You can also change the name, icon, etc. of the page itself.
 ...
   websiteTitle: 'Discord Web Dashboard',
   iconUrl: 'https://domain.com/icon.png',
+  html404: `<!DOCTYPE html>
+  <html>
+    <head>
+        <title>{{websiteTitle}} - 404 Page Not Found</title>
+    </head>
+    <body>
+        <h1>404 Not Found</h1>
+        <a href="/">Take me back home</a>
+    </body>
+  </html>`,
 ...
 ```
 
