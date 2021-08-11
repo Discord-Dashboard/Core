@@ -6,7 +6,7 @@ You can also add a folder or subfolder here.
 
 For example, using folder: **./static/test/image.jpg** will be available available at **localhost/test/image.jpg** or **domain.com/test/image.jpg** url.
 
-For example, using subfolders: **./static/test/sub/subsubfolder/image.jpg** will be available available at **localhost/test/sub/subsubfolder/image.jpg** or **domain.com/test/sub/subsubfolder/image.jpgg** url. You can use up to max 4 subfolders.
+For example, using subfolders: **./static/test/sub/subsubfolder/image.jpg** will be available available at **localhost/test/sub/subsubfolder/image.jpg** or **domain.com/test/sub/subsubfolder/image.jpg** url. You can use up to max 4 subfolders.
 
 # Important
 
