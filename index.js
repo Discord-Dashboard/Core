@@ -301,9 +301,12 @@ module.exports = {
         channelsSelect: (disabled) => {
             return {type:"channelsSelect", function:
                 (client, guildid) => {
+                    let listCount = {};
                     let list = {};
                     client.guilds.cache.get(guildid).channels.cache.forEach(channel=>{
-                    list[channel.name] = channel.id;
+                        listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
+                        if(list[role.name])list[`${role.name} (${listCount[role.name]})`] = role.id;
+                        else list[role.name] = role.id;
                     });
                     return {values:Object.values(list),keys:Object.keys(list)};
                 }, 
@@ -312,9 +315,12 @@ module.exports = {
         rolesSelect: (disabled) => {
             return {type:"rolesSelect", function:
                 (client, guildid) => {
+                    let listCount = {};
                     let list = {};
                     client.guilds.cache.get(guildid).roles.cache.forEach(role=>{
-                    list[role.name] = role.id;
+                        listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
+                        if(list[role.name])list[`${role.name} (${listCount[role.name]})`] = role.id;
+                        else list[role.name] = role.id;
                     });
                     return {values:Object.values(list),keys:Object.keys(list)};
                 }, 
