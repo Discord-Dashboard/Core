@@ -1,5 +1,4 @@
 const colors = require('colors');
-const count = require('./github_js_count.js');
 
 const err = (text) => {
     return text + ` Do you need help? Join our Discord server: ${'https://discord.gg/CzfMGtrdaA'.blue}`;
@@ -308,6 +307,20 @@ module.exports = {
                         if(list[role.name])list[`${role.name} (${listCount[role.name]})`] = role.id;
                         else list[role.name] = role.id;
                     });
+
+                    let myObj = list;
+                    let keys = Object.keys(myObj),
+                    i = null,
+                    len = keys.length;
+                        
+                    keys.sort();
+                    list = {};
+                    
+                    for (i = 0; i < len; i++) {
+                        k = keys[i];
+                        list[k] = myObj[k];
+                    }
+
                     return {values:Object.values(list),keys:Object.keys(list)};
                 }, 
                 disabled};
@@ -322,6 +335,20 @@ module.exports = {
                         if(list[role.name])list[`${role.name} (${listCount[role.name]})`] = role.id;
                         else list[role.name] = role.id;
                     });
+
+                    let myObj = list;
+                    let keys = Object.keys(myObj),
+                    i = null,
+                    len = keys.length;
+                        
+                    keys.sort();
+                    list = {};
+                    
+                    for (i = 0; i < len; i++) {
+                        k = keys[i];
+                        list[k] = myObj[k];
+                    }
+
                     return {values:Object.values(list),keys:Object.keys(list)};
                 }, 
                 disabled};
