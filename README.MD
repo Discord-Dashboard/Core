@@ -230,7 +230,9 @@ Config allows you to set server-stuff. All the options available here are:
   invite: {
     redirectUri: 'http://domain.com/ (website to redirect after inviting the bot - must be added to the trusted uris',
     permissions: 'permissions numer, by default 0',
-    clientId: 'Client ID, by default is set to config.bot.user.id'
+    clientId: 'Client ID, by default is set to config.bot.user.id',
+    scopes: ["bot"],
+    otherParams: "&state=15773059ghq9183habn"
   },
   noCreateServer: false
 ...
