@@ -303,9 +303,9 @@ module.exports = {
                     let listCount = {};
                     let list = {};
                     client.guilds.cache.get(guildid).channels.cache.forEach(channel=>{
-                        listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
-                        if(list[role.name])list[`${role.name} (${listCount[role.name]})`] = role.id;
-                        else list[role.name] = role.id;
+                        listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
+                        if(list[channel.name])list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
+                        else list[channel.name] = channel.id;
                     });
 
                     let myObj = list;
