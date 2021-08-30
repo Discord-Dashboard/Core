@@ -234,7 +234,11 @@ Config allows you to set server-stuff. All the options available here are:
     scopes: ["bot"],
     otherParams: "&state=15773059ghq9183habn"
   },
-  noCreateServer: false
+  noCreateServer: false,
+  supportServer: {
+    slash: '/support-server',
+    inviteUrl: 'https://discord.gg/Nkc8MWxHRD'
+  },
 ...
 ```
 
