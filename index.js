@@ -176,6 +176,14 @@ class Dashboard {
             return res.redirect('/guild/'+req.params.guildId+'?success=true');
         });
 
+        config.supportServer ? null : config.supportServer = {};
+
+        app.get(`${config.supportServer.slash || '/support-server'}`, (req,res) => {
+            if(!config.supportServer.inviteUrl)return res.send({error:true,message:"No inviteUrl defined (discord-dashboard config.supportServer)."});
+            if(!config.supportServer.inviteUrl.toLowerCase().startsWith('https://discord.gg/') && !config.supportServer.inviteUrl.toLowerCase().startsWith('https://discord.com/'))return res.send({error:true,message:"Invite url should start with 'https://discord.gg/' or 'https://discord.com/'."});
+            res.redirect(config.supportServer.inviteUrl);
+        });
+
         if(config.theme)config.theme.init(app, this.config);
 
         app.get('*', (req,res) => {
