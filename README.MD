@@ -306,9 +306,15 @@ If there are new themes, we'll write about them **here**, on [Discord Server](ht
 
 #### Capriham
 
-##### Dark Capriham created by iMidnight:
+##### New: Dark Capriham created by iMidnight
+
+```js
+npm i dbd-dark-dashboard
+```
 
 https://www.npmjs.com/package/dbd-dark-dashboard
+
+![Image](https://camo.githubusercontent.com/a5768145e7ca3f74d4673fb99937251734f1ed4b9a85f15e1a3057826cc86cd6/68747470733a2f2f692e696d6775722e636f6d2f3333736b3947692e706e67)
 
 ##### Install
 
