@@ -8,6 +8,7 @@ or
 npm i discord-web-dashboard dbd-capriham-theme
 ```
 
+
 # Docs website
 
 Better looking documentation with navigation: https://assistants.ga/dbd-docs/#/
@@ -304,6 +305,10 @@ If there are new themes, we'll write about them **here**, on [Discord Server](ht
 **PS**: *Themes in a Github project are located in the themes folder, you can also access them there. Themes in package with npm must be used as separate modules.*
 
 #### Capriham
+
+##### Dark Capriham created by iMidnight:
+
+https://www.npmjs.com/package/dbd-dark-dashboard
 
 ##### Install
 
