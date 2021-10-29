@@ -329,12 +329,13 @@ module.exports = {
             if(typeof(defaultState) != 'boolean')throw new Error(err("'state' in the 'switch' form type should be boolean (true/false)."));
             return {type:"switch",data:defaultState,disabled:disabled};
         },
-        channelsSelect: (disabled) => {
+        channelsSelect: (disabled, onlyText) => {
             return {type:"channelsSelect", function:
                 (client, guildid) => {
                     let listCount = {};
                     let list = {};
                     client.guilds.cache.get(guildid).channels.cache.forEach(channel=>{
+                        if(onlyText && channel.isText())return;
                         listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
                         if(list[channel.name])list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
                         else list[channel.name] = channel.id;
