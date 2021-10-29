@@ -335,7 +335,7 @@ module.exports = {
                     let listCount = {};
                     let list = {};
                     client.guilds.cache.get(guildid).channels.cache.forEach(channel=>{
-                        if(onlyText && channel.isText())return;
+                        if(onlyText && !channel.isText())return;
                         listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
                         if(list[channel.name])list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
                         else list[channel.name] = channel.id;
