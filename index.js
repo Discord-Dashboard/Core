@@ -122,7 +122,7 @@ class Dashboard {
             let bot = config.bot;
             if(!bot.guilds.cache.get(req.params.id))return res.redirect('/manage?error=noPermsToManageGuild');
             await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
-            if(v13support){  
+            if(v13support){
                 if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))return res.redirect('/manage?error=noPermsToManageGuild');
             }else{
                 if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD'))return res.redirect('/manage?error=noPermsToManageGuild');
@@ -146,7 +146,7 @@ class Dashboard {
             let bot = config.bot;
             if(!bot.guilds.cache.get(req.params.guildId))return res.redirect('/manage?error=noPermsToManageGuild');
             await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
-            if(v13support){  
+            if(v13support){
                 if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))return res.redirect('/manage?error=noPermsToManageGuild');
             }else{
                 if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD'))return res.redirect('/manage?error=noPermsToManageGuild');
@@ -234,7 +234,7 @@ class Dashboard {
             if(config.port != 80 && config.port != 443){
                 pport = `:${config.port}`;
             }
-    
+
             console.log(`
 ██████╗ ██████╗ ██████╗ 
 ██╔══██╗██╔══██╗██╔══██╗
@@ -329,7 +329,7 @@ module.exports = {
             if(typeof(defaultState) != 'boolean')throw new Error(err("'state' in the 'switch' form type should be boolean (true/false)."));
             return {type:"switch",data:defaultState,disabled:disabled};
         },
-        channelsSelect: (disabled, onlyText) => {
+        channelsSelect: (disabled, onlyText=true) => {
             return {type:"channelsSelect", function:
                 (client, guildid) => {
                     let listCount = {};
@@ -345,17 +345,17 @@ module.exports = {
                     let keys = Object.keys(myObj),
                     i = null,
                     len = keys.length;
-                        
+
                     keys.sort();
                     list = {};
-                    
+
                     for (i = 0; i < len; i++) {
                         k = keys[i];
                         list[k] = myObj[k];
                     }
 
                     return {values:Object.values(list),keys:Object.keys(list)};
-                }, 
+                },
                 disabled};
         },
         rolesSelect: (disabled) => {
@@ -373,17 +373,17 @@ module.exports = {
                     let keys = Object.keys(myObj),
                     i = null,
                     len = keys.length;
-                        
+
                     keys.sort();
                     list = {};
-                    
+
                     for (i = 0; i < len; i++) {
                         k = keys[i];
                         list[k] = myObj[k];
                     }
 
                     return {values:Object.values(list),keys:Object.keys(list)};
-                }, 
+                },
                 disabled};
         },
         colorSelect: (defaultState, disabled) => {
