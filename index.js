@@ -223,8 +223,12 @@ class Dashboard {
                     key: config.SSL.key || "",
                     cert: config.SSL.cert || ""
                 };
-                const https = require('https');
-                https.createServer(options, app);
+                try { 
+                    const https = require('https');
+                     https.createServer(options, app);
+                } catch(e) { 
+                    console.log(err(`${'discord-dashboard issue:'.red} There's a problem while creating server, check if the port specified is already on use.`));
+                }
             }else{
                 app.listen(config.port);
             }
