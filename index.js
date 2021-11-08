@@ -169,7 +169,11 @@ class Dashboard {
                         }
                     }
                 }else{
-                    if(req.body[option.optionId] || req.body[option.optionId] == null)option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]});
+                    if(req.body[option.optionId] == undefined || req.body[option.optionId] == null){
+                        option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:false});
+                    }else{
+                        option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]})
+                    }
                 }
             });
 
