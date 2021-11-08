@@ -170,7 +170,7 @@ class Dashboard {
                     }
                 }else{
                     if(req.body[option.optionId] == undefined || req.body[option.optionId] == null){
-                        option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:false});
+                        option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:null});
                     }else{
                         option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]})
                     }
