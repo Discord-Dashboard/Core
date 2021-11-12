@@ -96,6 +96,9 @@ class Dashboard {
 
             req.themeConfig = themeConfig;
 
+            req.botToken = config.bot.token;
+            req.guildAfterAuthorization = config.guildAfterAuthorization || {};
+
             req.websiteTitle = config.websiteTitle || "Discord Web Dashboard";
             req.iconUrl = config.iconUrl || 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png';
             next();
