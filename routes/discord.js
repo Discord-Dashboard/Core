@@ -53,8 +53,6 @@ router.get('/callback', (req, res) => {
             userResponse.avatarURL = userResponse.avatar ? `https://cdn.discordapp.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024` : null;
 
             req.session.user = userResponse;
-            
-        });
         fetch('https://discordapp.com/api/users/@me/guilds', {
             method: 'GET',
             headers: {
@@ -64,7 +62,25 @@ router.get('/callback', (req, res) => {
         .then(res3 => res3.json())
         .then(userGuilds => {
             req.session.guilds = userGuilds;
-            res.redirect(req.session.r || '/');
+
+            if(req.guildAfterAuthorization.use == true){
+                console.log(req.botToken)
+                fetch(`https://discordapp.com/api/guilds/${req.guildAfterAuthorization.guildId}/members/${req.session.user.id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({access_token: `${response.access_token}`}),
+                    headers: {
+                        Authorization: `Bot ${req.botToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                }).then(res4=>res4.json()).then(json5=>{
+                    console.log(json5)
+                    res.redirect(req.session.r || '/');
+                })
+            }else{
+                res.redirect(req.session.r || '/');
+            }
+        });
+
         });
     });
 });
