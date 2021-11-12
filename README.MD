@@ -269,6 +269,21 @@ DiscordClient.login('application_bot_token');
 ...
 ```
 
+### Automatic Support Server Join
+
+If you want the user to be automatically added to your server immediately after logging into the Dashboard, use this option.
+
+PS. The bot must be on this server and have the security to create permissions there.
+
+```js
+...
+    guildAfterAuthorization: {
+        use: true,
+        guildId: 'Your support guild id',
+    },
+...
+```
+
 ### Website Stuff
 
 You can also change the name, icon, etc. of the page itself.
