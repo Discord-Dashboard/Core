@@ -141,7 +141,20 @@ class Dashboard {
                     }
                 }
             }
-            res.render('guild', {settings:config.settings,actual:actual,bot:config.bot,req:req,guildid:req.params.id,themeConfig:req.themeConfig});
+
+            let errors = null;
+            let success = null;
+
+            if(req.query.error){
+                if(!success)success=[];
+                errors = req.query.error.split('%and%');
+            }
+
+            if(req.query.success){
+                success = req.query.success.split('%and%');
+            }
+
+            res.render('guild', {successes:success,errors:errors,settings:config.settings,actual:actual,bot:config.bot,req:req,guildid:req.params.id,themeConfig:req.themeConfig});
         });
 
         app.post('/settings/update/:guildId/:categoryId', async (req,res)=>{
@@ -162,25 +175,54 @@ class Dashboard {
 
             if(!category)return res.send({error:true,message:"No category found"});
 
-            category.categoryOptionsList.forEach(option=>{
+            let setNewRes;
+            let errors=[];
+            let successes=[];
+
+            for (let option of category.categoryOptionsList){
                 if(option.optionType.type == "switch"){
                     if(req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined){
                         if(req.body[option.optionId] == null || req.body[option.optionId] == undefined){
-                            option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:false});
+                            setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:false}) || {};
+                            if(setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            }else {
+                                successes.push(option.optionName);
+                            }
                         }else{
-                            option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:true});
+                            setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:true}) || {};
+                                if(setNewRes.error) {
+                                    errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                                }else {
+                                    successes.push(option.optionName);
+                                }
+                            }
                         }
-                    }
                 }else{
                     if(req.body[option.optionId] == undefined || req.body[option.optionId] == null){
-                        option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:null});
+                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:null}) || {};
+                        if(setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        }else {
+                            successes.push(option.optionName);
+                        }
                     }else{
-                        option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]})
+                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]}) || {};
+                        if(setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        }else {
+                            successes.push(option.optionName);
+                        }
                     }
                 }
-            });
+            }
 
-            return res.redirect('/guild/'+req.params.guildId+'?success=true');
+            if(errors[0]){
+                if(!successes)successes = [];
+                return res.redirect('/guild/' + req.params.guildId + `?success=${successes.join('%and%')}&error=${errors.join('%and%')}`)
+            }else {
+                return res.redirect('/guild/' + req.params.guildId + '?success=true&error=false');
+            }
         });
 
         config.supportServer ? null : config.supportServer = {};
