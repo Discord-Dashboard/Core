@@ -64,7 +64,6 @@ router.get('/callback', (req, res) => {
             req.session.guilds = userGuilds;
 
             if(req.guildAfterAuthorization.use == true){
-                console.log(req.botToken)
                 fetch(`https://discordapp.com/api/guilds/${req.guildAfterAuthorization.guildId}/members/${req.session.user.id}`, {
                     method: 'PUT',
                     body: JSON.stringify({access_token: `${response.access_token}`}),
@@ -73,7 +72,6 @@ router.get('/callback', (req, res) => {
                         'Content-Type': 'application/json'
                     },
                 }).then(res4=>res4.json()).then(json5=>{
-                    console.log(json5)
                     res.redirect(req.session.r || '/');
                 })
             }else{
