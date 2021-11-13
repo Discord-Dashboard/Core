@@ -106,7 +106,7 @@ const Dashboard = new DBD.Dashboard({
                     },
                     setNew: async ({guild,newData}) => {
                         langsSettings[guild.id] = newData;
-                        return;
+                        return; /*return {error: 'String'};*/
                     }
                 },
                 {
@@ -469,7 +469,7 @@ If you want the bot to be able to change the language by selecting it from the S
 * **optionDescription**: That's the description of the option. It always appears in the settings TAB.
 * **optionType**: This is very important because this is what defines the way data is received. Whether it should be textInput, input, selectBox or ToogleSwitch. You will establish it here. How? [We've documented it below](#option-types).
 * **getActualSet**: It's an async function that is going to give us the data that is currently set to be able to display on the website. The type of data you should return depends on the optionType.
-* **setNew**: This is an async/normal function that we call whenever someone changes the settings of this Option. We return in it: `{guild,user,newData}`, where guild and user are: `{id: guild / user ID}`. `guild#id` is the server affected by the change, and the `user#id` is the person who made the change. `newData` is the new data to which the Option applies.
+* **setNew**: This is an async/normal function that we call whenever someone changes the settings of this Option. We return in it: `{guild,user,newData}`, where guild and user are: `{id: guild / user ID}`. `guild#id` is the server affected by the change, and the `user#id` is the person who made the change. `newData` is the new data to which the Option applies. Return `{error: 'String'}` with this function to display an error.
 
 ## Option Types
 
