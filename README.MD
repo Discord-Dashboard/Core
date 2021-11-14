@@ -317,6 +317,71 @@ You can also change the name, icon, etc. of the page itself.
 ...
 ```
 
+### Under Maintenance Mode
+
+
+Use this mode if you don't want users to be able to access the Dashboard. A page informing about the technical break will be displayed. In order for you to be able to access the site despite blocking it, you must set:
+
+`underMaintenanceAccessKey`: The key that will allow you to access the blocked Dashboard (during the maintenance break).
+`underMaintenanceAccessPage`: After entering this page, a field for entering the accessKey you have set up will appear. All you have to do now is click Submit and you have access to the site despite the maintenance mode!
+
+#### Ready Built-In Maintenance Page
+
+You can change the color of the technical break page. All available options are shown in the example below.
+
+![Image](https://cdn.assistants.ga/kvzmqybi)
+
+```js
+...
+    underMaintenanceAccessKey: 'totalsecretkey',
+    underMaintenanceAccessPage: '/total-secret-get-access',
+    useUnderMaintenance: true,
+    underMaintenance: {
+        title: 'Under Maintenance',
+        contentTitle: 'This page is under maintenance',
+        texts: [
+        '<br>',
+        'We still want to change for the better for you.',
+        'Therefore, we are introducing technical updates so that we can allow you to enjoy the quality of our services.',
+        '<br>',
+        'Come back to us later or join our <a href="#">Discord Support Server</a>'
+    ],
+        bodyBackgroundColors: ['#ffa191', '#ffc247'],
+        buildingsColor: '#ff6347',
+        craneDivBorderColor: '#ff6347',
+        craneArmColor: '#f88f7c',
+        craneWeightColor: '#f88f7c',
+        outerCraneColor: '#ff6347',
+        craneLineColor: '#ff6347',
+        craneCabinColor: '#f88f7c',
+        craneStandColors: ['#ff6347', , '#f29b8b']
+},
+...
+```
+
+####  Own maintenance page
+
+To set up your own page, you must set underMaintenanceCustomHtml instead of underMaintenance.
+
+```js
+...
+    underMaintenanceAccessKey: 'totalsecretkey',
+    underMaintenanceAccessPage: '/total-secret-get-access',
+    useUnderMaintenance: true,
+    underMaintenanceCustomHtml: `
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Under Maintenance</title>
+        </head>
+        <body>
+            <h1>Under Maintenance</h1>
+        </body>
+    </html>
+    `,
+...
+```
+
 ### Themes
 
 You can also use themes to change the look of the page. To do this, you need to use additional modules and 'connect' them to the project.
