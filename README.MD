@@ -15,6 +15,18 @@ Better looking documentation with navigation: https://assistants.ga/dbd-docs/#/
 
 # Full Example
 
+
+NEW: Init full example discord-dashboard file.
+This will create an empty file with discord-dashboard empty default project.
+
+```js
+const DBD = require('discord-dashboard');
+
+DBD.initDashboard({fileName:'test-file',domain:'http://localhost', port: 80, token: '123', clientSecret: '456', clientId: '789'});
+```
+
+Default empty project code to copy:
+
 ```js
 const DBD = require('discord-dashboard');
 const CaprihamTheme = require('dbd-capriham-theme');
