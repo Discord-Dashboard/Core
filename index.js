@@ -21,6 +21,8 @@ class Dashboard {
         const config = this.config;
         const express = require('express');
         const app = express();
+
+
         const session = require('express-session');
         const FileStore = require('session-file-store')(session);
         const bodyParser = require('body-parser');
@@ -82,6 +84,30 @@ class Dashboard {
         }
 
         app.use(sessionIs);
+
+        if(config.useUnderMaintenance){
+            app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req,res)=>{
+               res.send(`
+               <form action="${config.domain}${config.underMaintenanceAccessPage || '/total-secret-get-access'}" method="POST" >
+                    <input id="accessKey" name="accessKey"/>
+                    <button role="submit">Submit</button>
+               </form>
+               `)
+            });
+
+            app.post(config.underMaintenanceAccessPage || '/total-secret-get-access', (req,res)=>{
+                if(!req.body)req.body = {};
+                const accessKey = req.body.accessKey;
+                if(accessKey != config.underMaintenanceAccessKey)return res.send('Wrong key.');
+                req.session.umaccess = true;
+                res.redirect('/');
+            });
+
+            app.use((req,res,next)=>{
+                if(!req.session.umaccess)return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance));
+                else next();
+            })
+        }
 
         let themeConfig = {};
         if(config.theme)themeConfig = config.theme.themeConfig;
