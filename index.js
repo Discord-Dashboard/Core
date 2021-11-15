@@ -8,6 +8,7 @@ class Dashboard {
     constructor(config) {
         let notSetYetAndRequired = [];
         if(!config.port)notSetYetAndRequired.push('port');
+        if(!config.theme)notSetYetAndRequired.push('theme');
         if(!config.client)notSetYetAndRequired.push('client');
         if(!config.redirectUri)notSetYetAndRequired.push('redirectUri');
         if(!config.bot)notSetYetAndRequired.push('bot');
@@ -45,14 +46,6 @@ class Dashboard {
             app.use('/:a/:b/', express.static(config.theme.staticPath));
             app.use('/:a/:b/:c/', express.static(config.theme.staticPath));
             app.use('/:a/:b/:c/:d/', express.static(config.theme.staticPath));
-        }else{
-            app.set('views', require('path').join(__dirname, '/views/project1'));
-            app.use(express.static(require('path').join(__dirname, '/static')));
-            app.use('/', express.static(require('path').join(__dirname, '/static')));
-            app.use('/:a/', express.static(require('path').join(__dirname, '/static')));
-            app.use('/:a/:b/', express.static(require('path').join(__dirname, '/static')));
-            app.use('/:a/:b/:c/', express.static(require('path').join(__dirname, '/static')));
-            app.use('/:a/:b/:c/:d/', express.static(require('path').join(__dirname, '/static')));
         }
         app.set('view engine','ejs');
 
@@ -206,10 +199,37 @@ class Dashboard {
             let successes=[];
 
             for (let option of category.categoryOptionsList){
-                if(option.optionType.type == "switch"){
-                    if(req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined){
+                if(option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect'){
+                    if(!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:[]});
+                        setNewRes ? null : setNewRes = {};
+                        if(setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        }else {
+                            successes.push(option.optionName);
+                        }
+                    }else if(typeof(req.body[option.optionId]) != 'object') {
+                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:[req.body[option.optionId]]});
+                        setNewRes ? null : setNewRes = {};
+                        if(setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        }else {
+                            successes.push(option.optionName);
+                        }
+                    } else{
+                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]});
+                        setNewRes ? null : setNewRes = {};
+                        if(setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        }else {
+                            successes.push(option.optionName);
+                        }
+                    }
+                }else  if(option.optionType.type == "switch"){
+                    if(!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined){
                         if(req.body[option.optionId] == null || req.body[option.optionId] == undefined){
                             setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:false}) || {};
+                            setNewRes ? null : setNewRes = {};
                             if(setNewRes.error) {
                                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
                             }else {
@@ -217,7 +237,8 @@ class Dashboard {
                             }
                         }else{
                             setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:true}) || {};
-                                if(setNewRes.error) {
+                            setNewRes ? null : setNewRes = {};
+                            if(setNewRes.error) {
                                     errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
                                 }else {
                                     successes.push(option.optionName);
@@ -227,6 +248,7 @@ class Dashboard {
                 }else{
                     if(req.body[option.optionId] == undefined || req.body[option.optionId] == null){
                         setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:null}) || {};
+                        setNewRes ? null : setNewRes = {};
                         if(setNewRes.error) {
                             errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
                         }else {
@@ -234,6 +256,7 @@ class Dashboard {
                         }
                     }else{
                         setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]}) || {};
+                        setNewRes ? null : setNewRes = {};
                         if(setNewRes.error) {
                             errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
                         }else {
@@ -498,56 +521,97 @@ Dashboard.init();`)
     },
     formTypes: {
         select: (list, disabled) => {
-            if(!list)throw new Error(err("List in the 'select' form type cannot be empty."));
-            if(typeof(list) != "object")throw new Error(err("List in the 'select' form type should be an JSON object."));
+            if (!list) throw new Error(err("List in the 'select' form type cannot be empty."));
+            if (typeof (list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
             let keys = Object.keys(list);
             let values = Object.values(list);
-            return {type: "select", data: {keys,values}, disabled: disabled || false};
+            return {
+                type: "select",
+                data: {
+                    keys,
+                    values
+                },
+                disabled: disabled || false
+            };
+        },
+        multiSelect: (list, disabled, required) => {
+            if (!list) throw new Error(err("List in the 'select' form type cannot be empty."));
+            if (typeof (list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
+            let keys = Object.keys(list);
+            let values = Object.values(list);
+            return {
+                type: "multiSelect",
+                data: {
+                    keys,
+                    values
+                },
+                disabled: disabled || false,
+                required: required || false
+            };
         },
         input: (placeholder, min, max, disabled, required) => {
-            if(min){
-                if(isNaN(min))throw new Error(err("'min' in the 'input' form type should be an number."));
+            if (min) {
+                if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
             }
-            if(max){
-                if(isNaN(max))throw new Error(err("'max' in the 'input' form type should be an number."));
+            if (max) {
+                if (isNaN(max)) throw new Error(err("'max' in the 'input' form type should be an number."));
             }
-            if(min && max){
-                if(min>max)throw new Error(err("'min' in the 'input' form type cannot be higher than 'max'."));
+            if (min && max) {
+                if (min > max) throw new Error(err("'min' in the 'input' form type cannot be higher than 'max'."));
             }
-            return {type: "input", data: placeholder, min: min || null, max: max || null, disabled: disabled || false, required: required || false};
+            return {
+                type: "input",
+                data: placeholder,
+                min: min || null,
+                max: max || null,
+                disabled: disabled || false,
+                required: required || false
+            };
         },
         textarea: (placeholder, min, max, disabled, required) => {
-            if(min){
-                if(isNaN(min))throw new Error(err("'min' in the 'input' form type should be an number."));
+            if (min) {
+                if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
             }
-            if(max){
-                if(isNaN(max))throw new Error(err("'max' in the 'input' form type should be an number."));
+            if (max) {
+                if (isNaN(max)) throw new Error(err("'max' in the 'input' form type should be an number."));
             }
-            if(min && max){
-                if(min>max)throw new Error(err("'min' in the 'input' form type cannot be higher than 'max'."));
+            if (min && max) {
+                if (min > max) throw new Error(err("'min' in the 'input' form type cannot be higher than 'max'."));
             }
-            return {type: "textarea", data: placeholder, min: min || null, max: max || null, disabled: disabled || false, required: required || false};
+            return {
+                type: "textarea",
+                data: placeholder,
+                min: min || null,
+                max: max || null,
+                disabled: disabled || false,
+                required: required || false
+            };
         },
         switch: (defaultState, disabled) => {
-            if(typeof(defaultState) != 'boolean')throw new Error(err("'state' in the 'switch' form type should be boolean (true/false)."));
-            return {type:"switch",data:defaultState,disabled:disabled};
+            if (typeof (defaultState) != 'boolean') throw new Error(err("'state' in the 'switch' form type should be boolean (true/false)."));
+            return {
+                type: "switch",
+                data: defaultState,
+                disabled: disabled
+            };
         },
-        channelsSelect: (disabled, onlyText=true) => {
-            return {type:"channelsSelect", function:
-                (client, guildid) => {
+        channelsSelect: (disabled) => {
+            return {
+                type: "channelsSelect",
+                function: (client, guildid) => {
                     let listCount = {};
                     let list = {};
-                    client.guilds.cache.get(guildid).channels.cache.forEach(channel=>{
-                        if(onlyText && !channel.isText())return;
+                    client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
+                        if (channel.type !== "GUILD_TEXT") return;
                         listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
-                        if(list[channel.name])list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
+                        if (list[channel.name]) list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
                         else list[channel.name] = channel.id;
                     });
 
                     let myObj = list;
                     let keys = Object.keys(myObj),
-                    i = null,
-                    len = keys.length;
+                        i = null,
+                        len = keys.length;
 
                     keys.sort();
                     list = {};
@@ -557,25 +621,67 @@ Dashboard.init();`)
                         list[k] = myObj[k];
                     }
 
-                    return {values:Object.values(list),keys:Object.keys(list)};
+                    return {
+                        values: Object.values(list),
+                        keys: Object.keys(list)
+                    };
                 },
-                disabled};
+                disabled,
+                required
+            };
         },
-        rolesSelect: (disabled) => {
-            return {type:"rolesSelect", function:
-                (client, guildid) => {
+        channelsMultiSelect: (disabled, required) => {
+            return {
+                type: "channelsMultiSelect",
+                function: (client, guildid) => {
                     let listCount = {};
                     let list = {};
-                    client.guilds.cache.get(guildid).roles.cache.forEach(role=>{
+                    client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
+                        if (channel.type !== "GUILD_TEXT") return;
+                        listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
+                        if (list[channel.name]) list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
+                        else list[channel.name] = channel.id;
+                    });
+
+                    let myObj = list;
+                    let keys = Object.keys(myObj),
+                        i = null,
+                        len = keys.length;
+
+                    keys.sort();
+                    list = {};
+
+                    for (i = 0; i < len; i++) {
+                        k = keys[i];
+                        list[k] = myObj[k];
+                    }
+
+                    return {
+                        values: Object.values(list),
+                        keys: Object.keys(list)
+                    };
+                },
+                disabled,
+                required
+            };
+        },
+        rolesMultiSelect: (disabled, required) => {
+            return {
+                type: "rolesMultiSelect",
+                function: (client, guildid) => {
+                    let listCount = {};
+                    let list = {};
+                    client.guilds.cache.get(guildid).roles.cache.forEach(role => {
+                        if (role.managed) return;
                         listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
-                        if(list[role.name])list[`${role.name} (${listCount[role.name]})`] = role.id;
+                        if (list[role.name]) list[`${role.name} (${listCount[role.name]})`] = role.id;
                         else list[role.name] = role.id;
                     });
 
                     let myObj = list;
                     let keys = Object.keys(myObj),
-                    i = null,
-                    len = keys.length;
+                        i = null,
+                        len = keys.length;
 
                     keys.sort();
                     list = {};
@@ -585,12 +691,57 @@ Dashboard.init();`)
                         list[k] = myObj[k];
                     }
 
-                    return {values:Object.values(list),keys:Object.keys(list)};
+                    return {
+                        values: Object.values(list),
+                        keys: Object.keys(list)
+                    };
                 },
-                disabled};
+                disabled,
+                required
+            };
+        },
+        rolesSelect: (disabled) => {
+            return {
+                type: "rolesSelect",
+                function: (client, guildid) => {
+                    let listCount = {};
+                    let list = {};
+                    client.guilds.cache.get(guildid).roles.cache.forEach(role => {
+                        if (role.managed) return;
+
+                        if(role.id === guildid) return; // @everyone role
+                        listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
+                        if (list[role.name]) list[`${role.name} (${listCount[role.name]})`] = role.id;
+                        else list[role.name] = role.id;
+                    });
+
+                    let myObj = list;
+                    let keys = Object.keys(myObj),
+                        i = null,
+                        len = keys.length;
+
+                    keys.sort();
+                    list = {};
+
+                    for (i = 0; i < len; i++) {
+                        k = keys[i];
+                        list[k] = myObj[k];
+                    }
+
+                    return {
+                        values: Object.values(list),
+                        keys: Object.keys(list)
+                    };
+                },
+                disabled
+            };
         },
         colorSelect: (defaultState, disabled) => {
-            return {type:"colorSelect",data:defaultState,disabled};
+            return {
+                type: "colorSelect",
+                data: defaultState,
+                disabled
+            };
         }
     },
     customPagesTypes: {
