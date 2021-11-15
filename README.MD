@@ -692,6 +692,35 @@ String (Channel ID)
 
 String (Role ID)
 
+#### Multiple Guild Roles Select
+```js
+...
+  optionType: DBD.formTypes.multipleRolesSelect(disabled, required),
+...
+```
+
+**disabled:** Boolean (true/false) - optional
+**required:** Boolean (true/false) - optional
+
+##### Returned data
+
+Array (Roles IDs)
+
+#### Multiple Select
+```js
+...
+  optionType: DBD.formTypes.multipleSelect(data, disabled, required),
+...
+```
+
+**list:** `{ displayName: valueReturned, }` - required
+**disabled:** Boolean (true/false) - optional
+**required:** Boolean (true/false) - optional
+
+##### Returned data
+
+Array (list of selected valueReturned)
+
 ## Custom Pages
 
 
