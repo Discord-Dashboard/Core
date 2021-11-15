@@ -627,7 +627,6 @@ Dashboard.init();`)
                     };
                 },
                 disabled,
-                required
             };
         },
         channelsMultiSelect: (disabled, required) => {
