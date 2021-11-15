@@ -595,39 +595,34 @@ Dashboard.init();`)
                 disabled: disabled
             };
         },
-        channelsSelect: (disabled) => {
-            return {
-                type: "channelsSelect",
-                function: (client, guildid) => {
-                    let listCount = {};
-                    let list = {};
-                    client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
-                        if (channel.type !== "GUILD_TEXT") return;
-                        listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
-                        if (list[channel.name]) list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
-                        else list[channel.name] = channel.id;
-                    });
+        channelsSelect: (disabled, onlyText=true) => {
+            return {type:"channelsSelect", function:
+                    (client, guildid) => {
+                        let listCount = {};
+                        let list = {};
+                        client.guilds.cache.get(guildid).channels.cache.forEach(channel=>{
+                            if(onlyText && !channel.isText())return;
+                            listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
+                            if(list[channel.name])list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
+                            else list[channel.name] = channel.id;
+                        });
 
-                    let myObj = list;
-                    let keys = Object.keys(myObj),
-                        i = null,
-                        len = keys.length;
+                        let myObj = list;
+                        let keys = Object.keys(myObj),
+                            i = null,
+                            len = keys.length;
 
-                    keys.sort();
-                    list = {};
+                        keys.sort();
+                        list = {};
 
-                    for (i = 0; i < len; i++) {
-                        k = keys[i];
-                        list[k] = myObj[k];
-                    }
+                        for (i = 0; i < len; i++) {
+                            k = keys[i];
+                            list[k] = myObj[k];
+                        }
 
-                    return {
-                        values: Object.values(list),
-                        keys: Object.keys(list)
-                    };
-                },
-                disabled,
-            };
+                        return {values:Object.values(list),keys:Object.keys(list)};
+                    },
+                disabled};
         },
         channelsMultiSelect: (disabled, required) => {
             return {
