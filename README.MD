@@ -692,6 +692,20 @@ String (Channel ID)
 
 String (Role ID)
 
+#### Multiple Guild Channels Select
+```js
+...
+  optionType: DBD.formTypes.multipleChannelsSelect(disabled, required),
+...
+```
+
+**disabled:** Boolean (true/false) - optional
+**required:** Boolean (true/false) - optional
+
+##### Returned data
+
+Array (Channels IDs)
+
 #### Multiple Guild Roles Select
 ```js
 ...
@@ -709,7 +723,7 @@ Array (Roles IDs)
 #### Multiple Select
 ```js
 ...
-  optionType: DBD.formTypes.multipleSelect(data, disabled, required),
+  optionType: DBD.formTypes.multipleSelect(list, disabled, required),
 ...
 ```
 
