@@ -226,7 +226,7 @@ class Dashboard {
                         }
                     }
                 }else  if(option.optionType.type == "switch"){
-                    if(!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined){
+                    if(req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined){
                         if(req.body[option.optionId] == null || req.body[option.optionId] == undefined){
                             setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:false}) || {};
                             setNewRes ? null : setNewRes = {};
@@ -321,10 +321,10 @@ class Dashboard {
                     key: config.SSL.key || "",
                     cert: config.SSL.cert || ""
                 };
-                try { 
+                try {
                     const https = require('https');
                      https.createServer(options, app);
-                } catch(e) { 
+                } catch(e) {
                     console.log(err(`${'discord-dashboard issue:'.red} There's a problem while creating server, check if the port specified is already on use.`));
                 }
             }else{
