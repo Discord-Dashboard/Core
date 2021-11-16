@@ -595,13 +595,13 @@ Dashboard.init();`)
                 disabled: disabled
             };
         },
-        channelsSelect: (disabled, onlyText=true) => {
+        channelsSelect: (disabled, channelTypes = ['GUILD_TEXT']) => {
             return {type:"channelsSelect", function:
                     (client, guildid) => {
                         let listCount = {};
                         let list = {};
                         client.guilds.cache.get(guildid).channels.cache.forEach(channel=>{
-                            if(onlyText && !channel.isText())return;
+                            if (!channelTypes.includes(channel.type)) return;
                             listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
                             if(list[channel.name])list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
                             else list[channel.name] = channel.id;
@@ -624,14 +624,14 @@ Dashboard.init();`)
                     },
                 disabled};
         },
-        channelsMultiSelect: (disabled, required) => {
+        channelsMultiSelect: (disabled, required, channelTypes = ['GUILD_TEXT']) => {
             return {
                 type: "channelsMultiSelect",
                 function: (client, guildid) => {
                     let listCount = {};
                     let list = {};
                     client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
-                        if (channel.type !== "GUILD_TEXT") return;
+                        if (!channelTypes.includes(channel.type)) return;
                         listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
                         if (list[channel.name]) list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
                         else list[channel.name] = channel.id;
