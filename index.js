@@ -337,7 +337,8 @@ class Dashboard {
                 pport = `:${config.port}`;
             }
 
-            console.log(`
+            if(!config.minimizedConsoleLogs) {
+                console.log(`
 ██████╗ ██████╗ ██████╗ 
 ██╔══██╗██╔══██╗██╔══██╗
 ██║  ██║██████╔╝██║  ██║
@@ -352,8 +353,13 @@ Remember that there are ${'themes'.rainbow} available to make the Dashboard look
 
 If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
 `);
+            } else {
+                console.log(`DBD Dashboard running on ${`${(config.domain || "domain.com") + pport}`.blue} !`);
+            }
+
         }else{
-            console.log(`
+            if(!config.minimizedConsoleLogs) {
+                console.log(`
 ██████╗ ██████╗ ██████╗ 
 ██╔══██╗██╔══██╗██╔══██╗
 ██║  ██║██████╔╝██║  ██║
@@ -368,6 +374,9 @@ Remember that there are ${'themes'.rainbow} available to make the Dashboard look
          
 If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
 `);
+            } else {
+                console.log(`DBD Dashboard running on ${`${(config.domain || "domain.com") + pport}`.blue} !`);
+            }
         }
 
     try{
@@ -408,6 +417,7 @@ const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS] });
 client.login(${token});
 
 const Dashboard = new DBD.Dashboard({
+    minimizedConsoleLogs: false,
     port: ${port},
     client: {
         id: "${clientId}",
