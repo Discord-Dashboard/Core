@@ -337,37 +337,9 @@ class Dashboard {
                 pport = `:${config.port}`;
             }
 
-            console.log(`
-██████╗ ██████╗ ██████╗ 
-██╔══██╗██╔══██╗██╔══██╗
-██║  ██║██████╔╝██║  ██║
-██║  ██║██╔══██╗██║  ██║
-██████╔╝██████╔╝██████╔╝
-╚═════╝ ╚═════╝ ╚═════╝ 
-Discord Bot Dashboard
-`.rainbow + `
-Thanks for using ${'discord-dashboard'.rainbow} module! The server is up and running, so head over to the ${`${(config.domain || "domain.com") + pport}`.blue} website and start your fun.
-
-Remember that there are ${'themes'.rainbow} available to make the Dashboard look better: ${'https://assistants.ga/dbd-docs/#/?id=themes'.blue}
-
-If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
-`);
+            console.log(`DBD Dashboard running on ${`${(config.domain || "domain.com") + pport}`.blue} !`);
         }else{
-            console.log(`
-██████╗ ██████╗ ██████╗ 
-██╔══██╗██╔══██╗██╔══██╗
-██║  ██║██████╔╝██║  ██║
-██║  ██║██╔══██╗██║  ██║
-██████╔╝██████╔╝██████╔╝
-╚═════╝ ╚═════╝ ╚═════╝ 
-Discord Bot Dashboard
-`.rainbow + `
-Thanks for using ${'discord-dashboard'.rainbow} module! You chose the option not to start the server. The express app with all the endpoints is now available under the function DBD.getApp()
-        
-Remember that there are ${'themes'.rainbow} available to make the Dashboard look better: ${'https://assistants.ga/dbd-docs/#/?id=themes'.blue}
-         
-If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
-`);
+            console.log(`DBD Dashboard running on ${`${(config.domain || "domain.com") + pport}`.blue} !`);
         }
 
     try{
