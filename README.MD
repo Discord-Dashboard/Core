@@ -118,7 +118,7 @@ const Dashboard = new DBD.Dashboard({
                     },
                     setNew: async ({guild,newData}) => {
                         langsSettings[guild.id] = newData;
-                        return; /*return {error: 'String'};*/
+                        return;
                     }
                 },
                 {
@@ -252,6 +252,7 @@ Config allows you to set server-stuff. All the options available here are:
     slash: '/support-server',
     inviteUrl: 'https://discord.gg/Nkc8MWxHRD'
   },
+  minimizedConsoleLogs: false
 ...
 ```
 
@@ -580,6 +581,21 @@ import { formTypes } from 'discord-dashboard';
 
 Currently available types are:
 
+#### Spacer
+```js
+...
+    optionType: 'spacer',
+    title: 'First spacer',
+    description: 'First spacer description.'
+...
+```
+
+How does a spacer work?
+
+Spacer allows you to create 'subcategories' in categories and possibility to separate its content.
+
+![Spacer](https://cdn.assistants.ga/kw59rn2q)
+
 #### Select
 ```js
 ...
@@ -669,11 +685,12 @@ String (Hex color with the # - for example, #fff000)
 #### Guild Channels Select
 ```js
 ...
-  optionType: DBD.formTypes.channelsSelect(disabled),
+  optionType: DBD.formTypes.channelsSelect(disabled, channelTypes),
 ...
 ```
 
 **disabled:** Boolean (true/false) - optional
+**channelTypes:** Array of channel types to use - optional, by default `['GUILD_TEXT']`
 
 ##### Returned data
 
@@ -695,12 +712,13 @@ String (Role ID)
 #### Multiple Guild Channels Select
 ```js
 ...
-  optionType: DBD.formTypes.chennelsMultiSelect(disabled, required),
+  optionType: DBD.formTypes.channelsMultiSelect(disabled, required, channelTypes),
 ...
 ```
 
 **disabled:** Boolean (true/false) - optional
 **required:** Boolean (true/false) - optional
+**channelTypes:** Array of channel types to use - optional, by default `['GUILD_TEXT']`
 
 ##### Returned data
 
