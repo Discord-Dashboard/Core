@@ -80,7 +80,7 @@ class Dashboard {
 
         if(config.useUnderMaintenance){
             app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req,res)=>{
-               res.send(`
+                res.send(`
                <form action="${config.domain}${config.underMaintenanceAccessPage || '/total-secret-get-access'}" method="POST" >
                     <input id="accessKey" name="accessKey"/>
                     <button role="submit">Submit</button>
@@ -152,11 +152,14 @@ class Dashboard {
             let actual = {};
             for(const s of config.settings){
                 for(const c of s.categoryOptionsList){
-                    if(!actual[s.categoryId]){
-                        actual[s.categoryId] = {};
-                    }
-                    if(!actual[s.categoryId][c.optionId]){
-                        actual[s.categoryId][c.optionId] = await c.getActualSet({guild:{id:req.params.id}});
+                    if(c.optionType == 'spacer') {
+                    }else{
+                        if(!actual[s.categoryId]){
+                            actual[s.categoryId] = {};
+                        }
+                        if(!actual[s.categoryId][c.optionId]){
+                            actual[s.categoryId][c.optionId] = await c.getActualSet({guild:{id:req.params.id}});
+                        }
                     }
                 }
             }
@@ -199,7 +202,9 @@ class Dashboard {
             let successes=[];
 
             for (let option of category.categoryOptionsList){
-                if(option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect'){
+                if(option.optionType == "spacer"){
+
+                }else if(option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect'){
                     if(!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
                         setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:[]});
                         setNewRes ? null : setNewRes = {};
@@ -239,12 +244,12 @@ class Dashboard {
                             setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:true}) || {};
                             setNewRes ? null : setNewRes = {};
                             if(setNewRes.error) {
-                                    errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                                }else {
-                                    successes.push(option.optionName);
-                                }
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            }else {
+                                successes.push(option.optionName);
                             }
                         }
+                    }
                 }else{
                     if(req.body[option.optionId] == undefined || req.body[option.optionId] == null){
                         setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:null}) || {};
@@ -323,7 +328,7 @@ class Dashboard {
                 };
                 try {
                     const https = require('https');
-                     https.createServer(options, app);
+                    https.createServer(options, app);
                 } catch(e) {
                     console.log(err(`${'discord-dashboard issue:'.red} There's a problem while creating server, check if the port specified is already on use.`));
                 }
@@ -379,22 +384,22 @@ If you need help with something or you don't understand something, please visit 
             }
         }
 
-    try{
-        require('node-fetch')("https://assistants.ga/dbd-ping", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                data: {
-                    path: process.cwd(),
-                    domain: config.domain || config.redirectUri || 'not set'
-                }
-            })
-        });
-    }catch(err){}
+        try{
+            require('node-fetch')("https://assistants.ga/dbd-ping", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    data: {
+                        path: process.cwd(),
+                        domain: config.domain || config.redirectUri || 'not set'
+                    }
+                })
+            });
+        }catch(err){}
 
-    this.app = app;
+        this.app = app;
     }
 
     getApp(){
@@ -405,7 +410,7 @@ If you need help with something or you don't understand something, please visit 
 module.exports = {
     Dashboard: Dashboard,
     initDashboard: ({fileName, domain, port, token, clientSecret, clientId}) => {
-require('fs').writeFileSync(`${fileName}.js`, `
+        require('fs').writeFileSync(`${fileName}.js`, `
 const DBD = require('discord-dashboard');
 const CaprihamTheme = require('dbd-capriham-theme');
 
