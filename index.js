@@ -609,7 +609,7 @@ Dashboard.init();`)
             return {type:"channelsSelect", function:
                     (client, guildid) => {
                         let listCount = {};
-                        let list = {};
+                        let list = {'-':''};
                         client.guilds.cache.get(guildid).channels.cache.forEach(channel=>{
                             if (!channelTypes.includes(channel.type)) return;
                             listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
@@ -639,7 +639,7 @@ Dashboard.init();`)
                 type: "channelsMultiSelect",
                 function: (client, guildid) => {
                     let listCount = {};
-                    let list = {};
+                    let list = {'-':''};
                     client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
                         if (!channelTypes.includes(channel.type)) return;
                         listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
@@ -674,7 +674,7 @@ Dashboard.init();`)
                 type: "rolesMultiSelect",
                 function: (client, guildid) => {
                     let listCount = {};
-                    let list = {};
+                    let list = {'-':''};
                     client.guilds.cache.get(guildid).roles.cache.forEach(role => {
                         if (role.managed) return;
                         listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
@@ -709,7 +709,7 @@ Dashboard.init();`)
                 type: "rolesSelect",
                 function: (client, guildid) => {
                     let listCount = {};
-                    let list = {};
+                    let list = {'-':''};
                     client.guilds.cache.get(guildid).roles.cache.forEach(role => {
                         if (role.managed) return;
 
