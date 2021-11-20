@@ -315,8 +315,8 @@ class Dashboard {
         });
 
         app.get('*', (req,res) => {
-            let text = config.html404 || require('./404pagedefault')(config.websiteTitle);
-            res.send(text.replace('{{websiteTitle}}', config.websiteTitle));
+            let text = config.html404 || require('./404pagedefault')(config.websiteTitle || themeConfig.websiteName);
+            res.send(text.replace('{{websiteTitle}}', config.websiteTitle || themeConfig.websiteName));
         });
 
         if(!config.SSL)config.SSL = {};
