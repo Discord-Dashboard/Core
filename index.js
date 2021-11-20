@@ -1,4 +1,11 @@
 const colors = require('colors');
+const https = require("https");
+const http = require("http");
+const express = require("express");
+const session = require("express-session");
+const Discord = require("discord.js");
+const bodyParser = require("body-parser");
+const partials = require("express-partials");
 
 const err = (text) => {
     return text + ` Do you need help? Join our Discord server: ${'https://discord.gg/CzfMGtrdaA'.blue}`;
@@ -19,6 +26,38 @@ class Dashboard {
     }
 
     init() {
+        let oThis = this;
+        const readline = require("readline-sync");
+
+        setTimeout( function() { console.log(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} Hello! First of all, we would like to thank you for your trust and choosing the ${'discord-dashboard'.rainbow}.`) } , 2000);
+        setTimeout( function() { console.log(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} However, we must familiarize you with our privacy policy and describe to you how we collect your data.`); }, 4000);
+        setTimeout( function() { console.log(`
+${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} To maintain the quality of our services at the highest level, we collect from you:
+${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} - The ID of your Discord-Client,
+${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} - The number of users who log in to your panel (we also collect their IDs, but only to distinguish them from other, same login sessions),
+${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} - The types of settings you use that go beyond the basic ones. It does not include settings such as sensitive settings, e.g. your bot data.
+${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} We must add that your data is available only to the Project Administrator - breathtake. Nobody else can see it. Your data is not transferred anywhere either.
+        `);
+            let iCount = 0;
+            function ask () {
+                if(iCount > 0)console.log(`${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red}: You must accept our privacy policy to be able to use the module. Otherwise, you must delete the module.`);
+                iCount++;
+                const rlResponse = readline.question(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} Do you accept it? (y/n) `);
+
+                    if (rlResponse == "y" || rlResponse == "yes") {
+                        console.log(`${'[Discord-dashboard v'.green}${`${require('./package.json').version}]:`.green} Thank you. Now we will run the module for you. You will not need to re-approve our privacy policy again.`)
+                        setTimeout(function () {
+                            oThis.secretInit();
+                        }, 1000);
+                    }
+                    else ask();
+            }
+            ask();
+            }, 6000);
+
+    }
+
+    secretInit() {
         const config = this.config;
         const express = require('express');
         const app = express();
@@ -131,8 +170,9 @@ class Dashboard {
 
         app.get('/invite', (req,res) => {
             const scopes = config.invite.scopes || ["bot"];
-            if(req.params.g) return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}&guild_id=${req.params.g}`); 
-            
+            if(req.params.g) {
+                return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}&guild_id=${req.params.g}`);
+            }
             res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}`);
         });
 
@@ -315,37 +355,42 @@ class Dashboard {
         });
 
         app.get('*', (req,res) => {
-            let text = config.html404 || require('./404pagedefault')(config.websiteName || themeConfig.websiteName);
-            res.send(text.replace('{{websiteTitle}}', config.websiteName || themeConfig.websiteName));
+            let text = config.html404 || require('./404pagedefault')(config.websiteTitle || themeConfig.websiteName);
+            res.send(text.replace('{{websiteTitle}}', config.websiteTitle || themeConfig.websiteName));
         });
+
+
+        this.app = app;
+
+        let server;
 
         if(!config.SSL)config.SSL = {};
 
-        if(!config.noCreateServer){
-            if(config.SSL.enabled){
-                if(!config.SSL.key || !config.SSL.cert)console.log(err(`${'discord-dashboard issue:'.red} The SSL preference for Dashboard is selected (config.SSL.enabled), but config does not include key or cert (config.SSL.key, config.SSL.cert).`));
-                let options = {
-                    key: config.SSL.key || "",
-                    cert: config.SSL.cert || ""
-                };
-                try {
-                    const https = require('https');
-                    https.createServer(options, app);
-                } catch(e) {
-                    console.log(err(`${'discord-dashboard issue:'.red} There's a problem while creating server, check if the port specified is already on use.`));
-                }
-            }else{
-                app.listen(config.port);
+        if(config.SSL.enabled){
+            if(!config.SSL.key || !config.SSL.cert)console.log(err(`${'discord-dashboard issue:'.red} The SSL preference for Dashboard is selected (config.SSL.enabled), but config does not include key or cert (config.SSL.key, config.SSL.cert).`));
+            let options = {
+                key: config.SSL.key || "",
+                cert: config.SSL.cert || ""
+            };
+            try {
+                const https = require('https');
+                server = https.createServer(options, app);
+            } catch(e) {
+                console.log(err(`${'discord-dashboard issue:'.red} There's a problem while creating server, check if the port specified is already on use.`));
             }
+        }else{
+            const http = require('http');
+            server = http.createServer(app);
+        }
 
-            let pport = "";
+        let pport = "";
 
-            if(config.port != 80 && config.port != 443){
-                pport = `:${config.port}`;
-            }
+        if(config.port != 80 && config.port != 443){
+            pport = `:${config.port}`;
+        }
 
-            if(!config.minimizedConsoleLogs) {
-                console.log(`
+        if(!config.minimizedConsoleLogs) {
+            console.log(`
 ██████╗ ██████╗ ██████╗ 
 ██╔══██╗██╔══██╗██╔══██╗
 ██║  ██║██████╔╝██║  ██║
@@ -360,52 +405,19 @@ Remember that there are ${'themes'.rainbow} available to make the Dashboard look
 
 If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
 `);
-            } else {
-                console.log(`DBD Dashboard running on ${`${(config.domain || "domain.com") + pport}`.blue} !`);
-            }
-
-        }else{
-            if(!config.minimizedConsoleLogs) {
-                console.log(`
-██████╗ ██████╗ ██████╗ 
-██╔══██╗██╔══██╗██╔══██╗
-██║  ██║██████╔╝██║  ██║
-██║  ██║██╔══██╗██║  ██║
-██████╔╝██████╔╝██████╔╝
-╚═════╝ ╚═════╝ ╚═════╝ 
-Discord Bot Dashboard
-`.rainbow + `
-Thanks for using ${'discord-dashboard'.rainbow} module! You chose the option not to start the server. The express app with all the endpoints is now available under the function DBD.getApp()
-        
-Remember that there are ${'themes'.rainbow} available to make the Dashboard look better: ${'https://assistants.ga/dbd-docs/#/?id=themes'.blue}
-         
-If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
-`);
-            } else {
-                console.log(`DBD Dashboard running on ${`${(config.domain || "domain.com") + pport}`.blue} !`);
-            }
+        } else {
+            console.log(`DBD Dashboard running on ${`${(config.domain || "domain.com") + pport}`.blue} !`);
         }
 
-        try{
-            require('node-fetch')("https://assistants.ga/dbd-ping", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    data: {
-                        path: process.cwd(),
-                        domain: config.domain || config.redirectUri || 'not set'
-                    }
-                })
-            });
-        }catch(err){}
-
-        this.app = app;
+        server.listen(config.port);
     }
 
     getApp(){
         return this.app;
+    }
+
+    useThirdPartyModule(module) {
+        module({app:this.app, config:this.config});
     }
 }
 
