@@ -121,8 +121,8 @@ class Dashboard {
 
             app.use((req, res, next) => {
                 if (!req.session.umaccess && !req.session.user) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, false));
-                else if(!req.session.umaccess && config.ownerIDs && !config.ownerIDs.includes(req.session.user.id)) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
-                else if(!req.session.umaccess) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
+                else if(!req.session.umaccess && !config.ownerIDs) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
+                else if(!req.session.umaccess && !config.ownerIDs.includes(req.session.user.id)) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
                 else next();
             })
         }
