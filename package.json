@@ -1,6 +1,6 @@
 {
-  "name": "discord-web-dashboard",
-  "version": "1.4.5",
+  "name": "discord-dashboard",
+  "version": "pre_1.5.0",
   "description": "The best way to create a Web Dashboard for your Discord Bot! No need to edit files or write the server from scratch!",
   "main": "index.js",
   "directories": {
@@ -19,6 +19,7 @@
     "form-data": "^4.0.0",
     "https": "^1.0.0",
     "node-fetch": "^2.6.1",
+    "readline-sync": "^1.4.10",
     "session-file-store": "^1.5.0"
   },
   "devDependencies": {
