@@ -146,6 +146,8 @@ ${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red} If 
         }
 
         app.use(sessionIs);
+        
+        require('./router')(app);
 
         if (config.useUnderMaintenance) {
             app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req, res) => {
@@ -166,7 +168,9 @@ ${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red} If 
             });
 
             app.use((req, res, next) => {
-                if (!req.session.umaccess) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance));
+                if (!req.session.umaccess && !req.session.user) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, false));
+                else if(!req.session.umaccess && !config.ownerIDs) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
+                else if(!req.session.umaccess && !config.ownerIDs.includes(req.session.user.id)) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
                 else next();
             })
         }
@@ -192,7 +196,6 @@ ${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red} If 
             next();
         });
 
-        require('./router')(app);
 
         app.get('/', (req, res) => {
             res.render('index', {
