@@ -44,6 +44,7 @@ class Dashboard {
         if(!projectData.id)projectData.id = uuidv4();
         projectData.name = `${config.websiteTitle || themeConfig.websiteName}`;
         fs.writeFileSync(require('path').join(__dirname, '/project.json'), JSON.stringify(projectData, null, 3))
+        if(config.acceptPrivacyPolicy) return this.secretInit(this.modules);
         const ppAccepted = fs.readFileSync(require('path').join(__dirname, '/ppAccepted.txt'), 'utf8');
         if (ppAccepted == "accepted") return this.secretInit(this.modules);
         let oThis = this;
@@ -68,7 +69,7 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
             function ask() {
                 if (iCount > 0) console.log(`${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red}: You must accept our privacy policy to be able to use the module. Otherwise, you must delete the module.`);
                 iCount++;
-                const rlResponse = readline.question(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} Do you accept it? (y/n) `);
+                const rlResponse = readline.question(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} Do you accept it (if you can't type in the console, pass 'acceptPrivacyPolicy: true,' to the discord-dashboard config)? (y/n) `);
 
                 if (rlResponse == "y" || rlResponse == "yes") {
                     console.log(`${'[Discord-dashboard v'.green}${`${require('./package.json').version}]:`.green} Thank you. Now we will run the module for you. You will not need to re-approve our privacy policy again.`)
