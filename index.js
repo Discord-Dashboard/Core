@@ -7,9 +7,11 @@ const Discord = require("discord.js");
 const bodyParser = require("body-parser");
 const partials = require("express-partials");
 const fs = require("fs");
+const uuidv4 = require("uuid").v4;
 const {
     Server: SocketServer
 } = require("socket.io");
+const DBDStats = require('./ExternalStatistics/index');
 
 const err = (text) => {
     return text + ` Do you need help? Join our Discord server: ${'https://discord.gg/CzfMGtrdaA'.blue}`;
@@ -31,8 +33,17 @@ class Dashboard {
     }
 
     async init() {
+        DBDStats.registerProject(this.config.client.id);
         const fs = require('fs');
         if (fs.existsSync(require('path').join(__dirname, '/.devChannel'))) return this.secretInit(this.modules);
+        let config = this.config;
+        let themeConfig = {};
+        if (config.theme) themeConfig = config.theme.themeConfig;
+        const projectStats = fs.readFileSync(require('path').join(__dirname, '/project.json'));
+        const projectData = JSON.parse(projectStats);
+        if(!projectData.id)projectData.id = uuidv4();
+        projectData.name = `${config.websiteTitle || themeConfig.websiteName}`;
+        fs.writeFileSync(require('path').join(__dirname, '/project.json'), JSON.stringify(projectData, null, 3))
         const ppAccepted = fs.readFileSync(require('path').join(__dirname, '/ppAccepted.txt'), 'utf8');
         if (ppAccepted == "accepted") return this.secretInit(this.modules);
         let oThis = this;
