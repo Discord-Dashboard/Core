@@ -146,7 +146,28 @@ ${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red} If 
         }
 
         app.use(sessionIs);
-        
+
+        let themeConfig = {};
+        if (config.theme) themeConfig = config.theme.themeConfig;
+
+        if (!config.invite) config.invite = {};
+
+        app.use((req, res, next) => {
+            if (!req.body) req.body = {};
+
+            req.client = config.client;
+            req.redirectUri = config.redirectUri;
+
+            req.themeConfig = themeConfig;
+
+            req.botToken = config.bot.token;
+            req.guildAfterAuthorization = config.guildAfterAuthorization || {};
+
+            req.websiteTitle = config.websiteTitle || "Discord Web Dashboard";
+            req.iconUrl = config.iconUrl || 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png';
+            next();
+        });
+
         require('./router')(app);
 
         if (config.useUnderMaintenance) {
@@ -169,32 +190,10 @@ ${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red} If 
 
             app.use((req, res, next) => {
                 if (!req.session.umaccess && !req.session.user) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, false));
-                else if(!req.session.umaccess && !config.ownerIDs) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
-                else if(!req.session.umaccess && !config.ownerIDs.includes(req.session.user.id)) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
+                else if(!req.session.umaccess && config.ownerIDs && !config.ownerIDs.includes(req.session.user.id)) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
                 else next();
             })
         }
-
-        let themeConfig = {};
-        if (config.theme) themeConfig = config.theme.themeConfig;
-
-        if (!config.invite) config.invite = {};
-
-        app.use((req, res, next) => {
-            if (!req.body) req.body = {};
-
-            req.client = config.client;
-            req.redirectUri = config.redirectUri;
-
-            req.themeConfig = themeConfig;
-
-            req.botToken = config.bot.token;
-            req.guildAfterAuthorization = config.guildAfterAuthorization || {};
-
-            req.websiteTitle = config.websiteTitle || "Discord Web Dashboard";
-            req.iconUrl = config.iconUrl || 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png';
-            next();
-        });
 
 
         app.get('/', (req, res) => {
@@ -600,6 +599,7 @@ const Dashboard = new DBD.Dashboard({
     redirectUri: \`${domain}${port == 80 || port == 443 ? '' : `:${port}`}/discord/callback\`,
     domain: "${domain}",
     bot: client,
+    ownerIDs: [],
     theme: CaprihamTheme({
         privacypolicy: {
             websitename: "Assistants",
