@@ -63,13 +63,14 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} -
 ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} - The number of users who log in to your panel (we also collect their IDs, but only to distinguish them from other, same login sessions),
 ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} - The types of settings you use that go beyond the basic ones. It does not include settings such as sensitive settings, e.g. your bot data.
 ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} We must add that your data is available only to the Project Administrator - breathtake. Nobody else can see it. Your data is not transferred anywhere either.
-        `);
+        
+${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red} If you can't type in the console, pass 'acceptPrivacyPolicy: true,' to the discord-dashboard config.`);
             let iCount = 0;
 
             function ask() {
                 if (iCount > 0) console.log(`${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red}: You must accept our privacy policy to be able to use the module. Otherwise, you must delete the module.`);
                 iCount++;
-                const rlResponse = readline.question(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} Do you accept it (if you can't type in the console, pass 'acceptPrivacyPolicy: true,' to the discord-dashboard config)? (y/n) `);
+                const rlResponse = readline.question(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} Do you accept it? (y/n) `);
 
                 if (rlResponse == "y" || rlResponse == "yes") {
                     console.log(`${'[Discord-dashboard v'.green}${`${require('./package.json').version}]:`.green} Thank you. Now we will run the module for you. You will not need to re-approve our privacy policy again.`)
