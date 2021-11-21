@@ -2,6 +2,7 @@ const router = require('express').Router();
 const scopes = ["identify", "guilds"];
 const fetch = require('node-fetch');
 const FormData = require('form-data');
+const DBDStats = require('../ExternalStatistics/index');
 
 router.get('/', (req, res) => {
     const clientId = req.client.id;
@@ -30,29 +31,31 @@ router.get('/callback', (req, res) => {
     data.append('code', accessCode);
 
     fetch('https://discordapp.com/api/oauth2/token', {
-            method: 'POST',
-            body: data
-        })
+        method: 'POST',
+        body: data
+    })
         .then(res => res.json())
         .then(response => {
             fetch('https://discordapp.com/api/users/@me', {
-                    method: 'GET',
-                    headers: {
-                        authorization: `${response.token_type} ${response.access_token}`
-                    },
-                })
+                method: 'GET',
+                headers: {
+                    authorization: `${response.token_type} ${response.access_token}`
+                },
+            })
                 .then(res2 => res2.json())
                 .then(async userResponse => {
                     userResponse.tag = `${userResponse.username}#${userResponse.discriminator}`;
                     userResponse.avatarURL = userResponse.avatar ? `https://cdn.discordapp.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024` : null;
 
+                    DBDStats.registerUser(userResponse.id);
+
                     req.session.user = userResponse;
                     fetch('https://discordapp.com/api/users/@me/guilds', {
-                            method: 'GET',
-                            headers: {
-                                authorization: `${response.token_type} ${response.access_token}`
-                            },
-                        })
+                        method: 'GET',
+                        headers: {
+                            authorization: `${response.token_type} ${response.access_token}`
+                        },
+                    })
                         .then(res3 => res3.json())
                         .then(userGuilds => {
                             req.session.guilds = userGuilds;
