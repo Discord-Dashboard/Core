@@ -3,14 +3,8 @@ const scopes = ["identify", "guilds"];
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 
-const forceAuth = (req, res, next) => {
-    if (!req.session.user) return res.redirect('/discord')
-    else return next();
-}
-
 router.get('/', (req, res) => {
     const clientId = req.client.id;
-    const clientSecret = req.client.secret;
     const redirectUri = req.redirectUri;
 
     req.session.r = req.query.r || '/';
@@ -23,7 +17,7 @@ router.get('/callback', (req, res) => {
     const clientId = req.client.id;
     const clientSecret = req.client.secret;
     const redirectUri = req.redirectUri;
-    
+
     const accessCode = req.query.code;
     if (!accessCode) return res.redirect('/?error=NoAccessCodeReturnedFromDiscord');
 
@@ -36,51 +30,53 @@ router.get('/callback', (req, res) => {
     data.append('code', accessCode);
 
     fetch('https://discordapp.com/api/oauth2/token', {
-        method: 'POST',
-        body: data
-    })
-    .then(res => res.json())
-    .then(response => {
-        fetch('https://discordapp.com/api/users/@me', {
-            method: 'GET',
-            headers: {
-                authorization: `${response.token_type} ${response.access_token}`
-            },
+            method: 'POST',
+            body: data
         })
-        .then(res2 => res2.json())
-        .then(async userResponse => {
-            userResponse.tag = `${userResponse.username}#${userResponse.discriminator}`;
-            userResponse.avatarURL = userResponse.avatar ? `https://cdn.discordapp.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024` : null;
-
-            req.session.user = userResponse;
-        fetch('https://discordapp.com/api/users/@me/guilds', {
-            method: 'GET',
-            headers: {
-                authorization: `${response.token_type} ${response.access_token}`
-            },
-        })
-        .then(res3 => res3.json())
-        .then(userGuilds => {
-            req.session.guilds = userGuilds;
-
-            if(req.guildAfterAuthorization.use == true){
-                fetch(`https://discordapp.com/api/guilds/${req.guildAfterAuthorization.guildId}/members/${req.session.user.id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify({access_token: `${response.access_token}`}),
+        .then(res => res.json())
+        .then(response => {
+            fetch('https://discordapp.com/api/users/@me', {
+                    method: 'GET',
                     headers: {
-                        Authorization: `Bot ${req.botToken}`,
-                        'Content-Type': 'application/json'
+                        authorization: `${response.token_type} ${response.access_token}`
                     },
-                }).then(res4=>res4.json()).then(json5=>{
-                    res.redirect(req.session.r || '/');
                 })
-            }else{
-                res.redirect(req.session.r || '/');
-            }
-        });
+                .then(res2 => res2.json())
+                .then(async userResponse => {
+                    userResponse.tag = `${userResponse.username}#${userResponse.discriminator}`;
+                    userResponse.avatarURL = userResponse.avatar ? `https://cdn.discordapp.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024` : null;
 
+                    req.session.user = userResponse;
+                    fetch('https://discordapp.com/api/users/@me/guilds', {
+                            method: 'GET',
+                            headers: {
+                                authorization: `${response.token_type} ${response.access_token}`
+                            },
+                        })
+                        .then(res3 => res3.json())
+                        .then(userGuilds => {
+                            req.session.guilds = userGuilds;
+
+                            if (req.guildAfterAuthorization.use == true) {
+                                fetch(`https://discordapp.com/api/guilds/${req.guildAfterAuthorization.guildId}/members/${req.session.user.id}`, {
+                                    method: 'PUT',
+                                    body: JSON.stringify({
+                                        access_token: `${response.access_token}`
+                                    }),
+                                    headers: {
+                                        Authorization: `Bot ${req.botToken}`,
+                                        'Content-Type': 'application/json'
+                                    },
+                                }).then(res4 => res4.json()).then(json5 => {
+                                    res.redirect(req.session.r || '/');
+                                })
+                            } else {
+                                res.redirect(req.session.r || '/');
+                            }
+                        });
+
+                });
         });
-    });
 });
 
 router.get('/logout', (req, res) => {
