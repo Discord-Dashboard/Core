@@ -117,6 +117,7 @@ ${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red} If 
             app.use('/:a/:b/:c/:d/', express.static(config.theme.staticPath));
         }
         app.set('view engine', 'ejs');
+        app.set("config", this.config);
 
         let sessionIs;
 
@@ -168,8 +169,6 @@ ${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red} If 
             next();
         });
 
-        require('./router')(app);
-
         if (config.useUnderMaintenance) {
             app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req, res) => {
                 res.send(`
@@ -195,258 +194,12 @@ ${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red} If 
             })
         }
 
-
-        app.get('/', (req, res) => {
-            res.render('index', {
-                req: req,
-                themeConfig: req.themeConfig,
-                bot: config.bot
-            });
-        });
-
-        app.get('/invite', (req, res) => {
-            const scopes = config.invite.scopes || ["bot"];
-            if (req.params.g) {
-                return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}&guild_id=${req.params.g}`);
-            }
-            res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}`);
-        });
-
-        app.get('/manage', (req, res) => {
-            if (!req.session.user) return res.redirect('/discord?r=/manage');
-            res.render('guilds', {
-                req: req,
-                bot: config.bot,
-                themeConfig: req.themeConfig
-            });
-        });
-
-        app.get('/guild/:id', async (req, res) => {
-            if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.id);
-            let bot = config.bot;
-            if (!bot.guilds.cache.get(req.params.id)) return res.redirect('/manage?error=noPermsToManageGuild');
-            await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
-            if (v13support) {
-                if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
-            } else {
-                if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD')) return res.redirect('/manage?error=noPermsToManageGuild');
-            }
-            let actual = {};
-            for (const s of config.settings) {
-                for (const c of s.categoryOptionsList) {
-                    if (c.optionType == 'spacer') {} else {
-                        if (!actual[s.categoryId]) {
-                            actual[s.categoryId] = {};
-                        }
-                        if (!actual[s.categoryId][c.optionId]) {
-                            actual[s.categoryId][c.optionId] = await c.getActualSet({
-                                guild: {
-                                    id: req.params.id
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-
-            let errors = null;
-            let success = null;
-
-            if (req.query.error) {
-                if (!success) success = [];
-                errors = req.query.error.split('%and%');
-            }
-
-            if (req.query.success) {
-                success = req.query.success.split('%and%');
-            }
-
-            res.render('guild', {
-                successes: success,
-                errors: errors,
-                settings: config.settings,
-                actual: actual,
-                bot: config.bot,
-                req: req,
-                guildid: req.params.id,
-                themeConfig: req.themeConfig
-            });
-        });
-
-        app.post('/settings/update/:guildId/:categoryId', async (req, res) => {
-            if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.guildId);
-            let bot = config.bot;
-            if (!bot.guilds.cache.get(req.params.guildId)) return res.redirect('/manage?error=noPermsToManageGuild');
-            await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
-            if (v13support) {
-                if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
-            } else {
-                if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD')) return res.redirect('/manage?error=noPermsToManageGuild');
-            }
-
-            let cid = req.params.categoryId;
-            let settings = config.settings;
-
-            let category = settings.find(c => c.categoryId == cid);
-
-            if (!category) return res.send({
-                error: true,
-                message: "No category found"
-            });
-
-            let setNewRes;
-            let errors = [];
-            let successes = [];
-
-            for (let option of category.categoryOptionsList) {
-                if (option.optionType == "spacer") {
-
-                } else if (option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect') {
-                    if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId
-                            },
-                            user: {
-                                id: req.session.user.id
-                            },
-                            newData: []
-                        });
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
-                        }
-                    } else if (typeof(req.body[option.optionId]) != 'object') {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId
-                            },
-                            user: {
-                                id: req.session.user.id
-                            },
-                            newData: [req.body[option.optionId]]
-                        });
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
-                        }
-                    } else {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId
-                            },
-                            user: {
-                                id: req.session.user.id
-                            },
-                            newData: req.body[option.optionId]
-                        });
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
-                        }
-                    }
-                } else if (option.optionType.type == "switch") {
-                    if (req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
-                        if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
-                            setNewRes = await option.setNew({
-                                guild: {
-                                    id: req.params.guildId
-                                },
-                                user: {
-                                    id: req.session.user.id
-                                },
-                                newData: false
-                            }) || {};
-                            setNewRes ? null : setNewRes = {};
-                            if (setNewRes.error) {
-                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                            } else {
-                                successes.push(option.optionName);
-                            }
-                        } else {
-                            setNewRes = await option.setNew({
-                                guild: {
-                                    id: req.params.guildId
-                                },
-                                user: {
-                                    id: req.session.user.id
-                                },
-                                newData: true
-                            }) || {};
-                            setNewRes ? null : setNewRes = {};
-                            if (setNewRes.error) {
-                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                            } else {
-                                successes.push(option.optionName);
-                            }
-                        }
-                    }
-                } else {
-                    if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId
-                            },
-                            user: {
-                                id: req.session.user.id
-                            },
-                            newData: null
-                        }) || {};
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
-                        }
-                    } else {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId
-                            },
-                            user: {
-                                id: req.session.user.id
-                            },
-                            newData: req.body[option.optionId]
-                        }) || {};
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
-                        }
-                    }
-                }
-            }
-
-            if (errors[0]) {
-                if (!successes) successes = [];
-                return res.redirect('/guild/' + req.params.guildId + `?success=${successes.join('%and%')}&error=${errors.join('%and%')}`)
-            } else {
-                return res.redirect('/guild/' + req.params.guildId + '?success=true&error=false');
-            }
-        });
-
         config.supportServer ? null : config.supportServer = {};
 
-        app.get(`${config.supportServer.slash || '/support-server'}`, (req, res) => {
-            if (!config.supportServer.inviteUrl) return res.send({
-                error: true,
-                message: "No inviteUrl defined (discord-dashboard config.supportServer)."
-            });
-            if (!config.supportServer.inviteUrl.toLowerCase().startsWith('https://discord.gg/') && !config.supportServer.inviteUrl.toLowerCase().startsWith('https://discord.com/')) return res.send({
-                error: true,
-                message: "Invite url should start with 'https://discord.gg/' or 'https://discord.com/'."
-            });
-            res.redirect(config.supportServer.inviteUrl);
-        });
-
         if (config.theme) config.theme.init(app, this.config);
+
+        module.exports.verysecretsettings = config;
+        require('./router')(app);
 
         let customPages = config.customPages || [];
 
