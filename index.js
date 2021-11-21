@@ -6,6 +6,8 @@ const session = require("express-session");
 const Discord = require("discord.js");
 const bodyParser = require("body-parser");
 const partials = require("express-partials");
+const fs = require("fs");
+const {Server: SocketServer} = require("socket.io");
 
 const err = (text) => {
     return text + ` Do you need help? Join our Discord server: ${'https://discord.gg/CzfMGtrdaA'.blue}`;
@@ -23,9 +25,14 @@ class Dashboard {
         if(!config.domain)notSetYetAndRequired.push('domain');
         if(notSetYetAndRequired[0])throw new Error(err(`You need to define some more things: ${notSetYetAndRequired.join(', ')}.`));
         this.config = config;
+        this.modules = [];
     }
 
-    init() {
+    async init() {
+        const fs = require('fs');
+        if(fs.existsSync(require('path').join(__dirname, '/.devChannel')))return this.secretInit(this.modules);
+        const ppAccepted = fs.readFileSync(require('path').join(__dirname, '/ppAccepted.txt'), 'utf8');
+        if(ppAccepted == "accepted")return this.secretInit(this.modules);
         let oThis = this;
         const readline = require("readline-sync");
 
@@ -46,8 +53,9 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
 
                     if (rlResponse == "y" || rlResponse == "yes") {
                         console.log(`${'[Discord-dashboard v'.green}${`${require('./package.json').version}]:`.green} Thank you. Now we will run the module for you. You will not need to re-approve our privacy policy again.`)
+                        fs.writeFileSync(require('path').join(__dirname, '/ppAccepted.txt'), 'accepted');
                         setTimeout(function () {
-                            oThis.secretInit();
+                            oThis.secretInit(oThis.modules);
                         }, 1000);
                     }
                     else ask();
@@ -57,7 +65,7 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
 
     }
 
-    secretInit() {
+    secretInit(modules) {
         const config = this.config;
         const express = require('express');
         const app = express();
@@ -117,6 +125,30 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
 
         app.use(sessionIs);
 
+        if(config.useUnderMaintenance){
+            app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req,res)=>{
+                res.send(`
+               <form action="${config.domain}${config.underMaintenanceAccessPage || '/total-secret-get-access'}" method="POST" >
+                    <input id="accessKey" name="accessKey"/>
+                    <button role="submit">Submit</button>
+               </form>
+               `)
+            });
+
+            app.post(config.underMaintenanceAccessPage || '/total-secret-get-access', (req,res)=>{
+                if(!req.body)req.body = {};
+                const accessKey = req.body.accessKey;
+                if(accessKey != config.underMaintenanceAccessKey)return res.send('Wrong key.');
+                req.session.umaccess = true;
+                res.redirect('/');
+            });
+
+            app.use((req,res,next)=>{
+                if(!req.session.umaccess)return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance));
+                else next();
+            })
+        }
+
         let themeConfig = {};
         if(config.theme)themeConfig = config.theme.themeConfig;
 
@@ -139,33 +171,7 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
         });
 
         require('./router')(app);
-        
-        if (config.useUnderMaintenance) {
-            app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req, res) => {
-                res.send(`
-               <form action="${config.domain}${config.underMaintenanceAccessPage || '/total-secret-get-access'}" method="POST" >
-                    <input id="accessKey" name="accessKey"/>
-                    <button role="submit">Submit</button>
-               </form>
-               `)
-            });
 
-            app.post(config.underMaintenanceAccessPage || '/total-secret-get-access', (req, res) => {
-                if (!req.body) req.body = {};
-                const accessKey = req.body.accessKey;
-                if (accessKey != config.underMaintenanceAccessKey) return res.send('Wrong key.');
-                req.session.umaccess = true;
-                res.redirect('/');
-            });
-
-            app.use((req, res, next) => {
-                if (!req.session.umaccess && !req.session.user) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, false));
-                else if(!req.session.umaccess && !config.ownerIDs) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
-                else if(!req.session.umaccess && !config.ownerIDs.includes(req.session.user.id)) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
-                else next();
-            })
-        }
-        
         app.get('/', (req,res) => {
             res.render('index', {req:req,themeConfig:req.themeConfig,bot:config.bot});
         });
@@ -356,6 +362,10 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
             }
         });
 
+        modules.forEach(module=>{
+            module.app({app:app,config:this.config,themeConfig:themeConfig});
+        });
+
         app.get('*', (req,res) => {
             let text = config.html404 || require('./404pagedefault')(config.websiteTitle || themeConfig.websiteName);
             res.send(text.replace('{{websiteTitle}}', config.websiteTitle || themeConfig.websiteName));
@@ -411,6 +421,19 @@ If you need help with something or you don't understand something, please visit 
             console.log(`DBD Dashboard running on ${`${(config.domain || "domain.com") + pport}`.blue} !`);
         }
 
+        const SocketServer = require("socket.io").Server;
+        const io = new SocketServer(server, {
+            cors: {
+                origin: '*',
+            },
+        });
+
+        this.io = io;
+
+        modules.forEach(module=>{
+            module.server({io:this.io,server:server,config:this.config,themeConfig:themeConfig});
+        });
+
         server.listen(config.port);
     }
 
@@ -419,7 +442,7 @@ If you need help with something or you don't understand something, please visit 
     }
 
     useThirdPartyModule(module) {
-        module({app:this.app, config:this.config});
+        this.modules.push(module);
     }
 }
 
@@ -447,7 +470,6 @@ const Dashboard = new DBD.Dashboard({
     redirectUri: \`${domain}${port == 80 || port == 443 ? '' : `:${port}`}/discord/callback\`,
     domain: "${domain}",
     bot: client,
-    ownerIDs: [],
     theme: CaprihamTheme({
         privacypolicy: {
             websitename: "Assistants",
