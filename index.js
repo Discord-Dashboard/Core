@@ -7,7 +7,9 @@ const Discord = require("discord.js");
 const bodyParser = require("body-parser");
 const partials = require("express-partials");
 const fs = require("fs");
-const {Server: SocketServer} = require("socket.io");
+const {
+    Server: SocketServer
+} = require("socket.io");
 
 const err = (text) => {
     return text + ` Do you need help? Join our Discord server: ${'https://discord.gg/CzfMGtrdaA'.blue}`;
@@ -16,29 +18,34 @@ const err = (text) => {
 class Dashboard {
     constructor(config) {
         let notSetYetAndRequired = [];
-        if(!config.port)notSetYetAndRequired.push('port');
-        if(!config.theme)notSetYetAndRequired.push('theme');
-        if(!config.client)notSetYetAndRequired.push('client');
-        if(!config.redirectUri)notSetYetAndRequired.push('redirectUri');
-        if(!config.bot)notSetYetAndRequired.push('bot');
-        if(!config.settings)notSetYetAndRequired.push('settings');
-        if(!config.domain)notSetYetAndRequired.push('domain');
-        if(notSetYetAndRequired[0])throw new Error(err(`You need to define some more things: ${notSetYetAndRequired.join(', ')}.`));
+        if (!config.port) notSetYetAndRequired.push('port');
+        if (!config.theme) notSetYetAndRequired.push('theme');
+        if (!config.client) notSetYetAndRequired.push('client');
+        if (!config.redirectUri) notSetYetAndRequired.push('redirectUri');
+        if (!config.bot) notSetYetAndRequired.push('bot');
+        if (!config.settings) notSetYetAndRequired.push('settings');
+        if (!config.domain) notSetYetAndRequired.push('domain');
+        if (notSetYetAndRequired[0]) throw new Error(err(`You need to define some more things: ${notSetYetAndRequired.join(', ')}.`));
         this.config = config;
         this.modules = [];
     }
 
     async init() {
         const fs = require('fs');
-        if(fs.existsSync(require('path').join(__dirname, '/.devChannel')))return this.secretInit(this.modules);
+        if (fs.existsSync(require('path').join(__dirname, '/.devChannel'))) return this.secretInit(this.modules);
         const ppAccepted = fs.readFileSync(require('path').join(__dirname, '/ppAccepted.txt'), 'utf8');
-        if(ppAccepted == "accepted")return this.secretInit(this.modules);
+        if (ppAccepted == "accepted") return this.secretInit(this.modules);
         let oThis = this;
         const readline = require("readline-sync");
 
-        setTimeout( function() { console.log(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} Hello! First of all, we would like to thank you for your trust and choosing the ${'discord-dashboard'.rainbow}.`) } , 2000);
-        setTimeout( function() { console.log(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} However, we must familiarize you with our privacy policy and describe to you how we collect your data.`); }, 4000);
-        setTimeout( function() { console.log(`
+        setTimeout(function() {
+            console.log(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} Hello! First of all, we would like to thank you for your trust and choosing the ${'discord-dashboard'.rainbow}.`)
+        }, 2000);
+        setTimeout(function() {
+            console.log(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} However, we must familiarize you with our privacy policy and describe to you how we collect your data.`);
+        }, 4000);
+        setTimeout(function() {
+            console.log(`
 ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} To maintain the quality of our services at the highest level, we collect from you:
 ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} - The ID of your Discord-Client,
 ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} - The number of users who log in to your panel (we also collect their IDs, but only to distinguish them from other, same login sessions),
@@ -46,22 +53,22 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} -
 ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} We must add that your data is available only to the Project Administrator - breathtake. Nobody else can see it. Your data is not transferred anywhere either.
         `);
             let iCount = 0;
-            function ask () {
-                if(iCount > 0)console.log(`${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red}: You must accept our privacy policy to be able to use the module. Otherwise, you must delete the module.`);
+
+            function ask() {
+                if (iCount > 0) console.log(`${'[Discord-dashboard v'.red}${`${require('./package.json').version}]:`.red}: You must accept our privacy policy to be able to use the module. Otherwise, you must delete the module.`);
                 iCount++;
                 const rlResponse = readline.question(`${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} Do you accept it? (y/n) `);
 
-                    if (rlResponse == "y" || rlResponse == "yes") {
-                        console.log(`${'[Discord-dashboard v'.green}${`${require('./package.json').version}]:`.green} Thank you. Now we will run the module for you. You will not need to re-approve our privacy policy again.`)
-                        fs.writeFileSync(require('path').join(__dirname, '/ppAccepted.txt'), 'accepted');
-                        setTimeout(function () {
-                            oThis.secretInit(oThis.modules);
-                        }, 1000);
-                    }
-                    else ask();
+                if (rlResponse == "y" || rlResponse == "yes") {
+                    console.log(`${'[Discord-dashboard v'.green}${`${require('./package.json').version}]:`.green} Thank you. Now we will run the module for you. You will not need to re-approve our privacy policy again.`)
+                    fs.writeFileSync(require('path').join(__dirname, '/ppAccepted.txt'), 'accepted');
+                    setTimeout(function() {
+                        oThis.secretInit(oThis.modules);
+                    }, 1000);
+                } else ask();
             }
             ask();
-            }, 6000);
+        }, 6000);
 
     }
 
@@ -79,13 +86,15 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
         let v13support = false;
 
         const Discord = require('discord.js');
-        if(Discord.version.slice(0,2) == "13")v13support = true;
+        if (Discord.version.slice(0, 2) == "13") v13support = true;
 
-        app.use(bodyParser.urlencoded({extended : true}));
+        app.use(bodyParser.urlencoded({
+            extended: true
+        }));
         app.use(bodyParser.json());
         app.use(partials());
 
-        if(config.theme){
+        if (config.theme) {
             app.set('views', config.theme.viewsPath);
             app.use(express.static(config.theme.staticPath));
             app.use('/', express.static(config.theme.staticPath));
@@ -94,13 +103,13 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
             app.use('/:a/:b/:c/', express.static(config.theme.staticPath));
             app.use('/:a/:b/:c/:d/', express.static(config.theme.staticPath));
         }
-        app.set('view engine','ejs');
+        app.set('view engine', 'ejs');
 
         let sessionIs;
 
-        if(!config.sessionFileStore)config.sessionFileStore = false;
+        if (!config.sessionFileStore) config.sessionFileStore = false;
 
-        if(config.sessionFileStore){
+        if (config.sessionFileStore) {
             sessionIs = session({
                 secret: config.cookiesSecret || 'total_secret_cookie_secret',
                 resave: true,
@@ -111,7 +120,7 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
                 },
                 store: new FileStore
             });
-        }else{
+        } else {
             sessionIs = session({
                 secret: config.cookiesSecret || 'total_secret_cookie_secret',
                 resave: true,
@@ -125,8 +134,8 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
 
         app.use(sessionIs);
 
-        if(config.useUnderMaintenance){
-            app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req,res)=>{
+        if (config.useUnderMaintenance) {
+            app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req, res) => {
                 res.send(`
                <form action="${config.domain}${config.underMaintenanceAccessPage || '/total-secret-get-access'}" method="POST" >
                     <input id="accessKey" name="accessKey"/>
@@ -135,27 +144,27 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
                `)
             });
 
-            app.post(config.underMaintenanceAccessPage || '/total-secret-get-access', (req,res)=>{
-                if(!req.body)req.body = {};
+            app.post(config.underMaintenanceAccessPage || '/total-secret-get-access', (req, res) => {
+                if (!req.body) req.body = {};
                 const accessKey = req.body.accessKey;
-                if(accessKey != config.underMaintenanceAccessKey)return res.send('Wrong key.');
+                if (accessKey != config.underMaintenanceAccessKey) return res.send('Wrong key.');
                 req.session.umaccess = true;
                 res.redirect('/');
             });
 
-            app.use((req,res,next)=>{
-                if(!req.session.umaccess)return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance));
+            app.use((req, res, next) => {
+                if (!req.session.umaccess) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance));
                 else next();
             })
         }
 
         let themeConfig = {};
-        if(config.theme)themeConfig = config.theme.themeConfig;
+        if (config.theme) themeConfig = config.theme.themeConfig;
 
-        if(!config.invite)config.invite = {};
+        if (!config.invite) config.invite = {};
 
-        app.use((req,res,next)=>{
-            if(!req.body)req.body={};
+        app.use((req, res, next) => {
+            if (!req.body) req.body = {};
 
             req.client = config.client;
             req.redirectUri = config.redirectUri;
@@ -172,43 +181,54 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
 
         require('./router')(app);
 
-        app.get('/', (req,res) => {
-            res.render('index', {req:req,themeConfig:req.themeConfig,bot:config.bot});
+        app.get('/', (req, res) => {
+            res.render('index', {
+                req: req,
+                themeConfig: req.themeConfig,
+                bot: config.bot
+            });
         });
 
-        app.get('/invite', (req,res) => {
+        app.get('/invite', (req, res) => {
             const scopes = config.invite.scopes || ["bot"];
-            if(req.params.g) {
+            if (req.params.g) {
                 return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}&guild_id=${req.params.g}`);
             }
             res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}`);
         });
 
-        app.get('/manage', (req,res) => {
-            if(!req.session.user)return res.redirect('/discord?r=/manage');
-            res.render('guilds', {req:req,bot:config.bot,themeConfig:req.themeConfig});
+        app.get('/manage', (req, res) => {
+            if (!req.session.user) return res.redirect('/discord?r=/manage');
+            res.render('guilds', {
+                req: req,
+                bot: config.bot,
+                themeConfig: req.themeConfig
+            });
         });
 
-        app.get('/guild/:id', async (req,res)=>{
-            if(!req.session.user)return res.redirect('/discord?r=/guild/' + req.params.id);
+        app.get('/guild/:id', async (req, res) => {
+            if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.id);
             let bot = config.bot;
-            if(!bot.guilds.cache.get(req.params.id))return res.redirect('/manage?error=noPermsToManageGuild');
+            if (!bot.guilds.cache.get(req.params.id)) return res.redirect('/manage?error=noPermsToManageGuild');
             await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
-            if(v13support){
-                if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))return res.redirect('/manage?error=noPermsToManageGuild');
-            }else{
-                if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD'))return res.redirect('/manage?error=noPermsToManageGuild');
+            if (v13support) {
+                if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
+            } else {
+                if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD')) return res.redirect('/manage?error=noPermsToManageGuild');
             }
             let actual = {};
-            for(const s of config.settings){
-                for(const c of s.categoryOptionsList){
-                    if(c.optionType == 'spacer') {
-                    }else{
-                        if(!actual[s.categoryId]){
+            for (const s of config.settings) {
+                for (const c of s.categoryOptionsList) {
+                    if (c.optionType == 'spacer') {} else {
+                        if (!actual[s.categoryId]) {
                             actual[s.categoryId] = {};
                         }
-                        if(!actual[s.categoryId][c.optionId]){
-                            actual[s.categoryId][c.optionId] = await c.getActualSet({guild:{id:req.params.id}});
+                        if (!actual[s.categoryId][c.optionId]) {
+                            actual[s.categoryId][c.optionId] = await c.getActualSet({
+                                guild: {
+                                    id: req.params.id
+                                }
+                            });
                         }
                     }
                 }
@@ -217,156 +237,238 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
             let errors = null;
             let success = null;
 
-            if(req.query.error){
-                if(!success)success=[];
+            if (req.query.error) {
+                if (!success) success = [];
                 errors = req.query.error.split('%and%');
             }
 
-            if(req.query.success){
+            if (req.query.success) {
                 success = req.query.success.split('%and%');
             }
 
-            res.render('guild', {successes:success,errors:errors,settings:config.settings,actual:actual,bot:config.bot,req:req,guildid:req.params.id,themeConfig:req.themeConfig});
+            res.render('guild', {
+                successes: success,
+                errors: errors,
+                settings: config.settings,
+                actual: actual,
+                bot: config.bot,
+                req: req,
+                guildid: req.params.id,
+                themeConfig: req.themeConfig
+            });
         });
 
-        app.post('/settings/update/:guildId/:categoryId', async (req,res)=>{
-            if(!req.session.user)return res.redirect('/discord?r=/guild/' + req.params.guildId);
+        app.post('/settings/update/:guildId/:categoryId', async (req, res) => {
+            if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.guildId);
             let bot = config.bot;
-            if(!bot.guilds.cache.get(req.params.guildId))return res.redirect('/manage?error=noPermsToManageGuild');
+            if (!bot.guilds.cache.get(req.params.guildId)) return res.redirect('/manage?error=noPermsToManageGuild');
             await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
-            if(v13support){
-                if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))return res.redirect('/manage?error=noPermsToManageGuild');
-            }else{
-                if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD'))return res.redirect('/manage?error=noPermsToManageGuild');
+            if (v13support) {
+                if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
+            } else {
+                if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD')) return res.redirect('/manage?error=noPermsToManageGuild');
             }
 
             let cid = req.params.categoryId;
             let settings = config.settings;
 
-            let category = settings.find(c=>c.categoryId == cid);
+            let category = settings.find(c => c.categoryId == cid);
 
-            if(!category)return res.send({error:true,message:"No category found"});
+            if (!category) return res.send({
+                error: true,
+                message: "No category found"
+            });
 
             let setNewRes;
-            let errors=[];
-            let successes=[];
+            let errors = [];
+            let successes = [];
 
-            for (let option of category.categoryOptionsList){
-                if(option.optionType == "spacer"){
+            for (let option of category.categoryOptionsList) {
+                if (option.optionType == "spacer") {
 
-                }else if(option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect'){
-                    if(!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
-                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:[]});
+                } else if (option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect') {
+                    if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                        setNewRes = await option.setNew({
+                            guild: {
+                                id: req.params.guildId
+                            },
+                            user: {
+                                id: req.session.user.id
+                            },
+                            newData: []
+                        });
                         setNewRes ? null : setNewRes = {};
-                        if(setNewRes.error) {
+                        if (setNewRes.error) {
                             errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        }else {
+                        } else {
                             successes.push(option.optionName);
                         }
-                    }else if(typeof(req.body[option.optionId]) != 'object') {
-                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:[req.body[option.optionId]]});
+                    } else if (typeof(req.body[option.optionId]) != 'object') {
+                        setNewRes = await option.setNew({
+                            guild: {
+                                id: req.params.guildId
+                            },
+                            user: {
+                                id: req.session.user.id
+                            },
+                            newData: [req.body[option.optionId]]
+                        });
                         setNewRes ? null : setNewRes = {};
-                        if(setNewRes.error) {
+                        if (setNewRes.error) {
                             errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        }else {
+                        } else {
                             successes.push(option.optionName);
                         }
-                    } else{
-                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]});
+                    } else {
+                        setNewRes = await option.setNew({
+                            guild: {
+                                id: req.params.guildId
+                            },
+                            user: {
+                                id: req.session.user.id
+                            },
+                            newData: req.body[option.optionId]
+                        });
                         setNewRes ? null : setNewRes = {};
-                        if(setNewRes.error) {
+                        if (setNewRes.error) {
                             errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        }else {
+                        } else {
                             successes.push(option.optionName);
                         }
                     }
-                }else  if(option.optionType.type == "switch"){
-                    if(req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined){
-                        if(req.body[option.optionId] == null || req.body[option.optionId] == undefined){
-                            setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:false}) || {};
+                } else if (option.optionType.type == "switch") {
+                    if (req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                        if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId
+                                },
+                                user: {
+                                    id: req.session.user.id
+                                },
+                                newData: false
+                            }) || {};
                             setNewRes ? null : setNewRes = {};
-                            if(setNewRes.error) {
+                            if (setNewRes.error) {
                                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                            }else {
+                            } else {
                                 successes.push(option.optionName);
                             }
-                        }else{
-                            setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:true}) || {};
+                        } else {
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId
+                                },
+                                user: {
+                                    id: req.session.user.id
+                                },
+                                newData: true
+                            }) || {};
                             setNewRes ? null : setNewRes = {};
-                            if(setNewRes.error) {
+                            if (setNewRes.error) {
                                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                            }else {
+                            } else {
                                 successes.push(option.optionName);
                             }
                         }
                     }
-                }else{
-                    if(req.body[option.optionId] == undefined || req.body[option.optionId] == null){
-                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:null}) || {};
+                } else {
+                    if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) {
+                        setNewRes = await option.setNew({
+                            guild: {
+                                id: req.params.guildId
+                            },
+                            user: {
+                                id: req.session.user.id
+                            },
+                            newData: null
+                        }) || {};
                         setNewRes ? null : setNewRes = {};
-                        if(setNewRes.error) {
+                        if (setNewRes.error) {
                             errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        }else {
+                        } else {
                             successes.push(option.optionName);
                         }
-                    }else{
-                        setNewRes = await option.setNew({guild:{id:req.params.guildId},user:{id:req.session.user.id},newData:req.body[option.optionId]}) || {};
+                    } else {
+                        setNewRes = await option.setNew({
+                            guild: {
+                                id: req.params.guildId
+                            },
+                            user: {
+                                id: req.session.user.id
+                            },
+                            newData: req.body[option.optionId]
+                        }) || {};
                         setNewRes ? null : setNewRes = {};
-                        if(setNewRes.error) {
+                        if (setNewRes.error) {
                             errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        }else {
+                        } else {
                             successes.push(option.optionName);
                         }
                     }
                 }
             }
 
-            if(errors[0]){
-                if(!successes)successes = [];
+            if (errors[0]) {
+                if (!successes) successes = [];
                 return res.redirect('/guild/' + req.params.guildId + `?success=${successes.join('%and%')}&error=${errors.join('%and%')}`)
-            }else {
+            } else {
                 return res.redirect('/guild/' + req.params.guildId + '?success=true&error=false');
             }
         });
 
         config.supportServer ? null : config.supportServer = {};
 
-        app.get(`${config.supportServer.slash || '/support-server'}`, (req,res) => {
-            if(!config.supportServer.inviteUrl)return res.send({error:true,message:"No inviteUrl defined (discord-dashboard config.supportServer)."});
-            if(!config.supportServer.inviteUrl.toLowerCase().startsWith('https://discord.gg/') && !config.supportServer.inviteUrl.toLowerCase().startsWith('https://discord.com/'))return res.send({error:true,message:"Invite url should start with 'https://discord.gg/' or 'https://discord.com/'."});
+        app.get(`${config.supportServer.slash || '/support-server'}`, (req, res) => {
+            if (!config.supportServer.inviteUrl) return res.send({
+                error: true,
+                message: "No inviteUrl defined (discord-dashboard config.supportServer)."
+            });
+            if (!config.supportServer.inviteUrl.toLowerCase().startsWith('https://discord.gg/') && !config.supportServer.inviteUrl.toLowerCase().startsWith('https://discord.com/')) return res.send({
+                error: true,
+                message: "Invite url should start with 'https://discord.gg/' or 'https://discord.com/'."
+            });
             res.redirect(config.supportServer.inviteUrl);
         });
 
-        if(config.theme)config.theme.init(app, this.config);
+        if (config.theme) config.theme.init(app, this.config);
 
         let customPages = config.customPages || [];
 
-        customPages.forEach(p=>{
-            if(p.type == "redirect"){
-                app.get(p.endpoint, async (req,res) => {
-                    let endpoint = await p.getEndpoint({user: req.session.user || {}});
+        customPages.forEach(p => {
+            if (p.type == "redirect") {
+                app.get(p.endpoint, async (req, res) => {
+                    let endpoint = await p.getEndpoint({
+                        user: req.session.user || {}
+                    });
                     res.redirect(endpoint);
                 });
-            }
-            else if(p.type == "html"){
-                app.get(p.endpoint, async (req,res) => {
-                    let html = await p.getHtml({user: req.session.user || {}});
+            } else if (p.type == "html") {
+                app.get(p.endpoint, async (req, res) => {
+                    let html = await p.getHtml({
+                        user: req.session.user || {}
+                    });
                     res.send(html);
                 });
-            }
-            else if(p.type == "json"){
-                app.get(p.endpoint, async (req,res) => {
-                    let json = await p.getJson({user: req.session.user || {}});
+            } else if (p.type == "json") {
+                app.get(p.endpoint, async (req, res) => {
+                    let json = await p.getJson({
+                        user: req.session.user || {}
+                    });
                     res.send(json);
                 });
             }
         });
 
-        modules.forEach(module=>{
-            module.app({app:app,config:this.config,themeConfig:themeConfig});
+        modules.forEach(module => {
+            module.app({
+                app: app,
+                config: this.config,
+                themeConfig: themeConfig
+            });
         });
 
-        app.get('*', (req,res) => {
+        app.get('*', (req, res) => {
             let text = config.html404 || require('./404pagedefault')(config.websiteTitle || themeConfig.websiteName);
             res.send(text.replace('{{websiteTitle}}', config.websiteTitle || themeConfig.websiteName));
         });
@@ -376,10 +478,10 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
 
         let server;
 
-        if(!config.SSL)config.SSL = {};
+        if (!config.SSL) config.SSL = {};
 
-        if(config.SSL.enabled){
-            if(!config.SSL.key || !config.SSL.cert)console.log(err(`${'discord-dashboard issue:'.red} The SSL preference for Dashboard is selected (config.SSL.enabled), but config does not include key or cert (config.SSL.key, config.SSL.cert).`));
+        if (config.SSL.enabled) {
+            if (!config.SSL.key || !config.SSL.cert) console.log(err(`${'discord-dashboard issue:'.red} The SSL preference for Dashboard is selected (config.SSL.enabled), but config does not include key or cert (config.SSL.key, config.SSL.cert).`));
             let options = {
                 key: config.SSL.key || "",
                 cert: config.SSL.cert || ""
@@ -387,21 +489,21 @@ ${'[Discord-dashboard v'.blue}${`${require('./package.json').version}]:`.blue} W
             try {
                 const https = require('https');
                 server = https.createServer(options, app);
-            } catch(e) {
+            } catch (e) {
                 console.log(err(`${'discord-dashboard issue:'.red} There's a problem while creating server, check if the port specified is already on use.`));
             }
-        }else{
+        } else {
             const http = require('http');
             server = http.createServer(app);
         }
 
         let pport = "";
 
-        if(config.port != 80 && config.port != 443){
+        if (config.port != 80 && config.port != 443) {
             pport = `:${config.port}`;
         }
 
-        if(!config.minimizedConsoleLogs) {
+        if (!config.minimizedConsoleLogs) {
             console.log(`
 ██████╗ ██████╗ ██████╗ 
 ██╔══██╗██╔══██╗██╔══██╗
@@ -430,14 +532,19 @@ If you need help with something or you don't understand something, please visit 
 
         this.io = io;
 
-        modules.forEach(module=>{
-            module.server({io:this.io,server:server,config:this.config,themeConfig:themeConfig});
+        modules.forEach(module => {
+            module.server({
+                io: this.io,
+                server: server,
+                config: this.config,
+                themeConfig: themeConfig
+            });
         });
 
         server.listen(config.port);
     }
 
-    getApp(){
+    getApp() {
         return this.app;
     }
 
@@ -448,7 +555,14 @@ If you need help with something or you don't understand something, please visit 
 
 module.exports = {
     Dashboard: Dashboard,
-    initDashboard: ({fileName, domain, port, token, clientSecret, clientId}) => {
+    initDashboard: ({
+                        fileName,
+                        domain,
+                        port,
+                        token,
+                        clientSecret,
+                        clientId
+                    }) => {
         require('fs').writeFileSync(`${fileName}.js`, `
 const DBD = require('discord-dashboard');
 const CaprihamTheme = require('dbd-capriham-theme');
@@ -576,7 +690,7 @@ Dashboard.init();`)
     formTypes: {
         select: (list, disabled) => {
             if (!list) throw new Error(err("List in the 'select' form type cannot be empty."));
-            if (typeof (list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
+            if (typeof(list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
             let keys = Object.keys(list);
             let values = Object.values(list);
             return {
@@ -590,7 +704,7 @@ Dashboard.init();`)
         },
         multiSelect: (list, disabled, required) => {
             if (!list) throw new Error(err("List in the 'select' form type cannot be empty."));
-            if (typeof (list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
+            if (typeof(list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
             let keys = Object.keys(list);
             let values = Object.values(list);
             return {
@@ -642,7 +756,7 @@ Dashboard.init();`)
             };
         },
         switch: (defaultState, disabled) => {
-            if (typeof (defaultState) != 'boolean') throw new Error(err("'state' in the 'switch' form type should be boolean (true/false)."));
+            if (typeof(defaultState) != 'boolean') throw new Error(err("'state' in the 'switch' form type should be boolean (true/false)."));
             return {
                 type: "switch",
                 data: defaultState,
@@ -650,40 +764,49 @@ Dashboard.init();`)
             };
         },
         channelsSelect: (disabled, channelTypes = ['GUILD_TEXT']) => {
-            return {type:"channelsSelect", function:
-                    (client, guildid) => {
-                        let listCount = {};
-                        let list = {'-':''};
-                        client.guilds.cache.get(guildid).channels.cache.forEach(channel=>{
-                            if (!channelTypes.includes(channel.type)) return;
-                            listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
-                            if(list[channel.name])list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
-                            else list[channel.name] = channel.id;
-                        });
+            return {
+                type: "channelsSelect",
+                function: (client, guildid) => {
+                    let listCount = {};
+                    let list = {
+                        '-': ''
+                    };
+                    client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
+                        if (!channelTypes.includes(channel.type)) return;
+                        listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
+                        if (list[channel.name]) list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
+                        else list[channel.name] = channel.id;
+                    });
 
-                        let myObj = list;
-                        let keys = Object.keys(myObj),
-                            i = null,
-                            len = keys.length;
+                    let myObj = list;
+                    let keys = Object.keys(myObj),
+                        i = null,
+                        len = keys.length;
 
-                        keys.sort();
-                        list = {};
+                    keys.sort();
+                    list = {};
 
-                        for (i = 0; i < len; i++) {
-                            k = keys[i];
-                            list[k] = myObj[k];
-                        }
+                    for (i = 0; i < len; i++) {
+                        k = keys[i];
+                        list[k] = myObj[k];
+                    }
 
-                        return {values:Object.values(list),keys:Object.keys(list)};
-                    },
-                disabled};
+                    return {
+                        values: Object.values(list),
+                        keys: Object.keys(list)
+                    };
+                },
+                disabled
+            };
         },
         channelsMultiSelect: (disabled, required, channelTypes = ['GUILD_TEXT']) => {
             return {
                 type: "channelsMultiSelect",
                 function: (client, guildid) => {
                     let listCount = {};
-                    let list = {'-':''};
+                    let list = {
+                        '-': ''
+                    };
                     client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
                         if (!channelTypes.includes(channel.type)) return;
                         listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
@@ -718,7 +841,9 @@ Dashboard.init();`)
                 type: "rolesMultiSelect",
                 function: (client, guildid) => {
                     let listCount = {};
-                    let list = {'-':''};
+                    let list = {
+                        '-': ''
+                    };
                     client.guilds.cache.get(guildid).roles.cache.forEach(role => {
                         if (role.managed) return;
                         listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
@@ -753,11 +878,13 @@ Dashboard.init();`)
                 type: "rolesSelect",
                 function: (client, guildid) => {
                     let listCount = {};
-                    let list = {'-':''};
+                    let list = {
+                        '-': ''
+                    };
                     client.guilds.cache.get(guildid).roles.cache.forEach(role => {
                         if (role.managed) return;
 
-                        if(role.id === guildid) return; // @everyone role
+                        if (role.id === guildid) return; // @everyone role
                         listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
                         if (list[role.name]) list[`${role.name} (${listCount[role.name]})`] = role.id;
                         else list[role.name] = role.id;
@@ -794,13 +921,25 @@ Dashboard.init();`)
     },
     customPagesTypes: {
         redirectToUrl: (endpoint, getDataFunction) => {
-            return {type:"redirect",endpoint: endpoint, getEndpoint: getDataFunction};
+            return {
+                type: "redirect",
+                endpoint: endpoint,
+                getEndpoint: getDataFunction
+            };
         },
         renderHtml: (endpoint, getDataFunction) => {
-            return {type:"html",endpoint: endpoint, getHtml: getDataFunction};
+            return {
+                type: "html",
+                endpoint: endpoint,
+                getHtml: getDataFunction
+            };
         },
         sendJson: (endpoint, getDataFunction) => {
-            return {type:"json",endpoint: endpoint, getJson: getDataFunction};
+            return {
+                type: "json",
+                endpoint: endpoint,
+                getJson: getDataFunction
+            };
         },
     }
 }
