@@ -2,11 +2,16 @@ const Discord = require("discord.js");
 const router = require('express').Router();
 
 module.exports = (app, config, themeConfig) => {
-    router.get('/', (req, res) => {
+    router.get('/', async (req, res) => {
+        let customThemeOptions;
+        if(themeConfig.customThemeOptions) {
+            customThemeOptions = await themeConfig.customThemeOptions.index({req: req, res: res, config: config});
+        }
         res.render('index', {
             req: req,
             themeConfig: req.themeConfig,
-            bot: config.bot
+            bot: config.bot,
+            customThemeOptions: customThemeOptions || {}
         });
     });
 
