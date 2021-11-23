@@ -1,4 +1,6 @@
-module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191', '#ffc247'], buildingsColor='#ff6347', craneDivBorderColor='#ff6347', craneArmColor='#f88f7c', craneWeightColor='#f88f7c', outerCraneColor='#ff6347', craneLineColor='#ff6347', craneCabinColor='#f88f7c', craneStandColors=['#ff6347', '#f29b8b']}) => {
+module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191', '#ffc247'], buildingsColor='#ff6347', craneDivBorderColor='#ff6347', craneArmColor='#f88f7c', craneWeightColor='#f88f7c', outerCraneColor='#ff6347', craneLineColor='#ff6347', craneCabinColor='#f88f7c', craneStandColors=['#ff6347', '#f29b8b']}, loggedIn) => {
+    let logged = "<a class='text' href='../discord'>Login</a>";
+    if(loggedIn) logged = "<a class='text' href='../discord/logout'>Logout</a>";
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -564,9 +566,10 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                     background-color: lightblue;
                   }
                   
-                .text {
+.text {
                      font-size: 30px;
                      text-align: center;
+                     z-index:9999999;
                 }
                 #content-title {
                     font-size: 40px;
@@ -577,6 +580,7 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                     .text {
                         font-size: 28px;
                         text-align: center;
+                        z-index:9999999;
                     }
                     #content-title {
                         font-size: 58px;
@@ -588,6 +592,7 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                     .text {
                         font-size: 50px;
                         text-align: center;
+                        z-index:9999999;
                     }
                     
                     #content-title {
@@ -600,6 +605,7 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                     .text {
                         font-size: 20px;
                         text-align: center;
+                        z-index:9999999;
                     }
                     #content-title {
                         font-size: 40px;
@@ -612,6 +618,8 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
             <div id="content">
                 <h1 id="content-title">${contentTitle}</h1>
                 ${texts.map(text=>'<p class="text">'+text+'</p>').join('')}
+                <br><br><br>
+                ${logged}
             </div>
             <div id="outerCraneContainer">
                 <div class="buildings">
