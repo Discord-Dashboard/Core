@@ -1,7 +1,5 @@
 module.exports = (app, config, themeConfig, modules) => {
     app.use('/discord', require('./Routes/discord'));
-    app.use('/', require('./Routes/main')(app, config, themeConfig));
-    app.use('/', require('./Routes/dashboard')(app, config, themeConfig));
 
     if (config.useUnderMaintenance) {
         app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req, res) => {
@@ -27,6 +25,9 @@ module.exports = (app, config, themeConfig, modules) => {
             else next();
         });
     }
+
+    app.use('/', require('./Routes/main')(app, config, themeConfig));
+    app.use('/', require('./Routes/dashboard')(app, config, themeConfig));
 
     config.theme.init(app, this.config);
 
