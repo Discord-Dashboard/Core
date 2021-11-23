@@ -1,7 +1,5 @@
-module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191', '#ffc247'], buildingsColor='#ff6347', craneDivBorderColor='#ff6347', craneArmColor='#f88f7c', craneWeightColor='#f88f7c', outerCraneColor='#ff6347', craneLineColor='#ff6347', craneCabinColor='#f88f7c', craneStandColors=['#ff6347', '#f29b8b']}, loggedIn) => {
-  let logged = "<a class='text' href='../discord'>Login</a>";
-  if(loggedIn) logged = "<a class='text' href='../discord/logout'>Logout</a>";  
-  return `
+module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191', '#ffc247'], buildingsColor='#ff6347', craneDivBorderColor='#ff6347', craneArmColor='#f88f7c', craneWeightColor='#f88f7c', outerCraneColor='#ff6347', craneLineColor='#ff6347', craneCabinColor='#f88f7c', craneStandColors=['#ff6347', '#f29b8b']}) => {
+    return `
     <!DOCTYPE html>
     <html lang="en">
         <head>
@@ -29,7 +27,7 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                 .buildings div {
                   height: inherit;
                   width: 42.48366013071895px;
-                  background: #ff6347;
+                  background: ${buildingsColor};
                   position: absolute;
                   bottom: 10%;
                 }
@@ -134,7 +132,7 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                   display: block;
                   bottom: 0;
                   left: -4500%;
-                  border: solid 1px #ff6347;
+                  border: solid 1px ${craneLineColor};
                 }
                 .craneTwo .line.lineThree:after {
                   height: 0.1em;
@@ -214,7 +212,7 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                   width: 9%;
                   bottom: 0;
                   left: 40%;
-                  background: #ff7359;
+                  background: ${craneArmColor};
                 }
                 .brickTwo {
                   left: 48%;
@@ -569,7 +567,6 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                 .text {
                      font-size: 30px;
                      text-align: center;
-                     z-index:9999999;
                 }
                 #content-title {
                     font-size: 40px;
@@ -580,7 +577,6 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                     .text {
                         font-size: 28px;
                         text-align: center;
-                        z-index:9999999;
                     }
                     #content-title {
                         font-size: 58px;
@@ -592,7 +588,6 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                     .text {
                         font-size: 50px;
                         text-align: center;
-                        z-index:9999999;
                     }
                     
                     #content-title {
@@ -605,7 +600,6 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                     .text {
                         font-size: 20px;
                         text-align: center;
-                        z-index:9999999;
                     }
                     #content-title {
                         font-size: 40px;
@@ -618,8 +612,6 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
             <div id="content">
                 <h1 id="content-title">${contentTitle}</h1>
                 ${texts.map(text=>'<p class="text">'+text+'</p>').join('')}
-                <br><br><br>
-                ${logged}
             </div>
             <div id="outerCraneContainer">
                 <div class="buildings">
