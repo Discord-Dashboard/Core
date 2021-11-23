@@ -2,17 +2,26 @@ const Discord = require("discord.js");
 const router = require('express').Router();
 
 module.exports = (app, config, themeConfig) => {
-    router.get('/manage', (req, res) => {
+    router.get('/manage', async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/manage');
+        let customThemeOptions;
+        if(themeConfig.customThemeOptions){
+            customThemeOptions = await themeConfig.customThemeOptions.manage({req: req,res:res,config:config});
+        }
         res.render('guilds', {
             req: req,
             bot: config.bot,
-            themeConfig: req.themeConfig
+            themeConfig: req.themeConfig,
+            customThemeOptions: customThemeOptions || {}
         });
     });
 
     router.get('/guild/:id', async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.id);
+        let customThemeOptions;
+        if(themeConfig.customThemeOptions) {
+            customThemeOptions = await themeConfig.customThemeOptions.getGuild({req: req, res: res, config: config,guildId: req.params.id});
+        }
         let bot = config.bot;
         if (!bot.guilds.cache.get(req.params.id)) return res.redirect('/manage?error=noPermsToManageGuild');
         await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
@@ -59,12 +68,17 @@ module.exports = (app, config, themeConfig) => {
             bot: config.bot,
             req: req,
             guildid: req.params.id,
-            themeConfig: req.themeConfig
+            themeConfig: req.themeConfig,
+            customThemeOptions: customThemeOptions || {}
         });
     });
 
     router.post('/settings/update/:guildId/:categoryId', async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.guildId);
+        let customThemeOptions;
+        if(themeConfig.customThemeOptions) {
+            customThemeOptions = await themeConfig.customThemeOptions.settingsUpdate({req: req, config: config,guildId: req.params.id,categoryId:req.params.categoryId});
+        }
         let bot = config.bot;
         if (!bot.guilds.cache.get(req.params.guildId)) return res.redirect('/manage?error=noPermsToManageGuild');
         await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
