@@ -7,6 +7,7 @@ const err = (text) => {
 }
 
 module.exports = (app, config, themeConfig, modules) => {
+    if(config.noCreateServer)return {io: null, server: null};
     let server;
 
     if (!config.SSL) config.SSL = {};
