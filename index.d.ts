@@ -509,4 +509,4 @@ type settings_options = [
 			}
 		];
 	}
-];
+]; 
