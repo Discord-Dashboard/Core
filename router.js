@@ -29,7 +29,7 @@ module.exports = (app, config, themeConfig, modules) => {
     app.use('/', require('./Routes/main')(app, config, themeConfig));
     app.use('/', require('./Routes/dashboard')(app, config, themeConfig));
 
-    config.theme.init(app, this.config);
+    config.theme.init(app, config);
 
     let customPages = config.customPages || [];
     customPages.forEach(p => {
