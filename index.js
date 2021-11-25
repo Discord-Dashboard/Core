@@ -70,6 +70,10 @@ class Dashboard {
         let themeConfig = config.theme.themeConfig;
 
         app.use((req, res, next) => {
+            if(req.session.loggedInLastTime == true){
+                req.displayLoggedInInfo = true;
+                req.session.loggedInLastTime = false;
+            }
             if (!req.body) req.body = {};
 
             req.v13support = v13support;
