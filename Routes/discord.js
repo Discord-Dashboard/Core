@@ -48,6 +48,7 @@ router.get('/callback', (req, res) => {
                     userResponse.avatarURL = userResponse.avatar ? `https://cdn.discordapp.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024` : null;
 
                     DBDStats.registerUser(userResponse.id);
+                    req.session.loggedInLastTime = true;
 
                     req.session.user = userResponse;
                     fetch('https://discordapp.com/api/users/@me/guilds', {
