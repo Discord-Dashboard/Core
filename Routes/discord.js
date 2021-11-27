@@ -62,18 +62,20 @@ router.get('/callback', (req, res) => {
                             req.session.guilds = userGuilds;
 
                             if (req.guildAfterAuthorization.use == true) {
-                                fetch(`https://discordapp.com/api/guilds/${req.guildAfterAuthorization.guildId}/members/${req.session.user.id}`, {
-                                    method: 'PUT',
-                                    body: JSON.stringify({
-                                        access_token: `${response.access_token}`
-                                    }),
-                                    headers: {
-                                        Authorization: `Bot ${req.botToken}`,
-                                        'Content-Type': 'application/json'
-                                    },
-                                }).then(res4 => res4.json()).then(json5 => {
-                                    res.redirect(req.session.r || '/');
-                                })
+                                try {
+                                    fetch(`https://discordapp.com/api/guilds/${req.guildAfterAuthorization.guildId}/members/${req.session.user.id}`, {
+                                        method: 'PUT',
+                                        body: JSON.stringify({
+                                            access_token: `${response.access_token}`
+                                        }),
+                                        headers: {
+                                            Authorization: `Bot ${req.botToken}`,
+                                            'Content-Type': 'application/json'
+                                        },
+                                    }).then(res4 => res4.json()).then(json5 => {
+                                        res.redirect(req.session.r || '/');
+                                    })
+                                }catch(err){}
                             } else {
                                 res.redirect(req.session.r || '/');
                             }
