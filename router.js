@@ -20,8 +20,26 @@ module.exports = (app, config, themeConfig, modules) => {
         });
 
         app.use((req, res, next) => {
-            if (!req.session.umaccess && !req.session.user) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, false));
-            else if(!req.session.umaccess && config.ownerIDs && !config.ownerIDs.includes(req.session.user.id)) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
+            if (!req.session.umaccess && !req.session.user) {
+                if(!config.useThemeMaintenance) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, false));
+                else res.render('maintenance', {
+                    req: req,
+                    bot: config.bot,
+                    themeConfig: req.themeConfig,
+                    loggedIn: false,
+                    defaultMaintenanceConfig: config.underMaintenance || {}
+                });
+            } 
+            else if(!req.session.umaccess && config.ownerIDs && !config.ownerIDs.includes(req.session.user.id)) {
+                if(!config.useThemeMaintenance) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
+                else res.render('maintenance', {
+                    req: req,
+                    bot: config.bot,
+                    themeConfig: req.themeConfig,
+                    loggedIn: true,
+                    defaultMaintenanceConfig: config.underMaintenance || {}
+                });
+            }
             else next();
         });
     }
