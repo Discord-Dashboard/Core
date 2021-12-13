@@ -191,6 +191,40 @@ module.exports = (app, config, themeConfig) => {
                         }
                     }
                 }
+            } else if(option.optionType == 'twoInputs') {
+                if (req.body[option.optionId + "_1"] == undefined || req.body[option.optionId + "_1"] == null) {
+                    setNewRes = await option.setNew({
+                        guild: {
+                            id: req.params.guildId
+                        },
+                        user: {
+                            id: req.session.user.id
+                        },
+                        newData: null
+                    }) || {};
+                    setNewRes ? null : setNewRes = {};
+                    if (setNewRes.error) {
+                        errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                    } else {
+                        successes.push(option.optionName);
+                    }
+                } else {
+                    setNewRes = await option.setNew({
+                        guild: {
+                            id: req.params.guildId
+                        },
+                        user: {
+                            id: req.session.user.id
+                        },
+                        newData: req.body[option.optionId]
+                    }) || {};
+                    setNewRes ? null : setNewRes = {};
+                    if (setNewRes.error) {
+                        errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                    } else {
+                        successes.push(option.optionName);
+                    }
+                }
             } else {
                 if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) {
                     setNewRes = await option.setNew({
