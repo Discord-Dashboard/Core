@@ -47,6 +47,30 @@ module.exports = {
             required: required || false
         };
     },
+    
+    
+    twoInputs: (placeholders, separator, min, max, disabled, required) => {
+        if (min) {
+            if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
+        }
+        if (max) {
+            if (isNaN(max)) throw new Error(err("'max' in the 'input' form type should be an number."));
+        }
+        if (min && max) {
+            if (min > max) throw new Error(err("'min' in the 'input' form type cannot be higher than 'max'."));
+        }
+        return {
+            type: "twoInputs",
+            separator: separator,
+            data: placeholders || ["", ""],
+            min: min || null,
+            max: max || null,
+            disabled: disabled || false,
+            required: required || false
+        };
+    },
+    
+    
     textarea: (placeholder, min, max, disabled, required) => {
         if (min) {
             if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
