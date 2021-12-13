@@ -84,6 +84,35 @@ declare module "discord-dashboard" {
 			disabled: boolean;
 			required: boolean;
 		};
+		
+		
+		                /**
+         * Allows for text based input in the form of a text input field
+         * @param placeholders the texts to display if non was entered. (in array)
+	 * @example ['placeholder1', 'placeholder2']
+         * @param separator separator between inputs.
+         * @param min the minimum text allowed in the input field
+         * @param max  the maximum text allowed in the input field
+         * @param disabled if the input field is disabled
+         * @param required if the input field is required
+         * @returns
+         */
+                 public static twoInputs(
+                    placeholders: string[],
+                    min: number,
+                    max: number,
+                    disabled: boolean,
+                    required: boolean
+                ): {
+                    type: string;
+                    data: string[];
+                    min: number | null;
+                    max: number | null;
+                    disabled: boolean;
+                    required: boolean;
+                };
+		
+		
 		/**
 		 * Similar to input but allows for multi line text.
 		 * @param placeholder the text to display if non was entered
