@@ -28,7 +28,7 @@ module.exports = {
             required: required || false
         };
     },
-    input: (placeholder, min, max, disabled, required) => {
+    input: (placeholder, min, max, disabled, required, showEmojiPicker=true) => {
         if (min) {
             if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
         }
@@ -44,7 +44,8 @@ module.exports = {
             min: min || null,
             max: max || null,
             disabled: disabled || false,
-            required: required || false
+            required: required || false,
+            showEmojiPicker
         };
     },
     textarea: (placeholder, min, max, disabled, required) => {
@@ -82,6 +83,7 @@ module.exports = {
                 let list = {
                     '-': ''
                 };
+                if(client.guilds.cache.size <= 1) client.guilds.resolve(guildid).then(g => g.channels.fetch())
                 client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
                     if (!channelTypes.includes(channel.type)) return;
                     listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
@@ -118,6 +120,7 @@ module.exports = {
                 let list = {
                     '-': ''
                 };
+                if(client.guilds.cache.size <= 1) client.guilds.resolve(guildid).then(g => g.channels.fetch())
                 client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
                     if (!channelTypes.includes(channel.type)) return;
                     listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
@@ -155,6 +158,7 @@ module.exports = {
                 let list = {
                     '-': ''
                 };
+                if(client.guilds.cache.size <= 1) client.guilds.resolve(guildid).then(g => g.roles.fetch());
                 client.guilds.cache.get(guildid).roles.cache.forEach(role => {
                     if (role.managed) return;
                     listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
@@ -192,6 +196,7 @@ module.exports = {
                 let list = {
                     '-': ''
                 };
+                if(client.guilds.cache.size <= 1) client.guilds.resolve(guildid).then(g => g.roles.fetch());
                 client.guilds.cache.get(guildid).roles.cache.forEach(role => {
                     if (role.managed) return;
 
