@@ -29,7 +29,7 @@ module.exports = (app, config, themeConfig, modules) => {
                     loggedIn: false,
                     defaultMaintenanceConfig: config.underMaintenance || {}
                 });
-            } 
+            }
             else if(!req.session.umaccess && config.ownerIDs && !config.ownerIDs.includes(req.session.user.id)) {
                 if(!config.useThemeMaintenance) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, true));
                 else res.render('maintenance', {
