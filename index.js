@@ -12,6 +12,8 @@ const {
     Server: SocketServer
 } = require("socket.io");
 const DBDStats = require('./ExternalStatistics/index');
+const EventEmitter = require('events');
+const DBDEvents = new EventEmitter();
 
 const err = (text) => {
     return text + ` Do you need help? Join our Discord server: ${'https://discord.gg/CzfMGtrdaA'.blue}`;
@@ -41,7 +43,6 @@ class Dashboard {
         const express = require('express');
         const app = express();
         const session = require('express-session');
-        const FileStore = require('session-file-store')(session);
         const bodyParser = require('body-parser');
         const partials = require('express-partials');
         const v13support = require('discord.js').version.slice(0, 2) == "13";
@@ -64,12 +65,20 @@ class Dashboard {
                 maxAge: 253402300799999,
             },
         };
-        config.sessionFileStore ? sessionData.store = new FileStore : null;
+        config.sessionSaveSession ? sessionData.store = config.sessionSaveSession : null;
         app.use(session(sessionData));
 
         let themeConfig = config.theme.themeConfig;
 
+        app.get('*', (req,res,next) => {
+            DBDEvents.emit('websiteView', req.session.user ? req.session.user : {loggedIn: false});
+
+            next();
+        });
+
         app.use((req, res, next) => {
+            req.DBDEvents = DBDEvents;
+
             if(req.session.loggedInLastTime == true){
                 req.displayLoggedInInfo = true;
                 req.session.loggedInLastTime = false;
@@ -112,10 +121,11 @@ class Dashboard {
 }
 
 module.exports = {
-    Dashboard: Dashboard,
+    Dashboard,
     initDashboard: ({fileName, domain, port, token, clientSecret, clientId}) => {
         require('./InitFunctions/initExampleDash')({fileName, domain, port, token, clientSecret, clientId});
     },
     formTypes: require('./ModuleExportsFunctions/formTypes'),
-    customPagesTypes: require('./ModuleExportsFunctions/customPagesTypes')
+    customPagesTypes: require('./ModuleExportsFunctions/customPagesTypes'),
+    DBDEvents
 }
