@@ -1,6 +1,6 @@
 module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191', '#ffc247'], buildingsColor='#ff6347', craneDivBorderColor='#ff6347', craneArmColor='#f88f7c', craneWeightColor='#f88f7c', outerCraneColor='#ff6347', craneLineColor='#ff6347', craneCabinColor='#f88f7c', craneStandColors=['#ff6347', '#f29b8b']}, loggedIn) => {
-    let logged = "<a class='text' href='../discord'>Login</a>";
-    if(loggedIn) logged = "<a class='text' href='../discord/logout'>Logout</a>";
+    let logged = "<a class='text' href='/discord'>Login</a>";
+    if(loggedIn) logged = "<a class='text' href='/discord/logout'>Logout</a>";
     return `
     <!DOCTYPE html>
     <html lang="en">
