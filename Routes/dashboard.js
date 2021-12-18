@@ -25,11 +25,7 @@ module.exports = (app, config, themeConfig) => {
         let bot = config.bot;
         if (!bot.guilds.cache.get(req.params.id)) return res.redirect('/manage?error=noPermsToManageGuild');
         await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
-        if (req.v13support) {
-            if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
-        } else {
-            if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD')) return res.redirect('/manage?error=noPermsToManageGuild');
-        }
+        if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
         let actual = {};
         for (const s of config.settings) {
             for (const c of s.categoryOptionsList) {
@@ -82,11 +78,7 @@ module.exports = (app, config, themeConfig) => {
         let bot = config.bot;
         if (!bot.guilds.cache.get(req.params.guildId)) return res.redirect('/manage?error=noPermsToManageGuild');
         await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
-        if (req.v13support) {
-            if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
-        } else {
-            if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).hasPermission('MANAGE_GUILD')) return res.redirect('/manage?error=noPermsToManageGuild');
-        }
+        if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
 
         let cid = req.params.categoryId;
         let settings = config.settings;
@@ -227,6 +219,19 @@ module.exports = (app, config, themeConfig) => {
                 }
             }
         }
+
+        let successesForDBDEvent = [];
+        let errorsForDBDEvent = [];
+
+        successes.forEach(item=>{
+           successesForDBDEvent.push(item.split('%is%')) ;
+        });
+
+        errors.forEach(item=>{
+            errorsForDBDEvent.push(item.split('%is%')) ;
+        });
+
+        req.DBDEvents.emit('guildSettingsUpdated', {user: req.session.user, changes: {successesForDBDEvent, errorsForDBDEvent}});
 
         if (errors[0]) {
             if (!successes) successes = [];
