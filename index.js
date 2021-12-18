@@ -21,6 +21,10 @@ const err = (text) => {
 
 class Dashboard {
     constructor(config) {
+        if(require('discord.js').version.slice(0, 2) == "12"){
+            console.log(`${'[Discord-dashboard v'.red}${`${require('../package.json').version}]:`.red} We apologize, but support for Discord.js v12 has been discontinued. Using it would have a negative impact on the performance of the Dashboard. As a reminder, Discord will soon end support for the API that Discord.js v12 uses, so we recommend updating your API Client.`);
+            return throw new TypeError("Discord.js v13+ is required to use discord-dashboard.");
+        }
         let notSetYetAndRequired = [];
         if (!config.port) notSetYetAndRequired.push('port');
         if (!config.theme) notSetYetAndRequired.push('theme');
@@ -84,8 +88,6 @@ class Dashboard {
                 req.session.loggedInLastTime = false;
             }
             if (!req.body) req.body = {};
-
-            req.v13support = v13support;
 
             req.client = config.client;
             req.redirectUri = config.redirectUri;
