@@ -28,7 +28,7 @@ module.exports = {
             required: required || false
         };
     },
-    input: (placeholder, min, max, disabled, required, showEmojiPicker=true) => {
+    input: (placeholder, min, max, disabled, required, useEmojiPicker=true) => {
         if (min) {
             if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
         }
@@ -45,7 +45,7 @@ module.exports = {
             max: max || null,
             disabled: disabled || false,
             required: required || false,
-            showEmojiPicker
+            useEmojiPicker
         };
     },
     textarea: (placeholder, min, max, disabled, required) => {
@@ -67,11 +67,15 @@ module.exports = {
             required: required || false
         };
     },
-    switch: (defaultState, disabled) => {
-        if (typeof(defaultState) != 'boolean') throw new Error(err("'state' in the 'switch' form type should be boolean (true/false)."));
+    switch: (disabled) => {
         return {
             type: "switch",
-            data: defaultState,
+            disabled: disabled
+        };
+    },
+    checkbox: (disabled) => {
+        return {
+            type: "checkbox",
             disabled: disabled
         };
     },
