@@ -39,7 +39,7 @@ ${'[Discord-dashboard v'.red}${`${require('../package.json').version}]:`.red} If
         function ask() {
             if (iCount > 0) console.log(`${'[Discord-dashboard v'.red}${`${require('../package.json').version}]:`.red}: You must accept our privacy policy to be able to use the module. Otherwise, you must delete the module.`);
             iCount++;
-            const rlResponse = (readline.question(`${'[Discord-dashboard v'.blue}${`${require('../package.json').version}]:`.blue} Do you accept it? (y/n) `)).toLowerCase();
+            const rlResponse = readline.question(`${'[Discord-dashboard v'.blue}${`${require('../package.json').version}]:`.blue} Do you accept it? (y/n) `);
 
             if (rlResponse == "y" || rlResponse == "yes") {
                 console.log(`${'[Discord-dashboard v'.green}${`${require('../package.json').version}]:`.green} Thank you. Now we will run the module for you. You will not need to re-approve our privacy policy again.`)

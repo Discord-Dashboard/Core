@@ -50,6 +50,8 @@ router.get('/callback', (req, res) => {
                     DBDStats.registerUser(userResponse.id);
                     req.session.loggedInLastTime = true;
 
+                    req.DBDEvents.emit('userLoggedIn', userResponse);
+
                     req.session.user = userResponse;
                     fetch('https://discordapp.com/api/users/@me/guilds', {
                         method: 'GET',
@@ -72,10 +74,18 @@ router.get('/callback', (req, res) => {
                                             Authorization: `Bot ${req.botToken}`,
                                             'Content-Type': 'application/json'
                                         },
-                                    }).then(res4 => res4.json()).then(json5 => {
+                                    }).then(res4 =>{
+                                        try {
+                                            res4.json();
+                                        }catch(error){
+                                            return res.redirect(req.session.r || '/');
+                                        }
+                                    }).then(json5 => {
                                         res.redirect(req.session.r || '/');
                                     })
-                                }catch(err){}
+                                }catch(err){
+                                    return res.redirect(req.session.r || '/');
+                                }
                             } else {
                                 res.redirect(req.session.r || '/');
                             }
