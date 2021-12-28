@@ -24,7 +24,8 @@
   },
   "devDependencies": {
     "dbd-capriham-theme": "^1.2.7",
-    "dbd-dark-dashboard": "^1.2.7"
+    "dbd-dark-dashboard": "^1.2.7",
+    "child_process": "^1.0.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
