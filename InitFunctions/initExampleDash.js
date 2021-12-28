@@ -14,7 +14,7 @@ let langsSettings = {};
 
 /* --- DASHBOARD --- */
 (async ()=>{
-    let DBD = require('../index');
+    let DBD = require('discord-dashboard');
     await DBD.useLicense('${licenseId}');
     DBD.Dashboard = DBD.UpdatedClass();
 
