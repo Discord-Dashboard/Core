@@ -19,6 +19,12 @@
 npm i discord-dashboard
 ```
 
+# Get help
+
+Join our Discord Support Server
+
+<a href="https://discord.gg/Nkc8MWxHRD"> <img src="https://discordapp.com/api/guilds/803034737261936670/widget.png" alt="Discord server"/></a>
+
 # Documentation
 
 Full and continuously updated project documentation can be found at the URL: https://assistants.ga/dbd-docs/
@@ -38,10 +44,9 @@ The project is covered by a **Shareware (CC BY-NC-SA 4.0) licence**. This means 
 
 ### What types of shareware license does the discord-dashboard project fall under?
 
-- **License type A**: Allows you to use the project for free, but only for non-profit purposes. Allows almost all the options the Dashboard carries, but is slightly limited in some things.
-- **License type B**: A licence which allows you to use the project for free, but only for non-profit purposes. Allows almost all the options the Dashboard carries, but is slightly limited in some things.
-- **License type C**: It allows you to earn from the project for various purposes. You can place ads on the Dashboard. It is designed for individuals and companies. With this licence you also receive faster support from the Assistants Center than for others.
-- **License type D**: A licence that allows you to generate limited additional type C licences during your billing period. It is mainly intended for individuals and companies earning from the Dashboard and creating them on commission using our module. With this licence you also receive 24/7 Support from the Assistants Center.
+- **OpenSource License**: Free. Personal usage only. Non-profit.
+- **Personal License**: Profit allowed. Personal usage only. Priority support from developers. Limited to major version: v2.*
+- **Production License**: Allowed for profit purposes. Distribution Allowed (you can share the license with your close friends). Priority support from developers. Limited to major version: v2.*
 
 #### You always have the latest news and the option to purchase license at the URL: https://licenses.assistants.ga/
 
