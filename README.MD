@@ -52,4 +52,4 @@ The project is covered by a **Shareware (CC BY-NC-SA 4.0) licence**. This means 
 
 <hr>
 
-© 2021 Assistants Center, All rights reserved
+© 2020-2022 Assistants Center, All rights reserved
