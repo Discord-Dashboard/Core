@@ -1,6 +1,6 @@
 {
   "name": "discord-dashboard",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "The best way to create a Web Dashboard for your Discord Bot! No need to edit files or write the server from scratch!",
   "main": "index.js",
   "directories": {
@@ -9,6 +9,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "colors": "*",
+    "discord-dashboard": "^2.0.31",
     "discord.js": "*",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
@@ -16,22 +17,23 @@
     "express-session": "^1.17.2",
     "form-data": "^4.0.0",
     "https": "^1.0.0",
+    "javascript-obfuscator": "^3.0.0",
     "node-fetch": "^2.6.1",
     "readline-sync": "^1.4.10",
-    "session-file-store": "^1.5.0",
     "socket.io": "^4.4.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "child_process": "^1.0.2",
     "dbd-capriham-theme": "^1.2.7",
-    "dbd-dark-dashboard": "^1.2.7",
-    "child_process": "^1.0.2"
+    "dbd-dark-dashboard": "^1.5.22",
+    "session-file-store": "^1.5.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "breftejk",
-  "license": "MIT",
+  "license": "CC BY-NC-SA 4.0",
   "homepage": "https://assistants.ga/dbd-docs/",
   "keywords": [
     "discord",

@@ -27,11 +27,29 @@ module.exports = (app, config, themeConfig) => {
         await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
         if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
         let actual = {};
+        let rolesForOptionCheck = {};
         for (const s of config.settings) {
             for (const c of s.categoryOptionsList) {
                 if (c.optionType == 'spacer') {} else {
                     if (!actual[s.categoryId]) {
                         actual[s.categoryId] = {};
+                    }
+                    if (!rolesForOptionCheck[s.categoryId]) {
+                        rolesForOptionCheck[s.categoryId] = {};
+                    }
+                    let reQ = [];
+                    if(c.rolesRequired){
+                        reQ = await c.rolesRequired({guild:{id:req.params.id}})
+                    }
+                    let hasRequiredRoles = true;
+                    if(reQ[0]){
+                        for (let role of reQ){
+                            const guildObject = await config.bot.guilds.cache.get(req.params.id);
+                            const memberOnGuild = await guildObject.members.cache.get(req.session.user.id);
+                            const userHasRole = await memberOnGuild.roles.cache.has(role);
+                            hasRequiredRoles = Boolean(userHasRole);
+                            rolesForOptionCheck[s.categoryId][c.optionId] = hasRequiredRoles;
+                        }
                     }
                     if (!actual[s.categoryId][c.optionId]) {
                         actual[s.categoryId][c.optionId] = await c.getActualSet({
@@ -61,6 +79,7 @@ module.exports = (app, config, themeConfig) => {
             errors: errors,
             settings: config.settings,
             actual: actual,
+            rolesForOptionCheck,
             bot: config.bot,
             req: req,
             guildid: req.params.id,
@@ -94,62 +113,44 @@ module.exports = (app, config, themeConfig) => {
         let errors = [];
         let successes = [];
 
-        for (let option of category.categoryOptionsList) {
-            if (option.optionType == "spacer") {
+        let rQFunc = null;
 
-            } else if (option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect') {
-                if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
-                    setNewRes = await option.setNew({
-                        guild: {
-                            id: req.params.guildId
-                        },
-                        user: {
-                            id: req.session.user.id
-                        },
-                        newData: []
-                    });
-                    setNewRes ? null : setNewRes = {};
-                    if (setNewRes.error) {
-                        errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                    } else {
-                        successes.push(option.optionName);
-                    }
-                } else if (typeof(req.body[option.optionId]) != 'object') {
-                    setNewRes = await option.setNew({
-                        guild: {
-                            id: req.params.guildId
-                        },
-                        user: {
-                            id: req.session.user.id
-                        },
-                        newData: [req.body[option.optionId]]
-                    });
-                    setNewRes ? null : setNewRes = {};
-                    if (setNewRes.error) {
-                        errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                    } else {
-                        successes.push(option.optionName);
-                    }
-                } else {
-                    setNewRes = await option.setNew({
-                        guild: {
-                            id: req.params.guildId
-                        },
-                        user: {
-                            id: req.session.user.id
-                        },
-                        newData: req.body[option.optionId]
-                    });
-                    setNewRes ? null : setNewRes = {};
-                    if (setNewRes.error) {
-                        errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                    } else {
-                        successes.push(option.optionName);
+        for (let option of category.categoryOptionsList) {
+            if(!option.usersAllowed)option.usersAllowed = [];
+            if(option.rolesRequired){
+                rQFunc = await option.rolesRequired({guild: {id:req.params.guildId}});
+            }else{
+                rQFunc = [];
+            }
+            let hasRequiredRoles = true;
+            if(rQFunc[0]){
+                for (let role of rQFunc){
+                    const guildObject = await config.bot.guilds.cache.get(req.params.guildId);
+                    const memberOnGuild = await guildObject.members.cache.get(req.session.user.id);
+                    const userHasRole = await memberOnGuild.roles.cache.has(role);
+                    if(!userHasRole){
+                        hasRequiredRoles = false;
+                        setNewRes = {error: config.noRequiredRoleError || 'You don\'t have required roles to change this option!'};
+                        if (setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        } else {
+                            successes.push(option.optionName);
+                        }
                     }
                 }
-            } else if (option.optionType.type == "switch") {
-                if (req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
-                    if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+            }
+            if(option.usersAllowed[0] && !option.usersAllowed.includes(req.session.user.id) && hasRequiredRoles){
+                setNewRes = {error: config.noPermissionsError || 'You are not whitelisted for this option!'}
+                if (setNewRes.error) {
+                    errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                } else {
+                    successes.push(option.optionName);
+                }
+            }else{
+                if(!hasRequiredRoles){}else if (option.optionType == "spacer") {
+
+                } else if (option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect') {
+                    if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
                         setNewRes = await option.setNew({
                             guild: {
                                 id: req.params.guildId
@@ -157,7 +158,93 @@ module.exports = (app, config, themeConfig) => {
                             user: {
                                 id: req.session.user.id
                             },
-                            newData: false
+                            newData: []
+                        });
+                        setNewRes ? null : setNewRes = {};
+                        if (setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        } else {
+                            successes.push(option.optionName);
+                        }
+                    } else if (typeof(req.body[option.optionId]) != 'object') {
+                        setNewRes = await option.setNew({
+                            guild: {
+                                id: req.params.guildId
+                            },
+                            user: {
+                                id: req.session.user.id
+                            },
+                            newData: [req.body[option.optionId]]
+                        });
+                        setNewRes ? null : setNewRes = {};
+                        if (setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        } else {
+                            successes.push(option.optionName);
+                        }
+                    } else {
+                        setNewRes = await option.setNew({
+                            guild: {
+                                id: req.params.guildId
+                            },
+                            user: {
+                                id: req.session.user.id
+                            },
+                            newData: req.body[option.optionId]
+                        });
+                        setNewRes ? null : setNewRes = {};
+                        if (setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        } else {
+                            successes.push(option.optionName);
+                        }
+                    }
+                } else if (option.optionType.type == "switch") {
+                    if (req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                        if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId
+                                },
+                                user: {
+                                    id: req.session.user.id
+                                },
+                                newData: false
+                            }) || {};
+                            setNewRes ? null : setNewRes = {};
+                            if (setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            } else {
+                                successes.push(option.optionName);
+                            }
+                        } else {
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId
+                                },
+                                user: {
+                                    id: req.session.user.id
+                                },
+                                newData: true
+                            }) || {};
+                            setNewRes ? null : setNewRes = {};
+                            if (setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            } else {
+                                successes.push(option.optionName);
+                            }
+                        }
+                    }
+                } else {
+                    if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) {
+                        setNewRes = await option.setNew({
+                            guild: {
+                                id: req.params.guildId
+                            },
+                            user: {
+                                id: req.session.user.id
+                            },
+                            newData: null
                         }) || {};
                         setNewRes ? null : setNewRes = {};
                         if (setNewRes.error) {
@@ -173,7 +260,7 @@ module.exports = (app, config, themeConfig) => {
                             user: {
                                 id: req.session.user.id
                             },
-                            newData: true
+                            newData: req.body[option.optionId]
                         }) || {};
                         setNewRes ? null : setNewRes = {};
                         if (setNewRes.error) {
@@ -181,40 +268,6 @@ module.exports = (app, config, themeConfig) => {
                         } else {
                             successes.push(option.optionName);
                         }
-                    }
-                }
-            } else {
-                if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) {
-                    setNewRes = await option.setNew({
-                        guild: {
-                            id: req.params.guildId
-                        },
-                        user: {
-                            id: req.session.user.id
-                        },
-                        newData: null
-                    }) || {};
-                    setNewRes ? null : setNewRes = {};
-                    if (setNewRes.error) {
-                        errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                    } else {
-                        successes.push(option.optionName);
-                    }
-                } else {
-                    setNewRes = await option.setNew({
-                        guild: {
-                            id: req.params.guildId
-                        },
-                        user: {
-                            id: req.session.user.id
-                        },
-                        newData: req.body[option.optionId]
-                    }) || {};
-                    setNewRes ? null : setNewRes = {};
-                    if (setNewRes.error) {
-                        errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                    } else {
-                        successes.push(option.optionName);
                     }
                 }
             }
