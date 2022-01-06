@@ -87,7 +87,6 @@ module.exports = {
                 let list = {
                     '-': ''
                 };
-                if(client.guilds.cache.size <= 1) client.guilds.resolve(guildid).then(g => g.channels.fetch())
                 client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
                     if (!channelTypes.includes(channel.type)) return;
                     listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
@@ -124,7 +123,6 @@ module.exports = {
                 let list = {
                     '-': ''
                 };
-                if(client.guilds.cache.size <= 1) client.guilds.resolve(guildid).then(g => g.channels.fetch())
                 client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
                     if (!channelTypes.includes(channel.type)) return;
                     listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
@@ -162,7 +160,6 @@ module.exports = {
                 let list = {
                     '-': ''
                 };
-                if(client.guilds.cache.size <= 1) client.guilds.resolve(guildid).then(g => g.roles.fetch());
                 client.guilds.cache.get(guildid).roles.cache.forEach(role => {
                     if (role.managed) return;
                     listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
@@ -200,7 +197,6 @@ module.exports = {
                 let list = {
                     '-': ''
                 };
-                if(client.guilds.cache.size <= 1) client.guilds.resolve(guildid).then(g => g.roles.fetch());
                 client.guilds.cache.get(guildid).roles.cache.forEach(role => {
                     if (role.managed) return;
 

@@ -23,9 +23,31 @@ module.exports = (app, config, themeConfig) => {
             customThemeOptions = await themeConfig.customThemeOptions.getGuild({req: req, res: res, config: config,guildId: req.params.id});
         }
         let bot = config.bot;
+        if(!bot.guilds.cache.get(req.params.id)){
+            try{
+                await bot.guilds.fetch(req.params.id);
+            }catch(err){}
+        };
         if (!bot.guilds.cache.get(req.params.id)) return res.redirect('/manage?error=noPermsToManageGuild');
-        await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
+        if(!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id)) {
+            try{
+                await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
+            }catch(err){}
+        }
         if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
+
+        if(bot.guilds.cache.get(req.params.id).channels.cache.size < 1){
+            try{
+                await bot.guilds.cache.get(req.params.id).channels.fetch();
+            }catch(err){}
+        }
+
+        if(bot.guilds.cache.get(req.params.id).roles.cache.size < 2){
+            try{
+                await bot.guilds.cache.get(req.params.id).roles.fetch();
+            }catch(err){}
+        }
+
         let actual = {};
         let rolesForOptionCheck = {};
         for (const s of config.settings) {
