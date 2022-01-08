@@ -49,29 +49,22 @@ module.exports = (app, config, themeConfig) => {
         }
 
         let actual = {};
-        let rolesForOptionCheck = {};
+
+        let canUseList = {};
         for (const s of config.settings) {
+            if(!canUseList[s.categoryId])canUseList[s.categoryId] = {};
             for (const c of s.categoryOptionsList) {
+                if(c.allowedCheck){
+                    const canUse = await c.allowedCheck({guild:{id:req.params.id}, user: {id: req.session.user.id}});
+                    if(typeof(canUse) != 'object')throw new TypeError(`${s.categoryId} category option with id ${c.optionId} allowedCheck function need to return {allowed: Boolean, errorMessage: String | null}`);
+                    canUseList[s.categoryId][c.optionId] = canUse;
+                }else{
+                    canUseList[s.categoryId][c.optionId] = {allowed: true, errorMessage: null};
+                }
+
                 if (c.optionType == 'spacer') {} else {
                     if (!actual[s.categoryId]) {
                         actual[s.categoryId] = {};
-                    }
-                    if (!rolesForOptionCheck[s.categoryId]) {
-                        rolesForOptionCheck[s.categoryId] = {};
-                    }
-                    let reQ = [];
-                    if(c.rolesRequired){
-                        reQ = await c.rolesRequired({guild:{id:req.params.id}})
-                    }
-                    let hasRequiredRoles = true;
-                    if(reQ[0]){
-                        for (let role of reQ){
-                            const guildObject = await config.bot.guilds.cache.get(req.params.id);
-                            const memberOnGuild = await guildObject.members.cache.get(req.session.user.id);
-                            const userHasRole = await memberOnGuild.roles.cache.has(role);
-                            hasRequiredRoles = Boolean(userHasRole);
-                            rolesForOptionCheck[s.categoryId][c.optionId] = hasRequiredRoles;
-                        }
                     }
                     if (!actual[s.categoryId][c.optionId]) {
                         actual[s.categoryId][c.optionId] = await c.getActualSet({
@@ -101,7 +94,7 @@ module.exports = (app, config, themeConfig) => {
             errors: errors,
             settings: config.settings,
             actual: actual,
-            rolesForOptionCheck,
+            canUseList,
             bot: config.bot,
             req: req,
             guildid: req.params.id,
@@ -135,41 +128,20 @@ module.exports = (app, config, themeConfig) => {
         let errors = [];
         let successes = [];
 
-        let rQFunc = null;
-
         for (let option of category.categoryOptionsList) {
-            if(!option.usersAllowed)option.usersAllowed = [];
-            if(option.rolesRequired){
-                rQFunc = await option.rolesRequired({guild: {id:req.params.guildId}});
+            let canUse = {};
+
+            if(option.allowedCheck){
+                canUse = await option.allowedCheck({guild:{id:req.params.guildId}, user: {id: req.session.user.id}});
             }else{
-                rQFunc = [];
+                canUse = {allowed: true, errorMessage: null};
             }
-            let hasRequiredRoles = true;
-            if(rQFunc[0]){
-                for (let role of rQFunc){
-                    const guildObject = await config.bot.guilds.cache.get(req.params.guildId);
-                    const memberOnGuild = await guildObject.members.cache.get(req.session.user.id);
-                    const userHasRole = await memberOnGuild.roles.cache.has(role);
-                    if(!userHasRole){
-                        hasRequiredRoles = false;
-                        setNewRes = {error: config.noRequiredRoleError || 'You don\'t have required roles to change this option!'};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
-                        }
-                    }
-                }
-            }
-            if(option.usersAllowed[0] && !option.usersAllowed.includes(req.session.user.id) && hasRequiredRoles){
-                setNewRes = {error: config.noPermissionsError || 'You are not whitelisted for this option!'}
-                if (setNewRes.error) {
-                    errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                } else {
-                    successes.push(option.optionName);
-                }
+
+            if(canUse.allowed == false){
+                setNewRes = {error: canUse.errorMessage}
+                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
             }else{
-                if(!hasRequiredRoles){}else if (option.optionType == "spacer") {
+                if (option.optionType == "spacer") {
 
                 } else if (option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect') {
                     if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {

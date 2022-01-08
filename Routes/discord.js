@@ -60,8 +60,18 @@ router.get('/callback', (req, res) => {
                         },
                     })
                         .then(res3 => res3.json())
-                        .then(userGuilds => {
+                        .then(async (userGuilds) => {
                             req.session.guilds = userGuilds;
+
+                            for(let g of userGuilds){
+                                try{
+                                    if(!req.bot.guilds.cache.get(g.id)){
+                                        if((g.permissions & 0x00000020) == 0x00000020){
+                                            await req.bot.guilds.fetch(g.id);
+                                        }
+                                    }
+                                }catch(err){}
+                            }
 
                             if (req.guildAfterAuthorization.use == true) {
                                 try {

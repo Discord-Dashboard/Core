@@ -1,4 +1,8 @@
 module.exports = (app, config, themeConfig, modules) => {
+    app.use((req,res,next)=>{
+        req.bot = config.bot;
+        next();
+    });
     app.use('/discord', require('./Routes/discord'));
 
     if (config.useUnderMaintenance) {
