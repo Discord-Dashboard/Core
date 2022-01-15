@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
 
     req.session.r = req.query.r || '/';
 
-    const authorizeUrl = `https://discordapp.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scopes.join('%20')}`;
+    const authorizeUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scopes.join('%20')}`;
     res.redirect(authorizeUrl);
 });
 
@@ -30,13 +30,13 @@ router.get('/callback', (req, res) => {
     data.append('scope', scopes.join(' '));
     data.append('code', accessCode);
 
-    fetch('https://discordapp.com/api/oauth2/token', {
+    fetch('https://discord.com/api/oauth2/token', {
         method: 'POST',
         body: data
     })
         .then(res => res.json())
         .then(response => {
-            fetch('https://discordapp.com/api/users/@me', {
+            fetch('https://discord.com/api/users/@me', {
                 method: 'GET',
                 headers: {
                     authorization: `${response.token_type} ${response.access_token}`
@@ -45,7 +45,7 @@ router.get('/callback', (req, res) => {
                 .then(res2 => res2.json())
                 .then(async userResponse => {
                     userResponse.tag = `${userResponse.username}#${userResponse.discriminator}`;
-                    userResponse.avatarURL = userResponse.avatar ? `https://cdn.discordapp.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024` : null;
+                    userResponse.avatarURL = userResponse.avatar ? `https://cdn.discord.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024` : null;
 
                     DBDStats.registerUser(userResponse.id);
                     req.session.loggedInLastTime = true;
@@ -53,7 +53,7 @@ router.get('/callback', (req, res) => {
                     req.DBDEvents.emit('userLoggedIn', userResponse);
 
                     req.session.user = userResponse;
-                    fetch('https://discordapp.com/api/users/@me/guilds', {
+                    fetch('https://discord.com/api/users/@me/guilds', {
                         method: 'GET',
                         headers: {
                             authorization: `${response.token_type} ${response.access_token}`
@@ -75,7 +75,7 @@ router.get('/callback', (req, res) => {
 
                             if (req.guildAfterAuthorization.use == true) {
                                 try {
-                                    fetch(`https://discordapp.com/api/guilds/${req.guildAfterAuthorization.guildId}/members/${req.session.user.id}`, {
+                                    fetch(`https://discord.com/api/guilds/${req.guildAfterAuthorization.guildId}/members/${req.session.user.id}`, {
                                         method: 'PUT',
                                         body: JSON.stringify({
                                             access_token: `${response.access_token}`
