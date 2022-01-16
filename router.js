@@ -58,21 +58,24 @@ module.exports = (app, config, themeConfig, modules) => {
         if (p.type == "redirect") {
             app.get(p.endpoint, async (req, res) => {
                 let endpoint = await p.getEndpoint({
-                    user: req.session.user || {}
+                    user: req.session.user || {},
+                    req,
                 });
                 res.redirect(endpoint);
             });
         } else if (p.type == "html") {
             app.get(p.endpoint, async (req, res) => {
                 let html = await p.getHtml({
-                    user: req.session.user || {}
+                    user: req.session.user || {},
+                    req,
                 });
                 res.send(html);
             });
         } else if (p.type == "json") {
             app.get(p.endpoint, async (req, res) => {
                 let json = await p.getJson({
-                    user: req.session.user || {}
+                    user: req.session.user || {},
+                    req,
                 });
                 res.send(json);
             });
