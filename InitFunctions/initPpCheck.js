@@ -2,19 +2,15 @@ const DBDStats = require("../ExternalStatistics");
 const fs = require("fs");
 const {v4: uuidv4} = require("uuid");
 const readline = require("readline-sync");
+
+const DiscordDashboardPP = require('discord-dashboard-pp-system');
+
 module.exports = (config, themeConfig, DBDStats, secretInit, modules, aaThis) => {
+    const PPManager = new DiscordDashboardPP.PPManager(config, themeConfig);
     DBDStats.registerProject(config.client.id);
-    const fs = require('fs');
-
-    if (fs.existsSync(require('path').join(__dirname, '/../.devChannel'))) return aaThis.secretInit(aaThis.modules);
-    const projectStats = fs.readFileSync(require('path').join(__dirname, '/../project.json'));
-    const projectData = JSON.parse(projectStats);
-
-    if(!projectData.id)projectData.id = uuidv4();
-    projectData.name = `${config.websiteTitle || themeConfig.websiteName}`;
-    fs.writeFileSync(require('path').join(__dirname, '/../project.json'), JSON.stringify(projectData, null, 3))
+    PPManager.SaveProjectData();
     if(config.acceptPrivacyPolicy) return aaThis.secretInit(aaThis.modules);
-    const ppAccepted = fs.readFileSync(require('path').join(__dirname, '/../ppAccepted.txt'), 'utf8');
+    const ppAccepted = PPManager.PP_GetAccepted();
     if (ppAccepted == "accepted") return aaThis.secretInit(aaThis.modules);
     let oThis = {secretInit, modules};
     const readline = require("readline-sync");
@@ -43,7 +39,7 @@ ${'[Discord-dashboard v'.red}${`${require('../package.json').version}]:`.red} If
 
             if (rlResponse == "y" || rlResponse == "yes") {
                 console.log(`${'[Discord-dashboard v'.green}${`${require('../package.json').version}]:`.green} Thank you. Now we will run the module for you. You will not need to re-approve our privacy policy again.`)
-                fs.writeFileSync(require('path').join(__dirname, '/../ppAccepted.txt'), 'accepted');
+                PPManager.PP_Accept();
                 setTimeout(function() {
                     aaThis.secretInit(aaThis.modules);
                 }, 1000);
