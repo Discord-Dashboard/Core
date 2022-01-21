@@ -3,6 +3,8 @@ declare module 'discord-dashboard' {
     const useLicense: (licenseId: string) => Promise<string>;
     const UpdatedClass: () => Dashboard;
 
+    let Dashboard: any;
+
     const initDashboard: (options: {fileName: string, domain: string, port: number, token: string, clientSecret: string, clientId: string}) => any;
 
     const formTypes: any;

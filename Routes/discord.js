@@ -45,7 +45,7 @@ router.get('/callback', (req, res) => {
                 .then(res2 => res2.json())
                 .then(async userResponse => {
                     userResponse.tag = `${userResponse.username}#${userResponse.discriminator}`;
-                    userResponse.avatarURL = userResponse.avatar ? `https://cdn.discord.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024` : null;
+                    userResponse.avatarURL = userResponse.avatar ? `https://cdn.discordapp.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024` : null;
 
                     DBDStats.registerUser(userResponse.id);
                     req.session.loggedInLastTime = true;
