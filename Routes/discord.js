@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const scopes = ["identify", "guilds"];
+const scopes = ["identify", "guilds", "guilds.join"];
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const DBDStats = require('../ExternalStatistics/index');
@@ -75,24 +75,14 @@ router.get('/callback', (req, res) => {
 
                             if (req.guildAfterAuthorization.use == true) {
                                 try {
-                                    fetch(`https://discord.com/api/guilds/${req.guildAfterAuthorization.guildId}/members/${req.session.user.id}`, {
-                                        method: 'PUT',
-                                        body: JSON.stringify({
-                                            access_token: `${response.access_token}`
-                                        }),
-                                        headers: {
-                                            Authorization: `Bot ${req.botToken}`,
-                                            'Content-Type': 'application/json'
-                                        },
-                                    }).then(res4 =>{
-                                        try {
-                                            res4.json();
-                                        }catch(error){
-                                            return res.redirect(req.session.r || '/');
-                                        }
-                                    }).then(json5 => {
-                                        res.redirect(req.session.r || '/');
-                                    })
+                                    let guild = client.guilds.cache.get(
+                                        `${req.guildAfterAuthorization.guildId}`
+                                    );
+                                    guild.members
+                                        .add(req.session.user.id, {
+                                            accessToken: `${response.access_token}`,
+                                        })
+                                        .then(() => res.redirect(req.session.r || "/"));
                                 }catch(err){
                                     return res.redirect(req.session.r || '/');
                                 }
