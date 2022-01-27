@@ -1,5 +1,5 @@
 module.exports = {
-    select: (list, disabled) => {
+    select: (list, disabled, themeOptions={}) => {
         if (!list) throw new Error(err("List in the 'select' form type cannot be empty."));
         if (typeof(list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
         let keys = Object.keys(list);
@@ -10,10 +10,11 @@ module.exports = {
                 keys,
                 values
             },
-            disabled: disabled || false
+            disabled: disabled || false,
+            themeOptions
         };
     },
-    multiSelect: (list, disabled, required) => {
+    multiSelect: (list, disabled, required, themeOptions={}) => {
         if (!list) throw new Error(err("List in the 'select' form type cannot be empty."));
         if (typeof(list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
         let keys = Object.keys(list);
@@ -25,10 +26,11 @@ module.exports = {
                 values
             },
             disabled: disabled || false,
-            required: required || false
+            required: required || false,
+            themeOptions
         };
     },
-    input: (placeholder, min, max, disabled, required, useEmojiPicker=true) => {
+    input: (placeholder, min, max, disabled, required, themeOptions={}) => {
         if (min) {
             if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
         }
@@ -45,10 +47,10 @@ module.exports = {
             max: max || null,
             disabled: disabled || false,
             required: required || false,
-            useEmojiPicker
+            themeOptions
         };
     },
-    textarea: (placeholder, min, max, disabled, required) => {
+    textarea: (placeholder, min, max, disabled, required, themeOptions={}) => {
         if (min) {
             if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
         }
@@ -64,22 +66,25 @@ module.exports = {
             min: min || null,
             max: max || null,
             disabled: disabled || false,
-            required: required || false
+            required: required || false,
+            themeOptions
         };
     },
-    switch: (disabled) => {
+    switch: (disabled, themeOptions={}) => {
         return {
             type: "switch",
-            disabled: disabled
+            disabled: disabled,
+            themeOptions
         };
     },
-    checkbox: (disabled) => {
+    checkbox: (disabled, themeOptions={}) => {
         return {
             type: "checkbox",
-            disabled: disabled
+            disabled: disabled,
+            themeOptions
         };
     },
-    channelsSelect: (disabled, channelTypes = ['GUILD_TEXT']) => {
+    channelsSelect: (disabled, channelTypes = ['GUILD_TEXT'], themeOptions={}) => {
         return {
             type: "channelsSelect",
             function: (client, guildid) => {
@@ -112,10 +117,11 @@ module.exports = {
                     keys: Object.keys(list)
                 };
             },
-            disabled
+            disabled,
+            themeOptions
         };
     },
-    channelsMultiSelect: (disabled, required, channelTypes = ['GUILD_TEXT']) => {
+    channelsMultiSelect: (disabled, required, channelTypes = ['GUILD_TEXT'], themeOptions={}) => {
         return {
             type: "channelsMultiSelect",
             function: (client, guildid) => {
@@ -149,10 +155,11 @@ module.exports = {
                 };
             },
             disabled,
-            required
+            required,
+            themeOptions
         };
     },
-    rolesMultiSelect: (disabled, required) => {
+    rolesMultiSelect: (disabled, required, themeOptions={}) => {
         return {
             type: "rolesMultiSelect",
             function: (client, guildid) => {
@@ -186,10 +193,11 @@ module.exports = {
                 };
             },
             disabled,
-            required
+            required,
+            themeOptions
         };
     },
-    rolesSelect: (disabled) => {
+    rolesSelect: (disabled, themeOptions={}) => {
         return {
             type: "rolesSelect",
             function: (client, guildid) => {
@@ -224,14 +232,24 @@ module.exports = {
                     keys: Object.keys(list)
                 };
             },
-            disabled
+            disabled,
+            themeOptions
         };
     },
-    colorSelect: (defaultState, disabled) => {
+    colorSelect: (defaultState, disabled, themeOptions={}) => {
         return {
             type: "colorSelect",
             data: defaultState,
-            disabled
+            disabled,
+            themeOptions
+        };
+    },
+    embedBuilder: (defaultSettings, disabled, themeOptions={}) => {
+        return {
+            type: "embedBuilder",
+            data: defaultSettings,
+            disabled,
+            themeOptions
         };
     }
 }

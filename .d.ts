@@ -7,8 +7,8 @@ declare module 'discord-dashboard' {
 
     const initDashboard: (options: {fileName: string, domain: string, port: number, token: string, clientSecret: string, clientId: string}) => any;
 
-    const formTypes: any;
-    const customPagesTypes: any;
+    const formTypes: formTypes;
+    const customPagesTypes: customPagesTypes;
 
     const version: string;
 }
@@ -66,7 +66,16 @@ interface option {
     optionId: string,
     optionName: string,
     optionDescription: string,
-    optionType: any,
+    optionType: {
+        type: string,
+        data?: string | null,
+        function?: any,
+        min?: number | null,
+        max?: number | null,
+        disabled?: boolean | null,
+        required?: boolean | null,
+        themeOptions?: object | null
+    },
     getActualSet: (options: optionOptions) => Promise<any>,
     setNew: (options: optionOptions) => Promise<any>,
     allowedCheck?: (options: allowedCheckOption) => Promise<any>
@@ -81,4 +90,123 @@ interface optionOptions {
 interface allowedCheckOption {
     guild: { id: string },
     user: { id: string }
+}
+
+interface formTypes {
+    select: (list: object, disabled?: boolean, themeOptions?: object) => {
+        type: string,
+        data: {
+            keys: object,
+            values: object
+        },
+        disabled: boolean,
+        themeOptions: object
+    };
+
+    multiSelect: (list: object, disabled?: boolean, required?: boolean, themeOptions?: object) => {
+        type: string,
+        data: {
+            keys: object,
+            values: object
+        },
+        disabled: boolean | null,
+        required: boolean | null,
+        themeOptions: object
+    };
+
+    input: (placeholder?: string, min?: number, max?: number, disabled?: boolean, required?: boolean, themeOptions?: object) => {
+        type: string,
+        data: string | null,
+        min: number | null,
+        max: number | null,
+        disabled: boolean | null,
+        required: boolean | null,
+        themeOptions: object | null
+    };
+
+    textarea: (placeholder?: string, min?: number, max?: number, disabled?: boolean, required?: boolean, themeOptions?: object) => {
+        type: string,
+        data: string | null,
+        min: number | null,
+        max: number | null,
+        disabled: boolean | null,
+        required: boolean | null,
+        themeOptions: object | null
+    };
+
+    switch: (disabled?: boolean, themeOptions?: object) => {
+        type: string,
+        disabled: boolean,
+        themeOptions: object
+    };
+
+    checkbox: (disabled?: boolean, themeOptions?: object) => {
+        type: string,
+        disabled: boolean,
+        themeOptions: object
+    };
+
+    channelsSelect: (disabled?: boolean, channelTypes?: string[], themeOptions?: object) => {
+        type: string,
+        function: (client: string, guildid: string) => any,
+        disabled: boolean,
+        themeOptions: object
+    };
+
+    channelsMultiSelect: (disabled?: boolean, required?: boolean, channelTypes?: string[], themeOptions?: object) => {
+        type: string,
+        function: (client: string, guildid: string) => any,
+        disabled: boolean,
+        required: boolean,
+        themeOptions: object
+    };
+
+    rolesSelect: (disabled?: boolean, themeOptions?: object) => {
+        type: string,
+        function: (client: string, guildid: string) => any,
+        disabled: boolean,
+        themeOptions: object
+    };
+
+    rolesMultiSelect: (disabled?: boolean, required?: boolean, themeOptions?: object) => {
+        type: string,
+        function: (client: string, guildid: string) => any,
+        disabled: boolean,
+        required: boolean,
+        themeOptions: object
+    };
+
+    colorSelect: (defaultState: string, disabled?: boolean, themeOptions?: object) => {
+        type: string,
+        data: string,
+        disabled: boolean,
+        themeOptions: object
+    };
+
+    embedBuilder: (defaultSettings: object, disabled?: boolean, themeOptions?: object) => {
+        type: string,
+        data: object,
+        disabled:boolean,
+        themeOptions: object
+    }
+}
+
+interface customPagesTypes {
+    redirectToUrl: (endpoint: string, getDataFunction: any) => {
+        type: string,
+        endpoint: string,
+        getEndpoint: any
+    };
+
+    renderHtml: (endpoint: string, getDataFunction: any) => {
+        type: string,
+        endpoint: string,
+        getHtml: any
+    };
+
+    sendJson: (endpoint: string, getDataFunction: any) => {
+        type: string,
+        endpoint: string,
+        getJson: any
+    };
 }
