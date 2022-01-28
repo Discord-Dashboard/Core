@@ -273,9 +273,9 @@ module.exports = (app, config, themeConfig) => {
                                 user: {
                                     id: req.session.user.id
                                 },
-                                newData: option.optionType.type
+                                newData: option.optionType.data
                             }) || {};
-                            setNewRes = {error: 'JSON parse for embed builder went wrong, your settings have been reseted.'}
+                            setNewRes = {error: 'JSON parse for embed builder went wrong, your settings have been reset.'}
                             if (setNewRes.error) {
                                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
                             } else {
