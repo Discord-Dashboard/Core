@@ -63,9 +63,11 @@ interface category {
 }
 
 interface option {
-    optionId: string,
-    optionName: string,
-    optionDescription: string,
+    optionId?: string,
+    optionName?: string,
+    optionDescription?: string,
+    title?: string,
+    description?: string,
     optionType: {
         type: string,
         data?: string | null,
@@ -75,9 +77,9 @@ interface option {
         disabled?: boolean | null,
         required?: boolean | null,
         themeOptions?: object | null
-    },
-    getActualSet: (options: optionOptions) => Promise<any>,
-    setNew: (options: optionOptions) => Promise<any>,
+    } | string,
+    getActualSet?: (options: optionOptions) => Promise<any>,
+    setNew?: (options: optionOptions) => Promise<any>,
     allowedCheck?: (options: allowedCheckOption) => Promise<any>
 }
 
@@ -183,12 +185,44 @@ interface formTypes {
         themeOptions: object
     };
 
-    embedBuilder: (defaultSettings: object, disabled?: boolean, themeOptions?: object) => {
+    embedBuilder: (defaultSettings: object, themeOptions?: object) => {
         type: string,
         data: object,
-        disabled:boolean,
         themeOptions: object
     }
+}
+
+interface EmbedBuilder {
+    content?: string,
+    embed: {
+        title?: string,
+        description: string,
+        color?: string | number,
+        timestamp?: any,
+        url?: string,
+        author?: {
+            name?: string,
+            url?: string,
+            icon_url?: string
+        },
+        thumbnail?: {
+            url?: string
+        },
+        image?: {
+            url?: string
+        },
+        footer?: {
+            text?: string,
+            icon_url?: string
+        },
+        fields?: [ EmbedBuilderField ],
+    }
+}
+
+interface EmbedBuilderField {
+    name?: string,
+    value?: string,
+    inline?: boolean
 }
 
 interface customPagesTypes {

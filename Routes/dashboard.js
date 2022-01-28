@@ -99,7 +99,8 @@ module.exports = (app, config, themeConfig) => {
             req: req,
             guildid: req.params.id,
             themeConfig: req.themeConfig,
-            customThemeOptions: customThemeOptions || {}
+            customThemeOptions: customThemeOptions || {},
+            config
         });
     });
 
@@ -222,6 +223,59 @@ module.exports = (app, config, themeConfig) => {
                                 newData: true
                             }) || {};
                             setNewRes ? null : setNewRes = {};
+                            if (setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            } else {
+                                successes.push(option.optionName);
+                            }
+                        }
+                    }
+                } else if (option.optionType.type == "embedBuilder") {
+                    if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                        setNewRes = await option.setNew({
+                            guild: {
+                                id: req.params.guildId
+                            },
+                            user: {
+                                id: req.session.user.id
+                            },
+                            newData: option.optionType.data
+                        }) || {};
+                        setNewRes ? null : setNewRes = {};
+                        if (setNewRes.error) {
+                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        } else {
+                            successes.push(option.optionName);
+                        }
+                    }else{
+                        try{
+                            const parsedResponse = JSON.parse(req.body[option.optionId]);
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId
+                                },
+                                user: {
+                                    id: req.session.user.id
+                                },
+                                newData: parsedResponse
+                            }) || {};
+                            setNewRes ? null : setNewRes = {};
+                            if (setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            } else {
+                                successes.push(option.optionName);
+                            }
+                        }catch(err){
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId
+                                },
+                                user: {
+                                    id: req.session.user.id
+                                },
+                                newData: option.optionType.type
+                            }) || {};
+                            setNewRes = {error: 'JSON parse for embed builder went wrong, your settings have been reseted.'}
                             if (setNewRes.error) {
                                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
                             } else {
