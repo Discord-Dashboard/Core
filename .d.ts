@@ -54,6 +54,8 @@ interface Dashboard {
                 deaf?: boolean,
             }
         },
+        reportError? : () => any,
+        assistantsSecureStorageKey?: string,
     }): any;
     DBDEvents: () => any;
     init: () => Promise<any>;
