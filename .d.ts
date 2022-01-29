@@ -54,7 +54,7 @@ interface Dashboard {
                 deaf?: boolean,
             }
         },
-        reportError? : () => any,
+        reportError? : (where: string, what: any) => any,
         assistantsSecureStorageKey?: string,
     }): any;
     DBDEvents: () => any;
