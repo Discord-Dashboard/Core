@@ -46,7 +46,13 @@ interface Dashboard {
         },
         guildAfterAuthorization?: {
             use: boolean,
-            guildId: string
+            guildId: string,
+            options?: {
+                nickname?: string,
+                roles?: [string],
+                mute?: boolean,
+                deaf?: boolean,
+            }
         },
     }): any;
     DBDEvents: () => any;
