@@ -79,17 +79,19 @@ module.exports = (app, config, themeConfig) => {
             }
         }
 
-        let errors = null;
-        let success = null;
+        let errors;
+        let success;
 
-        if (req.query.error) {
-            if (!success) success = [];
-            errors = req.query.error.split('%and%');
+        if (req.session.errors) {
+            errors = req.session.errors.split('%and%');
         }
 
-        if (req.query.success) {
-            success = req.query.success.split('%and%');
+        if (req.session.success) {
+            success = req.session.success.split('%and%');
         }
+
+        req.session.errors=null;
+        req.session.success=null;
 
         res.render('guild', {
             successes: success,
@@ -339,9 +341,13 @@ module.exports = (app, config, themeConfig) => {
 
         if (errors[0]) {
             if (!successes) successes = [];
-            return res.redirect('/guild/' + req.params.guildId + `?success=${successes.join('%and%')}&error=${errors.join('%and%')}`)
+            req.session.success = successes.join('%and%');
+            req.session.errors = errors.join('%and%');
+            return res.redirect('/guild/' + req.params.guildId)
         } else {
-            return res.redirect('/guild/' + req.params.guildId + '?success=true&error=false');
+            req.session.success = true;
+            req.session.errors = true;
+            return res.redirect('/guild/' + req.params.guildId );
         }
     });
 
