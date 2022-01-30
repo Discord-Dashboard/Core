@@ -27,7 +27,7 @@ module.exports = (app, config, themeConfig) => {
     });
 
 
-    router.get(`${config.supportServer.slash || '/support-server'}`, (req, res) => {
+    router.get(config.supportServer.slash || '/support-server', (req, res) => {
         let config = req.config;
             config.supportServer ? null : config.supportServer = {};
         if (!config.supportServer.inviteUrl) return res.send({
