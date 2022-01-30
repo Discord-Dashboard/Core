@@ -15,19 +15,21 @@ module.exports = (app, config, themeConfig) => {
         });
     });
 
-    if (!config.invite) config.invite = {};
 
     router.get('/invite', (req, res) => {
+        let config = req.config;
+            config.invite ? null : config.invite = {};
         const scopes = config.invite.scopes || ["bot"];
         if (req.query.g) {
-            return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}&guild_id=${req.query.g}`);
+            return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}&guild_id=${req.query.g}${config.invite.otherParams || ''}`);
         }
         res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}`);
     });
 
-    config.supportServer ? null : config.supportServer = {};
 
     router.get(`${config.supportServer.slash || '/support-server'}`, (req, res) => {
+        let config = req.config;
+            config.supportServer ? null : config.supportServer = {};
         if (!config.supportServer.inviteUrl) return res.send({
             error: true,
             message: "No inviteUrl defined (discord-dashboard config.supportServer)."
