@@ -34,7 +34,9 @@ module.exports = (app, config, themeConfig) => {
                 await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
             }catch(err){}
         }
-        if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
+        for(let PermissionRequired of req.requiredPermissions){
+            if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions[PermissionRequired[0]])) return res.redirect('/manage?error=noPermsToManageGuild');
+        }
 
         if(bot.guilds.cache.get(req.params.id).channels.cache.size < 1){
             try{
@@ -113,8 +115,9 @@ module.exports = (app, config, themeConfig) => {
         let bot = config.bot;
         if (!bot.guilds.cache.get(req.params.guildId)) return res.redirect('/manage?error=noPermsToManageGuild');
         await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
-        if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect('/manage?error=noPermsToManageGuild');
-
+        for(let PermissionRequired of req.requiredPermissions){
+            if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(Discord.Permissions[PermissionRequired[0]])) return res.redirect('/manage?error=noPermsToManageGuild');
+        }
         let cid = req.params.categoryId;
         let settings = config.settings;
 
