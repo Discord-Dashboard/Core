@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const router = require('express').Router();
 
-module.exports = (app, config, themeConfig) => {
+module.exports = (app, config, themeConfig, modules) => {
     router.get('/', async (req, res) => {
         let customThemeOptions;
         if(themeConfig.customThemeOptions) {
@@ -26,6 +26,7 @@ module.exports = (app, config, themeConfig) => {
         res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}`);
     });
 
+    if(!config.supportServer)config.supportServer = {};
 
     router.get(config.supportServer.slash || '/support-server', (req, res) => {
         let config = req.config;

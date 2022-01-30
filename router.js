@@ -48,8 +48,8 @@ module.exports = (app, config, themeConfig, modules) => {
         });
     }
 
-    app.use('/', require('./Routes/main')(app, config, themeConfig));
-    app.use('/', require('./Routes/dashboard')(app, config, themeConfig));
+    app.use('/', require('./Routes/main')(app, config, themeConfig, modules));
+    app.use('/', require('./Routes/dashboard')(app, config, themeConfig, modules));
 
     config.theme.init(app, config);
 
