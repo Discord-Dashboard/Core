@@ -194,7 +194,7 @@ router.get('/guilds/reload', async (req,res)=>{
         for (let g of OAuth2GuildsResponse) {
             try {
                 await req.bot.guilds.fetch(g.id);
-            } catch (err) {
+            } catch (err) { 
             }
         }
     }catch(err){
