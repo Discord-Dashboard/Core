@@ -197,11 +197,7 @@ router.get('/guilds/reload', async (req,res)=>{
     try {
         for (let g of OAuth2GuildsResponse) {
             try {
-                if (!req.bot.guilds.cache.get(g.id)) {
-                    if ((g.permissions & 0x00000020) == 0x00000020) {
-                        await req.bot.guilds.fetch(g.id);
-                    }
-                }
+                await req.bot.guilds.fetch(g.id);
             } catch (err) {
             }
         }
