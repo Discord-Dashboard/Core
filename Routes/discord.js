@@ -111,16 +111,12 @@ router.get('/callback', async (req, res) => {
     try {
         for (let g of OAuth2GuildsResponse) {
             try {
-                if (!req.bot.guilds.cache.get(g.id)) {
-                    if ((g.permissions & 0x00000020) == 0x00000020) {
-                        await req.bot.guilds.fetch(g.id);
-                    }
-                }
+                await req.bot.guilds.fetch(g.id);
             } catch (err) {
             }
         }
     }catch(err){
-        req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop (line 123)', err)
+        req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop (line 119)', err)
         return res.redirect('/?error='+err.message);
     }
 
@@ -147,7 +143,7 @@ router.get('/callback', async (req, res) => {
                 */
             });
         }catch(err){
-            req.config.reportError('Discord.js Route - guildAfterAuthorization (line 150)', err);
+            req.config.reportError('Discord.js Route - guildAfterAuthorization (line 146)', err);
             return res.redirect('/?error='+err.message);
         }
     }
@@ -185,7 +181,7 @@ router.get('/guilds/reload', async (req,res)=>{
     try {
         OAuth2GuildsResponse = await oauth.getUserGuilds(access_token);
     }catch(err){
-        req.config.reportError('Discord.js Route - OAuth2GuildsResponse for ReloadGuilds (line 183)', err);
+        req.config.reportError('Discord.js Route - OAuth2GuildsResponse for ReloadGuilds (line 184)', err);
         return res.send({error:true, message: "An error occured. Access_token is wrong or you're being rate limited.", login_again_text: true});
     }
     req.session.guilds = OAuth2GuildsResponse || [];
@@ -197,16 +193,12 @@ router.get('/guilds/reload', async (req,res)=>{
     try {
         for (let g of OAuth2GuildsResponse) {
             try {
-                if (!req.bot.guilds.cache.get(g.id)) {
-                    if ((g.permissions & 0x00000020) == 0x00000020) {
-                        await req.bot.guilds.fetch(g.id);
-                    }
-                }
+                await req.bot.guilds.fetch(g.id);
             } catch (err) {
             }
         }
     }catch(err){
-        req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 204)', err)
+        req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 201)', err)
         return res.send({error:true, message: "An error occured. Access_token is wrong or you're being rate limited.", login_again_text: true});
     }
 

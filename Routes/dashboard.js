@@ -83,11 +83,19 @@ module.exports = (app, config, themeConfig) => {
         let success;
 
         if (req.session.errors) {
-            errors = req.session.errors.split('%and%');
+            if(String(req.session.errors).includes('%is%')){
+                errors = req.session.errors.split('%and%');
+            }
         }
 
         if (req.session.success) {
-            success = req.session.success.split('%and%');
+            if(typeof(req.session.success) == 'boolean'){
+                success = true;
+            }else{
+                if(String(req.session.success).includes('%is%')){
+                    success = req.session.success.split('%and%');
+                }
+            }
         }
 
         req.session.errors=null;
@@ -346,7 +354,7 @@ module.exports = (app, config, themeConfig) => {
             return res.redirect('/guild/' + req.params.guildId)
         } else {
             req.session.success = true;
-            req.session.errors = true;
+            req.session.errors = false;
             return res.redirect('/guild/' + req.params.guildId );
         }
     });
