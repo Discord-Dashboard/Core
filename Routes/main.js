@@ -20,9 +20,12 @@ module.exports = (app, config, themeConfig, modules) => {
         let config = req.config;
             config.invite ? null : config.invite = {};
         const scopes = config.invite.scopes || ["bot"];
-        if (req.query.g) {
-            return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}&guild_id=${req.query.g}${config.invite.otherParams || ''}`);
-        }
+
+        if(req.query.redirect && !req.query.g) return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}&response_type=code&redirect_uri=${req.query.redirect}${config.invite.otherParams || ''}`);
+        if(req.query.redirect && req.query.g) return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}&response_type=code&redirect_uri=${req.query.redirect}&guild_id=${req.query.g}${config.invite.otherParams || ''}`);
+
+        if (req.query.g) return res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}&guild_id=${req.query.g}${config.invite.otherParams || ''}`);
+        
         res.redirect(`https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id}&scope=${scopes.join('%20')}&permissions=${config.invite.permissions || '0'}${config.invite.redirectUri ? `&response_type=code&redirect_uri=${config.invite.redirectUri}` : ''}${config.invite.otherParams || ''}`);
     });
 
