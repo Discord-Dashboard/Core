@@ -4,7 +4,7 @@ If you are getting `Error:FetchError: request to https://licenses.assistants.ga/
 We are working with Cloudflare to resolve this issue and will keep you updated.
 
 
-Thank you and best regards,<br>
+Thank you and sorry for issues,<br>
 Assistants Center
 
 <hr>
