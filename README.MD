@@ -1,3 +1,15 @@
+# ⚠️ Important Information ⚠️
+
+If you are getting `Error:FetchError: request to https://licenses.assistants.ga/validate failed, reason: getaddrinfo ENOTFOUND licenses.assistants.ga` error when using the project, change your DNS from Cloudflare to something else, such as Google (8.8.8.8, 8.8.4.4).<br>
+We are working with Cloudflare to resolve this issue and will keep you updated.
+
+
+Thank you and sorry for issues,<br>
+Assistants Center
+
+<hr>
+
+
 <img src="https://cdn.assistants.ga/kxlrosdn">
 
 <p align="center"><img src="https://nodei.co/npm/discord-dashboard.png"></p>
