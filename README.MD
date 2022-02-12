@@ -1,6 +1,6 @@
 # ⚠️ Important Information ⚠️
 
-If you are getting `Error:FetchError: request to https://licenses.assistants.ga/validate failed, reason: getaddrinfo ENOTFOUND licenses.assistants.ga` error when using the project, please update your module to `>2.2.23`.
+If you are getting `Error:FetchError: request to https://licenses.assistants.ga/validate failed, reason: getaddrinfo ENOTFOUND licenses.assistants.ga` error when using the project, please update your module to `>=2.2.23`.
 
 
 Thank you and sorry for issues,<br>
