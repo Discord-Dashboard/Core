@@ -1,16 +1,4 @@
-# ⚠️ Important Information ⚠️
-
-If you are getting `Error:FetchError: request to https://licenses.assistants.ga/validate failed, reason: getaddrinfo ENOTFOUND licenses.assistants.ga` error when using the project, change your DNS from Cloudflare to something else, such as Google (8.8.8.8, 8.8.4.4).<br>
-We are working with Cloudflare to resolve this issue and will keep you updated.
-
-
-Thank you and sorry for issues,<br>
-Assistants Center
-
-<hr>
-
-
-<img src="https://cdn.assistants.ga/kxlrosdn">
+<img src="https://cdn.assistantscenter.com/kxlrosdn">
 
 <p align="center"><img src="https://nodei.co/npm/discord-dashboard.png"></p>
 <p align="center"><img src="https://img.shields.io/npm/v/discord-dashboard"> <img src="https://img.shields.io/github/repo-size/breftejk/Discord.js-Web-Dashboard"> <img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg"> <img src="https://img.shields.io/github/contributors/breftejk/Discord.js-Web-Dashboard?color=green"> <img src="https://img.shields.io/badge/node.js-16.6.0+-blue"> <img src="https://img.shields.io/github/package-json/dependency-version/breftejk/Discord.js-Web-Dashboard/discord.js"> <img src="https://img.shields.io/github/package-json/dependency-version/breftejk/Discord.js-Web-Dashboard/express"> </p>
@@ -39,11 +27,11 @@ Join our Discord Support Server
 
 # Documentation
 
-Full and continuously updated project documentation can be found at the URL: https://assistants.ga/dbd-docs/
+Full and continuously updated project documentation can be found at the URL: https://assistantscenter.com/dbd-docs/
 
 # Privacy Policy and Terms of Use
 
-You can always find an updated privacy policy and terms of use for discord-dashboard under URL: https://assistants.ga/discord-dashboard-pp-tos/
+You can always find an updated privacy policy and terms of use for discord-dashboard under URL: https://assistantscenter.com/discord-dashboard-pp-tos/
 
 # Contact
 
@@ -60,7 +48,7 @@ The project is covered by a **Shareware (CC BY-NC-SA 4.0) licence**. This means 
 - **Personal License**: Profit allowed. Personal usage only. Priority support from developers. Limited to major version: v2.*
 - **Production License**: Allowed for profit purposes. Distribution Allowed (you can share the license with your close friends). Priority support from developers. Limited to major version: v2.*
 
-#### You always have the latest news and the option to purchase license at the URL: https://licenses.assistants.ga/
+#### You always have the latest news and the option to purchase license at the URL: https://licenses.assistantscenter.com/
 
 <hr>
 
