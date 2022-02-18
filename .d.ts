@@ -136,7 +136,8 @@ interface option {
     } | string,
     getActualSet?: (options: optionOptions) => Promise<any>,
     setNew?: (options: optionOptions) => Promise<any>,
-    allowedCheck?: (options: allowedCheckOption) => Promise<any>
+    allowedCheck?: (options: allowedCheckOption) => Promise<any>,
+    themeOptions?: Object,
 }
 
 interface optionOptions {
