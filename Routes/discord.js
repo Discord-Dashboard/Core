@@ -7,6 +7,8 @@ const DBDStats = require('../ExternalStatistics/index');
 const DiscordOauth2 = require("discord-oauth2");
 const oauth = new DiscordOauth2();
 
+let cacheData = {};
+
 router.get('/', (req, res) => {
     const clientId = req.client.id;
     const redirectUri = req.redirectUri;
@@ -17,13 +19,27 @@ router.get('/', (req, res) => {
     res.redirect(authorizeUrl);
 });
 
+router.get('/status', async (req,res)=>{
+    res.send(req.session?.discordAuthStatus);
+});
+
 router.get('/callback', async (req, res) => {
+    req.session.discordAuthStatus = {
+        loading: true,
+        success: null,
+        state: {
+            error: null,
+            data: null,
+        }
+    };
     const clientId = req.client.id;
     const clientSecret = req.client.secret;
     const redirectUri = req.redirectUri;
 
     const accessCode = req.query.code;
     if (!accessCode) return res.redirect('/?error=NoAccessCodeReturnedFromDiscord');
+
+    res.redirect('/loading');
 
     let OAuth2Response;
     let OAuth2UserResponse;
@@ -33,6 +49,16 @@ router.get('/callback', async (req, res) => {
     Get Discord OAuth2 API Response with Access Code gained
     */
     try {
+        req.session.discordAuthStatus = {
+            loading: true,
+            success: null,
+            state: {
+                error: null,
+                data: 'Requesting token...',
+            }
+        };
+        req.session.save(function(err) {
+        });
         OAuth2Response = await oauth.tokenRequest({
             clientId,
             clientSecret,
@@ -44,8 +70,16 @@ router.get('/callback', async (req, res) => {
             redirectUri,
         });
     }catch(err){
-        req.config.reportError('Discord.js Route - OAuth2Response (line 47)', err);
-        return res.redirect('/?error='+err.message);
+        req.config.reportError('Discord.js Route - OAuth2Response (line 73)', err);
+        req.session.discordAuthStatus = {
+            loading: false,
+            success: false,
+            state: {
+                error: err,
+                data: null,
+            }
+        };
+        return;
     }
 
 
@@ -54,10 +88,28 @@ router.get('/callback', async (req, res) => {
     */
 
     try {
+        req.session.discordAuthStatus = {
+            loading: true,
+            success: null,
+            state: {
+                error: null,
+                data: 'Getting User...',
+            }
+        };
+        req.session.save(function(err) {
+        });
         OAuth2UserResponse = await oauth.getUser(OAuth2Response.access_token);
     }catch(err){
-        req.config.reportError('Discord.js Route - OAuth2UserResponse (line 59)', err);
-        return res.redirect('/?error='+err.message);
+        req.config.reportError('Discord.js Route - OAuth2UserResponse (line 103)', err);
+        req.session.discordAuthStatus = {
+            loading: false,
+            success: false,
+            state: {
+                error: err,
+                data: null,
+            }
+        };
+        return;
     }
     OAuth2UserResponse.tag = `${OAuth2UserResponse.username}#${OAuth2UserResponse.discriminator}`;
     OAuth2UserResponse.avatarURL = OAuth2UserResponse.avatar ? `https://cdn.discordapp.com/avatars/${OAuth2UserResponse.id}/${OAuth2UserResponse.avatar}.png?size=1024` : null;
@@ -69,8 +121,16 @@ router.get('/callback', async (req, res) => {
     try{
         req.AssistantsSecureStorage.SaveUser(OAuth2UserResponse.id, OAuth2Response.access_token);
     }catch(err){
-        req.config.reportError('Discord.js Route - Assistants Secure Storage (line 72)', err);
-        return res.redirect('/?error='+err.message);
+        req.config.reportError('Discord.js Route - Assistants Secure Storage (line 124)', err);
+        req.session.discordAuthStatus = {
+            loading: false,
+            success: false,
+            state: {
+                error: err,
+                data: null,
+            }
+        };
+        return;
     }
 
     /*
@@ -88,8 +148,16 @@ router.get('/callback', async (req, res) => {
         DBDStats.registerUser(OAuth2UserResponse.id);
         req.DBDEvents.emit('userLoggedIn', OAuth2UserResponse);
     }catch(err){
-        req.config.reportError('Discord.js Route - DBDStats register and DBDEvent emit userLoggedIn (line 91)', err);
-        return res.redirect('/?error='+err.message);
+        req.config.reportError('Discord.js Route - DBDStats register and DBDEvent emit userLoggedIn (line 151)', err);
+        req.session.discordAuthStatus = {
+            loading: false,
+            success: false,
+            state: {
+                error: err,
+                data: null,
+            }
+        };
+        return;
     }
 
     /*
@@ -97,10 +165,28 @@ router.get('/callback', async (req, res) => {
     */
 
     try {
+        req.session.discordAuthStatus = {
+            loading: true,
+            success: null,
+            state: {
+                error: null,
+                data: 'Getting List of User Guilds...',
+            }
+        };
+        req.session.save(function(err) {
+        });
         OAuth2GuildsResponse = await oauth.getUserGuilds(OAuth2Response.access_token);
     }catch(err){
-        req.config.reportError('Discord.js Route - OAuth2GuildsResponse (line 102)', err);
-        return res.redirect('/?error='+err.message);
+        req.config.reportError('Discord.js Route - OAuth2GuildsResponse (line 180)', err);
+        req.session.discordAuthStatus = {
+            loading: false,
+            success: false,
+            state: {
+                error: err,
+                data: null,
+            }
+        };
+        return;
     }
     req.session.guilds = OAuth2GuildsResponse || [];
 
@@ -108,16 +194,36 @@ router.get('/callback', async (req, res) => {
     Loop and fetch each guild into bots cache
      */
 
-    try {
-        for (let g of OAuth2GuildsResponse) {
-            try {
-                await req.bot.guilds.fetch(g.id);
-            } catch (err) {
+    if(!req.config.disableResolvingGuildCache) {
+        try {
+            req.session.discordAuthStatus = {
+                loading: true,
+                success: null,
+                state: {
+                    error: null,
+                    data: 'Resolving guilds cache...',
+                }
+            };
+            req.session.save(function (err) {
+            });
+            for (let g of OAuth2GuildsResponse) {
+                try {
+                    await req.bot.guilds.fetch(g.id);
+                } catch (err) {
+                }
             }
+        } catch (err) {
+            req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop (line 216)', err)
+            req.session.discordAuthStatus = {
+                loading: false,
+                success: false,
+                state: {
+                    error: err,
+                    data: null,
+                }
+            };
+            return;
         }
-    }catch(err){
-        req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop (line 119)', err)
-        return res.redirect('/?error='+err.message);
     }
 
     /*
@@ -126,6 +232,16 @@ router.get('/callback', async (req, res) => {
 
     if (req.guildAfterAuthorization.use == true) {
         try {
+            req.session.discordAuthStatus = {
+                loading: true,
+                success: null,
+                state: {
+                    error: null,
+                    data: 'Authorizing user with guild...',
+                }
+            };
+            req.session.save(function(err) {
+            });
             await oauth.addMember({
                 accessToken: OAuth2Response.access_token,
                 botToken: req.botToken,
@@ -143,16 +259,31 @@ router.get('/callback', async (req, res) => {
                 */
             });
         }catch(err){
-            req.config.reportError('Discord.js Route - guildAfterAuthorization (line 146)', err);
-            return res.redirect('/?error='+err.message);
+            req.config.reportError('Discord.js Route - guildAfterAuthorization (line 262)', err);
+            req.session.discordAuthStatus = {
+                loading: false,
+                success: false,
+                state: {
+                    error: err,
+                    data: null,
+                }
+            };
+            return;
         }
     }
 
-    /*
-    As everything is done, redirect user back to Discord-Dashboard
-     */
+    req.session.discordAuthStatus = {
+        loading: false,
+        success: true,
+        state: {
+            error: null,
+            data: null,
+        }
+    };
+    req.session.save(function(err) {
+    });
 
-    return res.redirect(req.session.r || '/');
+    return;
 });
 
 router.get('/logout', (req, res) => {
@@ -181,7 +312,7 @@ router.get('/guilds/reload', async (req,res)=>{
     try {
         OAuth2GuildsResponse = await oauth.getUserGuilds(access_token);
     }catch(err){
-        req.config.reportError('Discord.js Route - OAuth2GuildsResponse for ReloadGuilds (line 184)', err);
+        req.config.reportError('Discord.js Route - OAuth2GuildsResponse for ReloadGuilds (line 315)', err);
         return res.send({error:true, message: "An error occured. Access_token is wrong or you're being rate limited.", login_again_text: true});
     }
     req.session.guilds = OAuth2GuildsResponse || [];
@@ -198,7 +329,7 @@ router.get('/guilds/reload', async (req,res)=>{
             }
         }
     }catch(err){
-        req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 201)', err)
+        req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 332)', err)
         return res.send({error:true, message: "An error occured. Access_token is wrong or you're being rate limited.", login_again_text: true});
     }
 

@@ -15,6 +15,12 @@ module.exports = (app, config, themeConfig, modules) => {
         });
     });
 
+    router.get('/loading', async(req,res)=>{
+       if(!req.session?.discordAuthStatus?.loading)return res.redirect('/manage');
+
+       res.render('loading', {req,themeConfig,bot:config.bot});
+    });
+
 
     router.get('/invite', (req, res) => {
         let config = req.config;

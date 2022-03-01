@@ -5,10 +5,18 @@ const readline = require("readline-sync");
 
 const DiscordDashboardPP = require('discord-dashboard-pp-system');
 
-module.exports = (config, themeConfig, DBDStats, secretInit, modules, aaThis) => {
+module.exports = (config, themeConfig, DBDStats, secretInit, modules, aaThis, license) => {
+    let externalStatsDisabled = false;
+    if(config.disableExternalStatistics){
+        if(license.type == 'production' || license.type == 'personal'){
+            externalStatsDisabled = true;
+        }else{
+            console.log(`${'[Discord-dashboard v'.red}${`${require('../package.json').version}]:`.red}: You can't disable External Stats without Personal/Production License.`)
+        }
+    }
     const PPManager = new DiscordDashboardPP.PPManager(config, themeConfig);
-    DBDStats.registerProject(config.client.id);
     PPManager.SaveProjectData();
+    if(!externalStatsDisabled)DBDStats.registerProject(config.client.id);
     if(config.acceptPrivacyPolicy) return aaThis.secretInit(aaThis.modules);
     const ppAccepted = PPManager.PP_GetAccepted();
     if (ppAccepted == "accepted") return aaThis.secretInit(aaThis.modules);
