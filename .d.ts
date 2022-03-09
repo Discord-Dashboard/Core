@@ -60,6 +60,13 @@ interface Permissions {
     MODERATE_MEMBERS: ['MODERATE_MEMBERS', 0x10000000000]
 }
 
+interface RateLimitSettingsObject {
+    windowMs: Number,
+    max: Number,
+    message: String,
+    store?: any
+}
+
 interface Dashboard {
     new(config: {
         port: number,
@@ -81,6 +88,12 @@ interface Dashboard {
             cert: string
         },
         minimizedConsoleLog?: boolean,
+        rateLimits?: {
+            manage?: RateLimitSettingsObject,
+            guildPage?: RateLimitSettingsObject,
+            settingsUpdatePostAPI?: RateLimitSettingsObject,
+            discordOAuth2?: RateLimitSettingsObject
+        },
         invite?: {
             clientId: string,
             scopes: object,

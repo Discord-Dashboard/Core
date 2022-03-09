@@ -2,7 +2,40 @@ const Discord = require("discord.js");
 const router = require('express').Router();
 
 module.exports = (app, config, themeConfig) => {
-    router.get('/manage', async (req, res) => {
+    const RL = require('express-rate-limit');
+    const RateLimits = config.rateLimits || {};
+    let RateFunctions = {};
+
+    const NoRL = (req,res,next)=>next();
+
+    if(RateLimits.manage){
+        RateFunctions.manage = RL.rateLimit({
+            windowMs: RateLimits.manage.windowMs,
+            max: RateLimits.manage.max,
+            message: RateLimits.manage.message,
+            store: RateLimits.manage.store || new RL.MemoryStore(),
+        });
+    }
+
+    if(RateLimits.guildPage){
+        RateFunctions.guildPage = RL.rateLimit({
+            windowMs: RateLimits.guildPage.windowMs,
+            max: RateLimits.guildPage.max,
+            message: RateLimits.guildPage.message,
+            store: RateLimits.guildPage.store || new RL.MemoryStore(),
+        });
+    }
+
+    if(RateLimits.settingsUpdatePostAPI){
+        RateFunctions.settingsUpdatePostAPI = RL.rateLimit({
+            windowMs: RateLimits.settingsUpdatePostAPI.windowMs,
+            max: RateLimits.settingsUpdatePostAPI.max,
+            message: RateLimits.settingsUpdatePostAPI.message,
+            store: RateLimits.settingsUpdatePostAPI.store || new RL.MemoryStore(),
+        });
+    }
+
+    router.get('/manage', RateFunctions.manage ? RateFunctions.manage : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/manage');
         let customThemeOptions;
         if(themeConfig.customThemeOptions){
@@ -16,7 +49,7 @@ module.exports = (app, config, themeConfig) => {
         });
     });
 
-    router.get('/guild/:id', async (req, res) => {
+    router.get('/guild/:id', RateFunctions.guildPage ? RateFunctions.guildPage : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.id);
         let customThemeOptions;
         if(themeConfig.customThemeOptions) {
@@ -116,7 +149,7 @@ module.exports = (app, config, themeConfig) => {
         });
     });
 
-    router.post('/settings/update/:guildId/:categoryId', async (req, res) => {
+    router.post('/settings/update/:guildId/:categoryId', RateFunctions.settingsUpdatePostAPI ? RateFunctions.settingsUpdatePostAPI : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.guildId);
         let customThemeOptions;
         if(themeConfig.customThemeOptions) {

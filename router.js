@@ -3,7 +3,7 @@ module.exports = (app, config, themeConfig, modules) => {
         req.bot = config.bot;
         next();
     });
-    app.use('/discord', require('./Routes/discord'));
+    app.use('/discord', require('./Routes/discord')(app, config, themeConfig, modules));
 
     if (config.useUnderMaintenance) {
         app.get(config.underMaintenanceAccessPage || '/total-secret-get-access', (req, res) => {
