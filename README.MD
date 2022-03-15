@@ -35,7 +35,7 @@ You can always find an updated privacy policy and terms of use for discord-dashb
 
 # Contact
 
-- **E-mail**: assistants.center@gmail.com, assistants.center.webmaster@gmail.com
+- **E-mail**: contact@assistantscenter.com, support@assistantscenter.com, billing@assistantscenter.com
 - **Discord**: https://discord.gg/Nkc8MWxHRD
 
 # Licenses
