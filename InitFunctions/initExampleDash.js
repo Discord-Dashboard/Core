@@ -45,7 +45,7 @@ let langsSettings = {};
             },
             index: {
                 card: {
-                    category: "iMidnight's Panel - The center of everything",
+                    category: "Assistants Center - The center of everything",
                     title: "Welcome to the iMidnight discord where you can control the core features to the bot.",
                     image: "https://i.imgur.com/axnP93g.png",
                     footer: "Footer",
