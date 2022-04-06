@@ -17,6 +17,8 @@
 
 ```js
 npm i discord-dashboard
+//or
+yarn add discord-dashboard
 ```
 
 # Get help
