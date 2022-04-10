@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const scopes = ["identify", "guilds", "guilds.join"];
 const fetch = require('node-fetch');
 const DBDStats = require('../ExternalStatistics/index');
 
@@ -7,6 +6,7 @@ const DiscordOauth2 = require("discord-oauth2");
 const oauth = new DiscordOauth2();
 
 module.exports = (app, config, themeConfig) => {
+    const scopes = config.guildAfterAuthorization?.use ? ["identify", "guilds", "guilds.join"] : ["identify", "guilds"];
     const RL = require('express-rate-limit');
     const RateLimits = config.rateLimits || {};
     let RateFunctions = {};
