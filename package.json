@@ -1,6 +1,6 @@
 {
   "name": "discord-dashboard",
-  "version": "2.3.15",
+  "version": "2.3.16",
   "description": "The best way to create a Web Dashboard for your Discord Bot! No need to edit files or write the server from scratch!",
   "main": "index.js",
   "directories": {
@@ -8,29 +8,22 @@
   },
   "typings": ".d.ts",
   "dependencies": {
-    "assistants-safe-storage": "*",
-    "body-parser": "^1.19.1",
+    "assistants-safe-storage": "^1.0.0",
+    "body-parser": "^1.20.0",
     "colors": "^1.4.0",
-    "discord-dashboard-pp-system": "*",
-    "discord-oauth2": "^2.9.0",
+    "discord-dashboard-pp-system": "^1.0.2",
+    "discord-oauth2": "^2.10.0",
     "discord.js": "^13.*.*",
-    "ejs": "^3.1.6",
-    "express": "^4.17.2",
+    "ejs": "^3.0.2",
+    "express": "^4.17.3",
     "express-partials": "^0.3.0",
     "express-rate-limit": "^6.3.0",
     "express-session": "^1.17.2",
     "https": "^1.0.0",
-    "node-fetch": "2.6.7",
+    "node-fetch": "^2.6.7",
     "readline-sync": "^1.4.10",
-    "socket.io": "^4.4.0",
+    "socket.io": "^4.4.1",
     "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "child_process": "^1.0.2",
-    "dbd-capriham-theme": "*",
-    "dbd-dark-dashboard": "*",
-    "javascript-obfuscator": "^3.0.0",
-    "session-file-store": "*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
