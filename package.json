@@ -43,5 +43,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Assistants-Center/Discord.js-Web-Dashboard.git"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.0.0"
   }
 }
