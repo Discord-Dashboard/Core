@@ -251,5 +251,55 @@ module.exports = {
             disabled,
             themeOptions
         };
-    }
+    },
+    slider: (disabled, step, dataList, themeOptions = {}) => {
+        return {
+            type: "slider",
+            step,
+            disabled,
+            dataList,
+            themeOptions
+        };
+    },    
+    date: (defaultState, disabled, themeOptions = {}) => {
+        return {
+            type: "date",
+            data: defaultState,
+            disabled,
+            themeOptions
+        };
+    },
+    numberPicker: (defaultState, disabled, themeOptions = {}) => {
+        return {
+            type: "numberPicker",
+            data: defaultState,
+            disabled,
+            themeOptions
+        };
+    },
+    tagInput: (defaultState, disabled, themeOptions = {}) => {
+        return {
+            type: "tagInput",
+            data: defaultState,
+            disabled,
+            themeOptions
+        };
+    },
+    visualEmbed: (defaultState, placeholderText, disabled, themeOptions = {}) => {
+        return {
+            type: "visualEmbed",
+            data: defaultState,
+            placeholder: placeholderText,
+            disabled,
+            themeOptions
+        };
+    },
+    upload: (defaultState, disabled, themeOptions = {}) => {
+        return {
+            type: "upload",
+            data: defaultState,
+            disabled,
+            themeOptions
+        };
+    },
 }
