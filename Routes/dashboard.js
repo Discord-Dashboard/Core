@@ -163,7 +163,7 @@ module.exports = (app, config, themeConfig) => {
     router.post('/settings/update/:guildId/:categoryId', RateFunctions.settingsUpdatePostAPI ? RateFunctions.settingsUpdatePostAPI : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.guildId);
         let customThemeOptions;
-        if (themeConfig.customThemeOptions) {
+        if (themeConfig?.customThemeOptions?.settingsUpdate) {
             customThemeOptions = await themeConfig.customThemeOptions.settingsUpdate({
                 req: req,
                 config: config,

@@ -4,14 +4,14 @@ const router = require('express').Router();
 module.exports = (app, config, themeConfig, modules) => {
     router.get('/', async (req, res) => {
         let customThemeOptions;
-        if(themeConfig.customThemeOptions) {
+        if(themeConfig?.customThemeOptions?.index) {
             customThemeOptions = await themeConfig.customThemeOptions.index({req: req, res: res, config: config});
         }
         res.render('index', {
             req: req,
             themeConfig: req.themeConfig,
             bot: config.bot,
-            customThemeOptions: customThemeOptions || {}
+            customThemeOptions,
         });
     });
 
