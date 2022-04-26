@@ -5,7 +5,7 @@ module.exports = (app, config, themeConfig, modules) => {
     router.get('/', async (req, res) => {
         let info;
         if(themeConfig?.customThemeOptions?.info) {
-            info = await themeConfig.customThemeOptions.info({req: req, res: res, config: config, guildId: req.params.id});
+            info = await themeConfig.customThemeOptions.info({config: config});
         }
         let customThemeOptions;
         if(themeConfig?.customThemeOptions?.index) {

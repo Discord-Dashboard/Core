@@ -39,7 +39,7 @@ module.exports = (app, config, themeConfig) => {
         if (!req.session.user) return res.redirect('/discord?r=/manage');
         let info;
         if(themeConfig?.customThemeOptions?.info) {
-            info = await themeConfig.customThemeOptions.info({req: req, res: res, config: config, guildId: req.params.id});
+            info = await themeConfig.customThemeOptions.info({config: config});
         }
         let customThemeOptions;
         if (themeConfig?.customThemeOptions?.manage) {
@@ -58,7 +58,7 @@ module.exports = (app, config, themeConfig) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.id);
         let info;
         if(themeConfig?.customThemeOptions?.info) {
-            info = await themeConfig.customThemeOptions.info({req: req, res: res, config: config, guildId: req.params.id});
+            info = await themeConfig.customThemeOptions.info({config: config});
         }
         let customThemeOptions;
         if (themeConfig?.customThemeOptions?.getGuild) {
@@ -174,7 +174,7 @@ module.exports = (app, config, themeConfig) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.guildId);
         let info;
         if(themeConfig?.customThemeOptions?.info) {
-            info = await themeConfig.customThemeOptions.info({req: req, res: res, config: config, guildId: req.params.id});
+            info = await themeConfig.customThemeOptions.info({config: config});
         }
         let customThemeOptions;
         if (themeConfig?.customThemeOptions?.settingsUpdate) {
