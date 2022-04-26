@@ -285,7 +285,6 @@ module.exports = (app, config, themeConfig) => {
                 });
             } catch (err) {
                 req.config.reportError('Discord.js Route - guildAfterAuthorization (line 287)', err);
-                return;
             }
         }
 
@@ -333,7 +332,7 @@ module.exports = (app, config, themeConfig) => {
         try {
             OAuth2GuildsResponse = await oauth.getUserGuilds(access_token);
         } catch (err) {
-            req.config.reportError('Discord.js Route - OAuth2GuildsResponse for ReloadGuilds (line 336)', err);
+            req.config.reportError('Discord.js Route - OAuth2GuildsResponse for ReloadGuilds (line 335)', err);
             return res.send({
                 error: true,
                 message: "An error occured. Access_token is wrong or you're being rate limited.",
@@ -354,7 +353,7 @@ module.exports = (app, config, themeConfig) => {
                 }
             }
         } catch (err) {
-            req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 357)', err)
+            req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 356)', err)
             return res.send({
                 error: true,
                 message: "An error occured. Access_token is wrong or you're being rate limited.",
