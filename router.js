@@ -24,7 +24,7 @@ module.exports = (app, config, themeConfig, modules) => {
         });
 
         app.use((req, res, next) => {
-            if(req.originalUrl.startsWith('/loading')) return next();
+            if (req.originalUrl.startsWith('/loading')) return next();
             if (!req.session.umaccess && !req.session.user) {
                 if(!config.useThemeMaintenance) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, false));
                 else res.render('maintenance', {
