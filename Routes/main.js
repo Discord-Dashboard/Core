@@ -3,6 +3,10 @@ const router = require('express').Router();
 
 module.exports = (app, config, themeConfig, modules) => {
     router.get('/', async (req, res) => {
+        let info;
+        if(themeConfig?.customThemeOptions?.info) {
+            info = await themeConfig.customThemeOptions.info({req: req, res: res, config: config, guildId: req.params.id});
+        }
         let customThemeOptions;
         if(themeConfig?.customThemeOptions?.index) {
             customThemeOptions = await themeConfig.customThemeOptions.index({req: req, res: res, config: config});
@@ -11,7 +15,8 @@ module.exports = (app, config, themeConfig, modules) => {
             req: req,
             themeConfig: req.themeConfig,
             bot: config.bot,
-            customThemeOptions,
+            customThemeOptions: customThemeOptions || {},
+            info: info || {},
         });
     });
 

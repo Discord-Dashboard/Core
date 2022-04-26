@@ -37,6 +37,10 @@ module.exports = (app, config, themeConfig) => {
 
     router.get('/manage', RateFunctions.manage ? RateFunctions.manage : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/manage');
+        let info;
+        if(themeConfig?.customThemeOptions?.info) {
+            info = await themeConfig.customThemeOptions.info({req: req, res: res, config: config, guildId: req.params.id});
+        }
         let customThemeOptions;
         if (themeConfig?.customThemeOptions?.manage) {
             customThemeOptions = await themeConfig.customThemeOptions.manage({req: req, res: res, config: config});
@@ -45,12 +49,17 @@ module.exports = (app, config, themeConfig) => {
             req: req,
             bot: config.bot,
             themeConfig: req.themeConfig,
-            customThemeOptions: customThemeOptions || {}
+            customThemeOptions: customThemeOptions || {},
+            info: info || {}
         });
     });
 
     router.get('/guild/:id', RateFunctions.guildPage ? RateFunctions.guildPage : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.id);
+        let info;
+        if(themeConfig?.customThemeOptions?.info) {
+            info = await themeConfig.customThemeOptions.info({req: req, res: res, config: config, guildId: req.params.id});
+        }
         let customThemeOptions;
         if (themeConfig?.customThemeOptions?.getGuild) {
             customThemeOptions = await themeConfig.customThemeOptions.getGuild({
@@ -156,12 +165,17 @@ module.exports = (app, config, themeConfig) => {
             guildid: req.params.id,
             themeConfig: req.themeConfig,
             customThemeOptions: customThemeOptions || {},
+            info: info || {},
             config
         });
     });
 
     router.post('/settings/update/:guildId/:categoryId', RateFunctions.settingsUpdatePostAPI ? RateFunctions.settingsUpdatePostAPI : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.guildId);
+        let info;
+        if(themeConfig?.customThemeOptions?.info) {
+            info = await themeConfig.customThemeOptions.info({req: req, res: res, config: config, guildId: req.params.id});
+        }
         let customThemeOptions;
         if (themeConfig?.customThemeOptions?.settingsUpdate) {
             customThemeOptions = await themeConfig.customThemeOptions.settingsUpdate({
