@@ -342,6 +342,14 @@ cryptr@^6.0.2:
   resolved "https://registry.npmjs.org/cryptr/-/cryptr-6.0.2.tgz"
   integrity sha512-1TRHI4bmuLIB8WgkH9eeYXzhEg1T4tonO4vVaMBKKde8Dre51J68nAgTVXTwMYXAf7+mV2gBCkm/9wksjSb2sA==
 
+dbd-dark-dashboard@^1.6.54:
+  version "1.6.54"
+  resolved "https://registry.yarnpkg.com/dbd-dark-dashboard/-/dbd-dark-dashboard-1.6.54.tgz#477f8c0bc3ef0c507a2b44b9b371f4068d2309ad"
+  integrity sha512-jeyHJO6+rZjBGt3IEH4TyGKeRIusuFmT7kwnj/8L5T1Hp16+k5nTAVOAON8tibdXV0Je9ORS+HPcEMDzaY4EWA==
+  dependencies:
+    discord-dashboard "*"
+    node-fetch "2.6.7"
+
 debug@2.6.9:
   version "2.6.9"
   resolved "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz"
@@ -405,6 +413,29 @@ discord-dashboard-pp-system@^1.0.2:
   integrity sha512-vc209e4/VCZyd2B14wdmrnihZoyJDBX/es3a9sAw1q1jn/6DR8BwTPNjF4sIYKPI71y2R6N56NhT4EgXgK+/qg==
   dependencies:
     uuid "*"
+
+discord-dashboard@*:
+  version "2.3.19"
+  resolved "https://registry.yarnpkg.com/discord-dashboard/-/discord-dashboard-2.3.19.tgz#f83fdf5779b3f7718d6621a2a77f693702e427c0"
+  integrity sha512-vdBqJhifZild5DkIfCSsHjVDq8HB+JN43Tyt03jkuF25/5hURGc6oNaE0Fj3nkLvYO2zDOidZ0RvF2KqpPYVLw==
+  dependencies:
+    assistants-safe-storage "^1.0.0"
+    body-parser "^1.20.0"
+    colors "^1.4.0"
+    discord-dashboard "^2.3.16"
+    discord-dashboard-pp-system "^1.0.2"
+    discord-oauth2 "^2.10.0"
+    discord.js "^13.*.*"
+    ejs "^3.0.2"
+    express "^4.17.3"
+    express-partials "^0.3.0"
+    express-rate-limit "^6.3.0"
+    express-session "^1.17.2"
+    https "^1.0.0"
+    node-fetch "^2.6.7"
+    readline-sync "^1.4.10"
+    socket.io "^4.4.1"
+    uuid "^8.3.2"
 
 discord-dashboard@^2.3.16:
   version "2.3.16"
@@ -1048,7 +1079,7 @@ negotiator@0.6.3:
   resolved "https://registry.npmjs.org/negotiator/-/negotiator-0.6.3.tgz"
   integrity sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==
 
-node-fetch@^2.6.1, node-fetch@^2.6.7:
+node-fetch@2.6.7, node-fetch@^2.6.1, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.7.tgz"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
