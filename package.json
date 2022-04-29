@@ -1,6 +1,6 @@
 {
   "name": "discord-dashboard",
-  "version": "2.3.20",
+  "version": "2.3.21",
   "description": "The best way to create a Web Dashboard for your Discord Bot! No need to edit files or write the server from scratch!",
   "main": "index.js",
   "directories": {
@@ -15,7 +15,7 @@
     "discord-dashboard-pp-system": "^1.0.2",
     "discord-oauth2": "^2.10.0",
     "discord.js": "^13.*.*",
-    "ejs": "^3.0.2",
+    "ejs": "^3.1.7",
     "express": "^4.17.3",
     "express-partials": "^0.3.0",
     "express-rate-limit": "^6.3.0",
