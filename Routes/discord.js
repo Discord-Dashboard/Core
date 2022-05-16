@@ -25,8 +25,10 @@ module.exports = (app, config, themeConfig) => {
     router.get('/', (req, res) => {
         const clientId = req.client.id;
         const redirectUri = req.redirectUri;
-
-        req.session.r = req.query.r || '/';
+        
+        let newPage = "/";
+        if(themeConfig.landingPage?.enabled) newPage = "/dash";
+        req.session.r = req.query.r || newPage;
 
         const authorizeUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scopes.join('%20')}`;
         res.redirect(authorizeUrl);
