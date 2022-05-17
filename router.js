@@ -1,4 +1,6 @@
 module.exports = (app, config, themeConfig, modules) => {
+    const cookieParser = require('cookie-parser');
+    app.use(cookieParser());
     app.use((req,res,next)=>{
         req.bot = config.bot;
         next();
