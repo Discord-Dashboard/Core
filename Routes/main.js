@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const router = require('express').Router();
-const db = require('quick.db');
 
 module.exports = (app, config, themeConfig, modules) => {
     router.get(themeConfig.landingPage?.enabled ? "/dash" : "/", async (req, res) => {
@@ -13,8 +12,7 @@ module.exports = (app, config, themeConfig, modules) => {
             themeConfig: req.themeConfig,
             bot: config.bot,
             customThemeOptions: customThemeOptions || {},
-            config,
-            db
+            config
         });
     });
     
