@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const router = require('express').Router();
 
 module.exports = (app, config, themeConfig, modules) => {
-    router.get('/', async (req, res) => {
+    router.get(themeConfig.landingPage?.enabled ? "/dash" : "/", async (req, res) => {
         let customThemeOptions;
         if(themeConfig?.customThemeOptions?.index) {
             customThemeOptions = await themeConfig.customThemeOptions.index({req: req, res: res, config: config});
@@ -14,6 +14,11 @@ module.exports = (app, config, themeConfig, modules) => {
             customThemeOptions: customThemeOptions || {},
             config
         });
+    });
+    
+    if(themeConfig.landingPage?.enabled) router.get('/', async(req,res) => {
+        res.setHeader("Content-Type", "text/html")
+        res.send(await themeConfig.landingPage.getLandingPage(req,res));
     });
 
     router.get('/loading', async(req,res)=>{

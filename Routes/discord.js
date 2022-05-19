@@ -25,8 +25,10 @@ module.exports = (app, config, themeConfig) => {
     router.get('/', (req, res) => {
         const clientId = req.client.id;
         const redirectUri = req.redirectUri;
-
-        req.session.r = req.query.r || '/';
+        
+        let newPage = "/";
+        if(themeConfig.landingPage?.enabled) newPage = "/dash";
+        req.session.r = req.query.r || newPage;
 
         const authorizeUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scopes.join('%20')}`;
         res.redirect(authorizeUrl);
@@ -346,14 +348,21 @@ module.exports = (app, config, themeConfig) => {
          */
 
         try {
+            const Promises = [];
             for (let g of OAuth2GuildsResponse) {
+                Promises.push(new Promise(async (resolve, reject) => {
+                    try{
+                        await req.bot.guilds.fetch(g.id);
+                    }catch(err){}
+                    resolve(1);
+                }));
                 try {
-                    await req.bot.guilds.fetch(g.id);
+                    await Promises.all(Promises);
                 } catch (err) {
                 }
             }
         } catch (err) {
-            req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 356)', err)
+            req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 363)', err)
             return res.send({
                 error: true,
                 message: "An error occured. Access_token is wrong or you're being rate limited.",
