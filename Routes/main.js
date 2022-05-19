@@ -12,6 +12,7 @@ module.exports = (app, config, themeConfig, modules) => {
             themeConfig: req.themeConfig,
             bot: config.bot,
             customThemeOptions: customThemeOptions || {},
+            config
         });
     });
 
