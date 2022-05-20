@@ -93,10 +93,10 @@ module.exports = (app, config, themeConfig, modules) => {
         });
     });
 
-    app.get('*', (req, res) => {
-        if(!config.useTheme404) {
+    if(!config.useTheme404) {
+        app.get('*', (req, res) => {
             let text = config.html404 || require('./404pagedefault')(config.websiteTitle || themeConfig.websiteName);
             res.send(text.replace('{{websiteTitle}}', config.websiteTitle || themeConfig.websiteName));
-        }
-    });
+        });
+    }
 }
