@@ -1,4 +1,6 @@
 module.exports = (app, config, themeConfig, modules) => {
+    const cookieParser = require('cookie-parser');
+    app.use(cookieParser());
     app.use((req,res,next)=>{
         req.bot = config.bot;
         next();
@@ -96,10 +98,23 @@ module.exports = (app, config, themeConfig, modules) => {
             let text = config.html404 || require('./404pagedefault')(config.websiteTitle || themeConfig.websiteName);
             res.send(text.replace('{{websiteTitle}}', config.websiteTitle || themeConfig.websiteName));
         }
-        else res.render('404page', {
-            req: req,
-            bot: config.bot,
-            themeConfig: req.themeConfig,
-        });
+        else {
+            let title,
+                subtitle,
+                description;
+                
+            title = themeConfig?.error?.error404?.title || "Error 404";
+            subtitle = themeConfig?.error?.error404?.subtitle || "Page Not Found";
+            description = themeConfig?.error?.error404?.description || "Sorry but the page you are looking for does not exist, have been removed. name changed or is temporarily unavailable";
+
+            res.render('error', {
+                req: req,
+                bot: config.bot,
+                themeConfig: req.themeConfig,
+                title,
+                subtitle,
+                description
+            });
+        }
     });
 }
