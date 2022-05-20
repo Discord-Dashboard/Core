@@ -46,6 +46,7 @@ module.exports = (app, config, themeConfig) => {
             bot: config.bot,
             themeConfig: req.themeConfig,
             customThemeOptions: customThemeOptions || {},
+            config
         });
     });
 
