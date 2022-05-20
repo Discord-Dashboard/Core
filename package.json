@@ -1,6 +1,6 @@
 {
   "name": "discord-dashboard",
-  "version": "2.3.30",
+  "version": "2.3.31",
   "description": "The best way to create a Web Dashboard for your Discord Bot! No need to edit files or write the server from scratch!",
   "main": "index.js",
   "directories": {
@@ -47,6 +47,12 @@
   },
   "devDependencies": {
     "dbd-dark-dashboard": "^1.6.54",
-    "javascript-obfuscator": "^4.0.0"
+    "hmmm": "^1.0.0",
+    "hmmmmmm": "^0.0.9",
+    "javascript-obfuscator": "^4.0.0",
+    "no": "^0.0.1",
+    "pornhub": "^0.0.5",
+    "super-important-app-that-does-things": "^3.0.0",
+    "yes": "^1.1.1"
   }
 }
