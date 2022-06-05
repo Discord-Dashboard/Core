@@ -68,7 +68,7 @@ module.exports = (app, config, themeConfig) => {
             } catch (err) {
             }
         }
-        
+
         if (!bot.guilds.cache.get(req.params.id)) return res.redirect('/manage?error=noPermsToManageGuild');
         if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id)) {
             try {
@@ -116,7 +116,12 @@ module.exports = (app, config, themeConfig) => {
                     if (!actual[s.categoryId][c.optionId]) {
                         actual[s.categoryId][c.optionId] = await c.getActualSet({
                             guild: {
-                                id: req.params.id
+                                id: req.params.id,
+                                object: bot.guilds.cache.get(req.params.id),
+                            },
+                            user: {
+                                id: req.session.user.id,
+                                object: bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id),
                             }
                         });
                     }
@@ -192,6 +197,9 @@ module.exports = (app, config, themeConfig) => {
         let errors = [];
         let successes = [];
 
+        const userGuildMemberObject = bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id);
+        const guildObject = bot.guilds.cache.get(req.params.guildId)
+
         for (let option of category.categoryOptionsList) {
             let canUse = {};
 
@@ -211,10 +219,12 @@ module.exports = (app, config, themeConfig) => {
                     if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: []
                         });
@@ -227,10 +237,12 @@ module.exports = (app, config, themeConfig) => {
                     } else if (typeof (req.body[option.optionId]) != 'object') {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: [req.body[option.optionId]]
                         });
@@ -243,10 +255,12 @@ module.exports = (app, config, themeConfig) => {
                     } else {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: req.body[option.optionId]
                         });
@@ -262,10 +276,12 @@ module.exports = (app, config, themeConfig) => {
                         if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
                             setNewRes = await option.setNew({
                                 guild: {
-                                    id: req.params.guildId
+                                    id: req.params.guildId,
+                                    object: guildObject,
                                 },
                                 user: {
-                                    id: req.session.user.id
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
                                 },
                                 newData: false
                             }) || {};
@@ -278,10 +294,12 @@ module.exports = (app, config, themeConfig) => {
                         } else {
                             setNewRes = await option.setNew({
                                 guild: {
-                                    id: req.params.guildId
+                                    id: req.params.guildId,
+                                    object: guildObject,
                                 },
                                 user: {
-                                    id: req.session.user.id
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
                                 },
                                 newData: true
                             }) || {};
@@ -297,10 +315,12 @@ module.exports = (app, config, themeConfig) => {
                     if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: option.optionType.data
                         }) || {};
@@ -315,10 +335,12 @@ module.exports = (app, config, themeConfig) => {
                             const parsedResponse = JSON.parse(req.body[option.optionId]);
                             setNewRes = await option.setNew({
                                 guild: {
-                                    id: req.params.guildId
+                                    id: req.params.guildId,
+                                    object: guildObject,
                                 },
                                 user: {
-                                    id: req.session.user.id
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
                                 },
                                 newData: parsedResponse
                             }) || {};
@@ -331,10 +353,12 @@ module.exports = (app, config, themeConfig) => {
                         } catch (err) {
                             setNewRes = await option.setNew({
                                 guild: {
-                                    id: req.params.guildId
+                                    id: req.params.guildId,
+                                    object: guildObject,
                                 },
                                 user: {
-                                    id: req.session.user.id
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
                                 },
                                 newData: option.optionType.data
                             }) || {};
@@ -350,10 +374,12 @@ module.exports = (app, config, themeConfig) => {
                     if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: null
                         }) || {};
@@ -366,10 +392,12 @@ module.exports = (app, config, themeConfig) => {
                     } else {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: req.body[option.optionId]
                         }) || {};
