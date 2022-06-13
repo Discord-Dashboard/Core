@@ -1,6 +1,6 @@
 {
   "name": "discord-dashboard",
-  "version": "2.3.35",
+  "version": "2.3.36",
   "description": "The best way to create a Web Dashboard for your Discord Bot! No need to edit files or write the server from scratch!",
   "main": "index.js",
   "directories": {
@@ -15,14 +15,15 @@
     "discord-dashboard-pp-system": "^1.0.2",
     "discord-oauth2": "^2.10.0",
     "discord.js": "^13.*.*",
-    "ejs": "^3.1.7",
+    "ejs": "^3.1.8",
     "express": "^4.17.3",
     "express-partials": "^0.3.0",
-    "express-rate-limit": "^6.3.0",
-    "express-session": "^1.17.2",
+    "express-rate-limit": "^6.4.0",
+    "express-session": "^1.17.3",
     "https": "^1.0.0",
     "node-fetch": "^2.6.7",
-    "socket.io": "^4.4.1",
+    "readline-sync": "^1.4.10",
+    "socket.io": "^4.5.1",
     "uuid": "^8.3.2"
   },
   "scripts": {
@@ -46,7 +47,6 @@
   },
   "devDependencies": {
     "dbd-dark-dashboard": "^1.6.54",
-    "javascript-obfuscator": "^4.0.0",
-    "readline-sync": "^1.4.10"
+    "javascript-obfuscator": "^4.0.0"
   }
 }
