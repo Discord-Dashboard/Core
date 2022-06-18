@@ -29,7 +29,20 @@ Join our Discord Support Server
 
 # Documentation
 
-Full and continuously updated project documentation can be found at the URL: https://assistantscenter.com/dbd-docs/
+**Tutorial:**
+- **#1** [Introduction](https://learnit.assistantscenter.com/discord-dashboard-tutorial-1-introduction/)
+- **#2** [Setting up a project](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-setting-up-a-project/)
+  - ***#2.1.*** [Let's make it work](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-1-lets-make-it-work/)
+  - ***#2.2.*** [Creating custom options](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-2-creating-custom-options/)
+  - ***#2.3.*** [FormTypes](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-3-formtypes/)
+  - ***#2.4.*** [Theme customization](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-3-theme-customization/)
+- **#3** [How to...? ](https://learnit.assistantscenter.com/discord-dashboard-tutorial-3-how-to/)
+    - ***#3.1.*** [Connect domain with the dashboard](https://learnit.assistantscenter.com/discord-dashboard-tutorial-3-1-connect-domain-with-the-dashboard/)
+    - ***#2.2.*** [Make dashboard HTTPS (SSL)](https://learnit.assistantscenter.com/discord-dashboard-tutorial-3-2-make-dashboard-https-ssl/)
+
+Straight-written DOCS can be found at the URL: https://assistantscenter.com/dbd-docs/
+
+We'd prefer using Tutorial 😅
 
 # Privacy Policy and Terms of Use
 
