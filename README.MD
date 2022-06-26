@@ -10,8 +10,8 @@
 - No need to know how the API works, no need to write it
 - Easy configuration
 - Community support
-- Free for non-commercial use
-- Paid plans
+- Free for no-profit usage
+- Paid for profit usage
 
 # Install
 
@@ -44,10 +44,6 @@ Straight-written DOCS can be found at the URL: https://assistantscenter.com/dbd-
 
 We'd prefer using Tutorial 😅
 
-# Privacy Policy and Terms of Use
-
-You can always find an updated privacy policy and terms of use for discord-dashboard under URL: https://assistantscenter.com/discord-dashboard-pp-tos/
-
 # Contact
 
 - **E-mail**: contact@assistantscenter.com, support@assistantscenter.com, billing@assistantscenter.com
@@ -60,10 +56,18 @@ The project is covered by a **Shareware (CC BY-NC-SA 4.0) licence**. This means 
 ### What types of shareware license does the discord-dashboard project fall under?
 
 - **OpenSource License**: Free. Personal usage only. Non-profit.
-- **Personal License**: Profit allowed. Personal usage only. Priority support from developers. Limited to major version: v2.*
-- **Production License**: Allowed for profit purposes. Distribution Allowed (you can share the license with your close friends). Priority support from developers. Limited to major version: v2.*
 
-#### You always have the latest news and the option to purchase license at the URL: https://licenses.assistantscenter.com/
+**For profit usage**: Please contact use us to resell rights. Email: *contact@assistantscenter.com*
+
+#### You can generate OpenSource License there: https://licenses.assistantscenter.com/
+
+# v3 Info
+
+The v3 version of the project designed using solutions like Fastify+Next.js is coming!
+
+### **Stay tuned:**
+
+**Discord v3 Updates**: https://discord.gg/Nkc8MWxHRD
 
 <hr>
 
