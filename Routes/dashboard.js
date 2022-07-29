@@ -547,7 +547,6 @@ module.exports = (app, config, themeConfig) => {
         }
 
         if (config.useCategorySet && catO.length) {
-            console.log(catO)
             let sNR = await category.setNew({
                 guild: {
                     id: req.params.guildId,
