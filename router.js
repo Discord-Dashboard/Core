@@ -1,8 +1,30 @@
 module.exports = (app, config, themeConfig, modules) => {
-    app.use((req,res,next)=>{
+    app.use(require('cookie-parser')());
+    
+    app.use((req, res, next) => {
         req.bot = config.bot;
         next();
     });
+
+    if (themeConfig.defaultLocale) {
+        app.use((req, res, next) => {
+            if (req.cookies?.lang) req.lang = req.cookies.lang;
+            else req.lang = req.acceptsLanguages()[0].replace("-", "");
+    
+            if (themeConfig.locales) {
+                if (Object.keys(themeConfig.locales).includes(req.lang)) {
+                    req.locales = themeConfig.locales[req.lang]
+                } else {
+                    req.locales = themeConfig.locales[Object.keys(themeConfig.locales)[0]]
+                }
+            } else {
+                req.locales = themeConfig.defaultLocales[Object.keys(themeConfig.defaultLocales).includes(req.lang) ? req.lang : "enUS"]
+            }
+            
+            next()
+        })
+    }
+
     app.use('/discord', require('./Routes/discord')(app, config, themeConfig, modules));
 
     if (config.useUnderMaintenance) {
@@ -24,6 +46,7 @@ module.exports = (app, config, themeConfig, modules) => {
         });
 
         app.use((req, res, next) => {
+            if (req.originalUrl.startsWith('/loading')) return next();
             if (!req.session.umaccess && !req.session.user) {
                 if(!config.useThemeMaintenance) return res.send(config.underMaintenanceCustomHtml || require('./underMaintenancePageDefault')(config.underMaintenance, false));
                 else res.render('maintenance', {
@@ -90,15 +113,10 @@ module.exports = (app, config, themeConfig, modules) => {
         });
     });
 
-    app.get('*', (req, res) => {
-        if(!config.useTheme404) {
+    if(!config.useTheme404) {
+        app.get('*', (req, res) => {
             let text = config.html404 || require('./404pagedefault')(config.websiteTitle || themeConfig.websiteName);
             res.send(text.replace('{{websiteTitle}}', config.websiteTitle || themeConfig.websiteName));
-        }
-        else res.render('404page', {
-            req: req,
-            bot: config.bot,
-            themeConfig: req.themeConfig,
         });
-    });
+    }
 }
