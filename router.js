@@ -1,10 +1,30 @@
 module.exports = (app, config, themeConfig, modules) => {
-    const cookieParser = require('cookie-parser');
-    app.use(cookieParser());
-    app.use((req,res,next)=>{
+    app.use(require('cookie-parser')());
+    
+    app.use((req, res, next) => {
         req.bot = config.bot;
         next();
     });
+
+    if (themeConfig.defaultLocales) {
+        app.use((req, res, next) => {
+            if (req.cookies?.lang) req.lang = req.cookies.lang;
+            else req.lang = req.acceptsLanguages()[0].replace("-", "");
+    
+            if (themeConfig.locales) {
+                if (Object.keys(themeConfig.locales).includes(req.lang)) {
+                    req.locales = themeConfig.locales[req.lang]
+                } else {
+                    req.locales = themeConfig.locales[Object.keys(themeConfig.locales)[0]]
+                }
+            } else {
+                req.locales = themeConfig.defaultLocales[Object.keys(themeConfig.defaultLocales).includes(req.lang) ? req.lang : "enUS"]
+            }
+            
+            next()
+        })
+    }
+
     app.use('/discord', require('./Routes/discord')(app, config, themeConfig, modules));
 
     if (config.useUnderMaintenance) {
@@ -99,4 +119,5 @@ module.exports = (app, config, themeConfig, modules) => {
             res.send(text.replace('{{websiteTitle}}', config.websiteTitle || themeConfig.websiteName));
         });
     }
+}
 }
