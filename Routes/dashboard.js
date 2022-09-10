@@ -6,9 +6,9 @@ module.exports = (app, config, themeConfig) => {
     const RateLimits = config.rateLimits || {};
     let RateFunctions = {};
 
-    const NoRL = (req,res,next)=>next();
+    const NoRL = (req, res, next) => next();
 
-    if(RateLimits.manage){
+    if (RateLimits.manage) {
         RateFunctions.manage = RL.rateLimit({
             windowMs: RateLimits.manage.windowMs,
             max: RateLimits.manage.max,
@@ -17,7 +17,7 @@ module.exports = (app, config, themeConfig) => {
         });
     }
 
-    if(RateLimits.guildPage){
+    if (RateLimits.guildPage) {
         RateFunctions.guildPage = RL.rateLimit({
             windowMs: RateLimits.guildPage.windowMs,
             max: RateLimits.guildPage.max,
@@ -26,7 +26,7 @@ module.exports = (app, config, themeConfig) => {
         });
     }
 
-    if(RateLimits.settingsUpdatePostAPI){
+    if (RateLimits.settingsUpdatePostAPI) {
         RateFunctions.settingsUpdatePostAPI = RL.rateLimit({
             windowMs: RateLimits.settingsUpdatePostAPI.windowMs,
             max: RateLimits.settingsUpdatePostAPI.max,
@@ -38,73 +38,90 @@ module.exports = (app, config, themeConfig) => {
     router.get('/manage', RateFunctions.manage ? RateFunctions.manage : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/manage');
         let customThemeOptions;
-        if(themeConfig.customThemeOptions){
-            customThemeOptions = await themeConfig.customThemeOptions.manage({req: req,res:res,config:config});
+        if (themeConfig?.customThemeOptions?.manage) {
+            customThemeOptions = await themeConfig.customThemeOptions.manage({req: req, res: res, config: config});
         }
         res.render('guilds', {
             req: req,
             bot: config.bot,
             themeConfig: req.themeConfig,
-            customThemeOptions: customThemeOptions || {}
+            customThemeOptions: customThemeOptions || {},
+            config
         });
     });
 
     router.get('/guild/:id', RateFunctions.guildPage ? RateFunctions.guildPage : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.id);
         let customThemeOptions;
-        if(themeConfig.customThemeOptions) {
-            customThemeOptions = await themeConfig.customThemeOptions.getGuild({req: req, res: res, config: config,guildId: req.params.id});
+        if (themeConfig?.customThemeOptions?.getGuild) {
+            customThemeOptions = await themeConfig.customThemeOptions.getGuild({
+                req: req,
+                res: res,
+                config: config,
+                guildId: req.params.id
+            });
         }
         let bot = config.bot;
-        if(!bot.guilds.cache.get(req.params.id)){
-            try{
+        if (!bot.guilds.cache.get(req.params.id)) {
+            try {
                 await bot.guilds.fetch(req.params.id);
-            }catch(err){}
-        };
-        if (!bot.guilds.cache.get(req.params.id)) return res.redirect('/manage?error=noPermsToManageGuild');
-        if(!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id)) {
-            try{
-                await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
-            }catch(err){}
+            } catch (err) {
+            }
         }
-        for(let PermissionRequired of req.requiredPermissions){
+
+        if (!bot.guilds.cache.get(req.params.id)) return res.redirect('/manage?error=noPermsToManageGuild');
+        if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id)) {
+            try {
+                await bot.guilds.cache.get(req.params.id).members.fetch(req.session.user.id);
+            } catch (err) {
+            }
+        }
+        for (let PermissionRequired of req.requiredPermissions) {
             if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(PermissionRequired[0])) return res.redirect('/manage?error=noPermsToManageGuild');
         }
 
-        if(bot.guilds.cache.get(req.params.id).channels.cache.size < 1){
-            try{
+        if (bot.guilds.cache.get(req.params.id).channels.cache.size < 1) {
+            try {
                 await bot.guilds.cache.get(req.params.id).channels.fetch();
-            }catch(err){}
+            } catch (err) {
+            }
         }
 
-        if(bot.guilds.cache.get(req.params.id).roles.cache.size < 2){
-            try{
+        if (bot.guilds.cache.get(req.params.id).roles.cache.size < 2) {
+            try {
                 await bot.guilds.cache.get(req.params.id).roles.fetch();
-            }catch(err){}
+            } catch (err) {
+            }
         }
 
         let actual = {};
 
         let canUseList = {};
         for (const s of config.settings) {
-            if(!canUseList[s.categoryId])canUseList[s.categoryId] = {};
+            if (!canUseList[s.categoryId]) canUseList[s.categoryId] = {};
             for (const c of s.categoryOptionsList) {
-                if(c.allowedCheck){
-                    const canUse = await c.allowedCheck({guild:{id:req.params.id}, user: {id: req.session.user.id}});
-                    if(typeof(canUse) != 'object')throw new TypeError(`${s.categoryId} category option with id ${c.optionId} allowedCheck function need to return {allowed: Boolean, errorMessage: String | null}`);
+                if (c.allowedCheck) {
+                    const canUse = await c.allowedCheck({guild: {id: req.params.id}, user: {id: req.session.user.id}});
+                    if (typeof (canUse) != 'object') throw new TypeError(`${s.categoryId} category option with id ${c.optionId} allowedCheck function need to return {allowed: Boolean, errorMessage: String | null}`);
                     canUseList[s.categoryId][c.optionId] = canUse;
-                }else{
+                } else {
                     canUseList[s.categoryId][c.optionId] = {allowed: true, errorMessage: null};
                 }
 
-                if (c.optionType == 'spacer') {} else {
+                if (c.optionType == 'spacer') {
+                } else {
                     if (!actual[s.categoryId]) {
                         actual[s.categoryId] = {};
                     }
                     if (!actual[s.categoryId][c.optionId]) {
                         actual[s.categoryId][c.optionId] = await c.getActualSet({
                             guild: {
-                                id: req.params.id
+                                id: req.params.id,
+                                object: bot.guilds.cache.get(req.params.id),
+                            },
+                            user: {
+                                id: req.session.user.id,
+                                object: bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id),
                             }
                         });
                     }
@@ -116,23 +133,23 @@ module.exports = (app, config, themeConfig) => {
         let success;
 
         if (req.session.errors) {
-            if(String(req.session.errors).includes('%is%')){
+            if (String(req.session.errors).includes('%is%')) {
                 errors = req.session.errors.split('%and%');
             }
         }
 
         if (req.session.success) {
-            if(typeof(req.session.success) == 'boolean'){
+            if (typeof (req.session.success) == 'boolean') {
                 success = true;
-            }else{
-                if(String(req.session.success).includes('%is%')){
+            } else {
+                if (String(req.session.success).includes('%is%')) {
                     success = req.session.success.split('%and%');
                 }
             }
         }
 
-        req.session.errors=null;
-        req.session.success=null;
+        req.session.errors = null;
+        req.session.success = null;
 
         res.render('guild', {
             successes: success,
@@ -152,13 +169,18 @@ module.exports = (app, config, themeConfig) => {
     router.post('/settings/update/:guildId/:categoryId', RateFunctions.settingsUpdatePostAPI ? RateFunctions.settingsUpdatePostAPI : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.guildId);
         let customThemeOptions;
-        if(themeConfig.customThemeOptions) {
-            customThemeOptions = await themeConfig.customThemeOptions.settingsUpdate({req: req, config: config,guildId: req.params.id,categoryId:req.params.categoryId});
+        if (themeConfig?.customThemeOptions?.settingsUpdate) {
+            customThemeOptions = await themeConfig.customThemeOptions.settingsUpdate({
+                req: req,
+                config: config,
+                guildId: req.params.id,
+                categoryId: req.params.categoryId
+            });
         }
         let bot = config.bot;
         if (!bot.guilds.cache.get(req.params.guildId)) return res.redirect('/manage?error=noPermsToManageGuild');
         await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
-        for(let PermissionRequired of req.requiredPermissions){
+        for (let PermissionRequired of req.requiredPermissions) {
             if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(PermissionRequired[0])) return res.redirect('/manage?error=noPermsToManageGuild');
         }
         let cid = req.params.categoryId;
@@ -175,29 +197,34 @@ module.exports = (app, config, themeConfig) => {
         let errors = [];
         let successes = [];
 
+        const userGuildMemberObject = bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id);
+        const guildObject = bot.guilds.cache.get(req.params.guildId)
+
         for (let option of category.categoryOptionsList) {
             let canUse = {};
 
-            if(option.allowedCheck){
-                canUse = await option.allowedCheck({guild:{id:req.params.guildId}, user: {id: req.session.user.id}});
-            }else{
+            if (option.allowedCheck) {
+                canUse = await option.allowedCheck({guild: {id: req.params.guildId}, user: {id: req.session.user.id}});
+            } else {
                 canUse = {allowed: true, errorMessage: null};
             }
 
-            if(canUse.allowed == false){
+            if (canUse.allowed == false) {
                 setNewRes = {error: canUse.errorMessage}
                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-            }else{
+            } else {
                 if (option.optionType == "spacer") {
 
                 } else if (option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect') {
                     if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: []
                         });
@@ -207,13 +234,15 @@ module.exports = (app, config, themeConfig) => {
                         } else {
                             successes.push(option.optionName);
                         }
-                    } else if (typeof(req.body[option.optionId]) != 'object') {
+                    } else if (typeof (req.body[option.optionId]) != 'object') {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: [req.body[option.optionId]]
                         });
@@ -226,10 +255,12 @@ module.exports = (app, config, themeConfig) => {
                     } else {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: req.body[option.optionId]
                         });
@@ -245,10 +276,12 @@ module.exports = (app, config, themeConfig) => {
                         if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
                             setNewRes = await option.setNew({
                                 guild: {
-                                    id: req.params.guildId
+                                    id: req.params.guildId,
+                                    object: guildObject,
                                 },
                                 user: {
-                                    id: req.session.user.id
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
                                 },
                                 newData: false
                             }) || {};
@@ -261,10 +294,12 @@ module.exports = (app, config, themeConfig) => {
                         } else {
                             setNewRes = await option.setNew({
                                 guild: {
-                                    id: req.params.guildId
+                                    id: req.params.guildId,
+                                    object: guildObject,
                                 },
                                 user: {
-                                    id: req.session.user.id
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
                                 },
                                 newData: true
                             }) || {};
@@ -280,10 +315,12 @@ module.exports = (app, config, themeConfig) => {
                     if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: option.optionType.data
                         }) || {};
@@ -293,15 +330,17 @@ module.exports = (app, config, themeConfig) => {
                         } else {
                             successes.push(option.optionName);
                         }
-                    }else{
-                        try{
+                    } else {
+                        try {
                             const parsedResponse = JSON.parse(req.body[option.optionId]);
                             setNewRes = await option.setNew({
                                 guild: {
-                                    id: req.params.guildId
+                                    id: req.params.guildId,
+                                    object: guildObject,
                                 },
                                 user: {
-                                    id: req.session.user.id
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
                                 },
                                 newData: parsedResponse
                             }) || {};
@@ -311,13 +350,15 @@ module.exports = (app, config, themeConfig) => {
                             } else {
                                 successes.push(option.optionName);
                             }
-                        }catch(err){
+                        } catch (err) {
                             setNewRes = await option.setNew({
                                 guild: {
-                                    id: req.params.guildId
+                                    id: req.params.guildId,
+                                    object: guildObject,
                                 },
                                 user: {
-                                    id: req.session.user.id
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
                                 },
                                 newData: option.optionType.data
                             }) || {};
@@ -333,10 +374,12 @@ module.exports = (app, config, themeConfig) => {
                     if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: null
                         }) || {};
@@ -349,10 +392,12 @@ module.exports = (app, config, themeConfig) => {
                     } else {
                         setNewRes = await option.setNew({
                             guild: {
-                                id: req.params.guildId
+                                id: req.params.guildId,
+                                object: guildObject,
                             },
                             user: {
-                                id: req.session.user.id
+                                id: req.session.user.id,
+                                object: userGuildMemberObject,
                             },
                             newData: req.body[option.optionId]
                         }) || {};
@@ -370,15 +415,18 @@ module.exports = (app, config, themeConfig) => {
         let successesForDBDEvent = [];
         let errorsForDBDEvent = [];
 
-        successes.forEach(item=>{
-           successesForDBDEvent.push(item.split('%is%')) ;
+        successes.forEach(item => {
+            successesForDBDEvent.push(item.split('%is%'));
         });
 
-        errors.forEach(item=>{
-            errorsForDBDEvent.push(item.split('%is%')) ;
+        errors.forEach(item => {
+            errorsForDBDEvent.push(item.split('%is%'));
         });
 
-        req.DBDEvents.emit('guildSettingsUpdated', {user: req.session.user, changes: {successesForDBDEvent, errorsForDBDEvent}});
+        req.DBDEvents.emit('guildSettingsUpdated', {
+            user: req.session.user,
+            changes: {successesForDBDEvent, errorsForDBDEvent}
+        });
 
         if (errors[0]) {
             if (!successes) successes = [];
@@ -388,7 +436,7 @@ module.exports = (app, config, themeConfig) => {
         } else {
             req.session.success = true;
             req.session.errors = false;
-            return res.redirect('/guild/' + req.params.guildId );
+            return res.redirect('/guild/' + req.params.guildId);
         }
     });
 

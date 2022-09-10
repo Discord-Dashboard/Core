@@ -45,7 +45,7 @@ Discord Bot Dashboard
 `.rainbow + `
 Thanks for using ${'discord-dashboard'.rainbow} module! The server is up and running, so head over to the ${`${(config.domain || "domain.com") + pport}`.blue} website and start your fun.
 
-Remember that there are ${'themes'.rainbow} available to make the Dashboard look better: ${'https://assistants.ga/dbd-docs/#/?id=themes'.blue}
+Remember that there are ${'themes'.rainbow} available to make the Dashboard look better: ${'https://dbd-docs.assistantscenter.com/#/?id=themes'.blue}
 
 If you need help with something or you don't understand something, please visit our ${'Discord Support Server'.rainbow}: ${'https://discord.gg/CzfMGtrdaA'.blue}
 `);

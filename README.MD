@@ -10,13 +10,15 @@
 - No need to know how the API works, no need to write it
 - Easy configuration
 - Community support
-- Free for non-commercial use
-- Paid plans
+- Free for no-profit usage
+- Paid for profit usage
 
 # Install
 
 ```js
 npm i discord-dashboard
+//or
+yarn add discord-dashboard
 ```
 
 # Get help
@@ -27,11 +29,20 @@ Join our Discord Support Server
 
 # Documentation
 
-Full and continuously updated project documentation can be found at the URL: https://assistantscenter.com/dbd-docs/
+**Tutorial:**
+- **#1** [Introduction](https://learnit.assistantscenter.com/discord-dashboard-tutorial-1-introduction/)
+- **#2** [Setting up a project](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-setting-up-a-project/)
+  - ***#2.1.*** [Let's make it work](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-1-lets-make-it-work/)
+  - ***#2.2.*** [Creating custom options](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-2-creating-custom-options/)
+  - ***#2.3.*** [FormTypes](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-3-formtypes/)
+  - ***#2.4.*** [Theme customization](https://learnit.assistantscenter.com/discord-dashboard-tutorial-2-3-theme-customization/)
+- **#3** [How to...? ](https://learnit.assistantscenter.com/discord-dashboard-tutorial-3-how-to/)
+    - ***#3.1.*** [Connect domain with the dashboard](https://learnit.assistantscenter.com/discord-dashboard-tutorial-3-1-connect-domain-with-the-dashboard/)
+    - ***#2.2.*** [Make dashboard HTTPS (SSL)](https://learnit.assistantscenter.com/discord-dashboard-tutorial-3-2-make-dashboard-https-ssl/)
 
-# Privacy Policy and Terms of Use
+Straight-written DOCS can be found at the URL: https://assistantscenter.com/dbd-docs/
 
-You can always find an updated privacy policy and terms of use for discord-dashboard under URL: https://assistantscenter.com/discord-dashboard-pp-tos/
+We'd prefer using Tutorial 😅
 
 # Contact
 
@@ -45,10 +56,18 @@ The project is covered by a **Shareware (CC BY-NC-SA 4.0) licence**. This means 
 ### What types of shareware license does the discord-dashboard project fall under?
 
 - **OpenSource License**: Free. Personal usage only. Non-profit.
-- **Personal License**: Profit allowed. Personal usage only. Priority support from developers. Limited to major version: v2.*
-- **Production License**: Allowed for profit purposes. Distribution Allowed (you can share the license with your close friends). Priority support from developers. Limited to major version: v2.*
 
-#### You always have the latest news and the option to purchase license at the URL: https://licenses.assistantscenter.com/
+**For profit usage**: Please contact use us to resell rights. Email: *contact@assistantscenter.com*
+
+#### You can generate OpenSource License there: https://licenses.assistantscenter.com/
+
+# v3 Info
+
+The v3 version of the project designed using solutions like Fastify+Next.js is coming!
+
+### **Stay tuned:**
+
+**Discord v3 Updates**: https://discord.gg/Nkc8MWxHRD
 
 <hr>
 

@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const scopes = ["identify", "guilds", "guilds.join"];
 const fetch = require('node-fetch');
 const DBDStats = require('../ExternalStatistics/index');
 
@@ -7,6 +6,7 @@ const DiscordOauth2 = require("discord-oauth2");
 const oauth = new DiscordOauth2();
 
 module.exports = (app, config, themeConfig) => {
+    const scopes = config.guildAfterAuthorization?.use ? ["identify", "guilds", "guilds.join"] : ["identify", "guilds"];
     const RL = require('express-rate-limit');
     const RateLimits = config.rateLimits || {};
     let RateFunctions = {};
@@ -25,8 +25,10 @@ module.exports = (app, config, themeConfig) => {
     router.get('/', (req, res) => {
         const clientId = req.client.id;
         const redirectUri = req.redirectUri;
-
-        req.session.r = req.query.r || '/';
+        
+        let newPage = "/";
+        if(themeConfig.landingPage?.enabled) newPage = "/dash";
+        req.session.r = req.query.r || newPage;
 
         const authorizeUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scopes.join('%20')}`;
         res.redirect(authorizeUrl);
@@ -92,6 +94,8 @@ module.exports = (app, config, themeConfig) => {
                     data: null,
                 }
             };
+            req.session.save(function (err) {
+            });
             return;
         }
 
@@ -113,7 +117,7 @@ module.exports = (app, config, themeConfig) => {
             });
             OAuth2UserResponse = await oauth.getUser(OAuth2Response.access_token);
         } catch (err) {
-            req.config.reportError('Discord.js Route - OAuth2UserResponse (line 116)', err);
+            req.config.reportError('Discord.js Route - OAuth2UserResponse (line 118)', err);
             req.session.discordAuthStatus = {
                 loading: false,
                 success: false,
@@ -122,6 +126,8 @@ module.exports = (app, config, themeConfig) => {
                     data: null,
                 }
             };
+            req.session.save(function (err) {
+            });
             return;
         }
         OAuth2UserResponse.tag = `${OAuth2UserResponse.username}#${OAuth2UserResponse.discriminator}`;
@@ -134,7 +140,7 @@ module.exports = (app, config, themeConfig) => {
         try {
             req.AssistantsSecureStorage.SaveUser(OAuth2UserResponse.id, OAuth2Response.access_token);
         } catch (err) {
-            req.config.reportError('Discord.js Route - Assistants Secure Storage (line 137)', err);
+            req.config.reportError('Discord.js Route - Assistants Secure Storage (line 141)', err);
             req.session.discordAuthStatus = {
                 loading: false,
                 success: false,
@@ -143,6 +149,8 @@ module.exports = (app, config, themeConfig) => {
                     data: null,
                 }
             };
+            req.session.save(function (err) {
+            });
             return;
         }
 
@@ -161,7 +169,7 @@ module.exports = (app, config, themeConfig) => {
             DBDStats.registerUser(OAuth2UserResponse.id);
             req.DBDEvents.emit('userLoggedIn', OAuth2UserResponse);
         } catch (err) {
-            req.config.reportError('Discord.js Route - DBDStats register and DBDEvent emit userLoggedIn (line 164)', err);
+            req.config.reportError('Discord.js Route - DBDStats register and DBDEvent emit userLoggedIn (line 170)', err);
             req.session.discordAuthStatus = {
                 loading: false,
                 success: false,
@@ -170,6 +178,8 @@ module.exports = (app, config, themeConfig) => {
                     data: null,
                 }
             };
+            req.session.save(function (err) {
+            });
             return;
         }
 
@@ -190,7 +200,7 @@ module.exports = (app, config, themeConfig) => {
             });
             OAuth2GuildsResponse = await oauth.getUserGuilds(OAuth2Response.access_token);
         } catch (err) {
-            req.config.reportError('Discord.js Route - OAuth2GuildsResponse (line 193)', err);
+            req.config.reportError('Discord.js Route - OAuth2GuildsResponse (line 201)', err);
             req.session.discordAuthStatus = {
                 loading: false,
                 success: false,
@@ -199,6 +209,8 @@ module.exports = (app, config, themeConfig) => {
                     data: null,
                 }
             };
+            req.session.save(function (err) {
+            });
             return;
         }
         req.session.guilds = OAuth2GuildsResponse || [];
@@ -226,7 +238,7 @@ module.exports = (app, config, themeConfig) => {
                     }
                 }
             } catch (err) {
-                req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop (line 229)', err)
+                req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop (line 239)', err)
                 req.session.discordAuthStatus = {
                     loading: false,
                     success: false,
@@ -235,6 +247,8 @@ module.exports = (app, config, themeConfig) => {
                         data: null,
                     }
                 };
+                req.session.save(function (err) {
+                });
                 return;
             }
         }
@@ -244,7 +258,6 @@ module.exports = (app, config, themeConfig) => {
          */
 
         if (req.guildAfterAuthorization.use == true) {
-            try {
                 req.session.discordAuthStatus = {
                     loading: true,
                     success: null,
@@ -255,6 +268,7 @@ module.exports = (app, config, themeConfig) => {
                 };
                 req.session.save(function (err) {
                 });
+            try {
                 await oauth.addMember({
                     accessToken: OAuth2Response.access_token,
                     botToken: req.botToken,
@@ -272,16 +286,7 @@ module.exports = (app, config, themeConfig) => {
                     */
                 });
             } catch (err) {
-                req.config.reportError('Discord.js Route - guildAfterAuthorization (line 275)', err);
-                req.session.discordAuthStatus = {
-                    loading: false,
-                    success: false,
-                    state: {
-                        error: err,
-                        data: null,
-                    }
-                };
-                return;
+                req.config.reportError('Discord.js Route - guildAfterAuthorization (line 287)', err);
             }
         }
 
@@ -329,7 +334,7 @@ module.exports = (app, config, themeConfig) => {
         try {
             OAuth2GuildsResponse = await oauth.getUserGuilds(access_token);
         } catch (err) {
-            req.config.reportError('Discord.js Route - OAuth2GuildsResponse for ReloadGuilds (line 332)', err);
+            req.config.reportError('Discord.js Route - OAuth2GuildsResponse for ReloadGuilds (line 335)', err);
             return res.send({
                 error: true,
                 message: "An error occured. Access_token is wrong or you're being rate limited.",
@@ -343,14 +348,21 @@ module.exports = (app, config, themeConfig) => {
          */
 
         try {
+            const Promises = [];
             for (let g of OAuth2GuildsResponse) {
+                Promises.push(new Promise(async (resolve, reject) => {
+                    try{
+                        await req.bot.guilds.fetch(g.id);
+                    }catch(err){}
+                    resolve(1);
+                }));
                 try {
-                    await req.bot.guilds.fetch(g.id);
+                    await Promises.all(Promises);
                 } catch (err) {
                 }
             }
         } catch (err) {
-            req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 353)', err)
+            req.config.reportError('Discord.js Route - OAuth2GuildsResponse Whole Loop for ReloadGuilds (line 363)', err)
             return res.send({
                 error: true,
                 message: "An error occured. Access_token is wrong or you're being rate limited.",
