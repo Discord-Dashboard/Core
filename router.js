@@ -120,4 +120,3 @@ module.exports = (app, config, themeConfig, modules) => {
         });
     }
 }
-}
