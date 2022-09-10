@@ -6,7 +6,7 @@ module.exports = (app, config, themeConfig, modules) => {
         next();
     });
 
-    if (themeConfig.defaultLocale) {
+    if (themeConfig.defaultLocales) {
         app.use((req, res, next) => {
             if (req.cookies?.lang) req.lang = req.cookies.lang;
             else req.lang = req.acceptsLanguages()[0].replace("-", "");
