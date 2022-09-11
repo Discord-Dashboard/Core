@@ -1,7 +1,7 @@
 module.exports = {
-    select: (list, disabled, themeOptions={}) => {
+    select: (list, disabled, themeOptions = {}) => {
         if (!list) throw new Error(err("List in the 'select' form type cannot be empty."));
-        if (typeof(list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
+        if (typeof (list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
         let keys = Object.keys(list);
         let values = Object.values(list);
         return {
@@ -14,9 +14,9 @@ module.exports = {
             themeOptions
         };
     },
-    multiSelect: (list, disabled, required, themeOptions={}) => {
+    multiSelect: (list, disabled, required, themeOptions = {}) => {
         if (!list) throw new Error(err("List in the 'select' form type cannot be empty."));
-        if (typeof(list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
+        if (typeof (list) != "object") throw new Error(err("List in the 'select' form type should be an JSON object."));
         let keys = Object.keys(list);
         let values = Object.values(list);
         return {
@@ -30,7 +30,7 @@ module.exports = {
             themeOptions
         };
     },
-    input: (placeholder, min, max, disabled, required, themeOptions={}) => {
+    input: (placeholder, min, max, disabled, required, themeOptions = {}) => {
         if (min) {
             if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
         }
@@ -50,7 +50,7 @@ module.exports = {
             themeOptions
         };
     },
-    textarea: (placeholder, min, max, disabled, required, themeOptions={}) => {
+    textarea: (placeholder, min, max, disabled, required, themeOptions = {}) => {
         if (min) {
             if (isNaN(min)) throw new Error(err("'min' in the 'input' form type should be an number."));
         }
@@ -70,21 +70,21 @@ module.exports = {
             themeOptions
         };
     },
-    switch: (disabled, themeOptions={}) => {
+    switch: (disabled, themeOptions = {}) => {
         return {
             type: "switch",
             disabled: disabled,
             themeOptions
         };
     },
-    checkbox: (disabled, themeOptions={}) => {
+    checkbox: (disabled, themeOptions = {}) => {
         return {
             type: "checkbox",
             disabled: disabled,
             themeOptions
         };
     },
-    channelsSelect: (disabled, channelTypes = ['GUILD_TEXT'], themeOptions={}) => {
+    channelsSelect: (disabled, channelTypes = ['GUILD_TEXT'], themeOptions = {}) => {
         return {
             type: "channelsSelect",
             function: (client, guildid) => {
@@ -121,7 +121,7 @@ module.exports = {
             themeOptions
         };
     },
-    channelsMultiSelect: (disabled, required, channelTypes = ['GUILD_TEXT'], themeOptions={}) => {
+    channelsMultiSelect: (disabled, required, channelTypes = ['GUILD_TEXT'], themeOptions = {}) => {
         return {
             type: "channelsMultiSelect",
             function: (client, guildid) => {
@@ -159,7 +159,7 @@ module.exports = {
             themeOptions
         };
     },
-    rolesMultiSelect: (disabled, required, themeOptions={}) => {
+    rolesMultiSelect: (disabled, required, includeBots, themeOptions = {}) => {
         return {
             type: "rolesMultiSelect",
             function: (client, guildid) => {
@@ -168,7 +168,7 @@ module.exports = {
                     '-': ''
                 };
                 client.guilds.cache.get(guildid).roles.cache.forEach(role => {
-                    if (role.managed) return;
+                    if (role.managed && !includeBots) return;
                     listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
                     if (list[role.name]) list[`${role.name} (${listCount[role.name]})`] = role.id;
                     else list[role.name] = role.id;
@@ -197,7 +197,7 @@ module.exports = {
             themeOptions
         };
     },
-    rolesSelect: (disabled, themeOptions={}) => {
+    rolesSelect: (disabled, includeBots, themeOptions = {}) => {
         return {
             type: "rolesSelect",
             function: (client, guildid) => {
@@ -206,7 +206,7 @@ module.exports = {
                     '-': ''
                 };
                 client.guilds.cache.get(guildid).roles.cache.forEach(role => {
-                    if (role.managed) return;
+                    if (role.managed && !includeBots) return;
 
                     if (role.id === guildid) return; // @everyone role
                     listCount[role.name] ? listCount[role.name] = listCount[role.name] + 1 : listCount[role.name] = 1;
@@ -236,7 +236,7 @@ module.exports = {
             themeOptions
         };
     },
-    colorSelect: (defaultState, disabled, themeOptions={}) => {
+    colorSelect: (defaultState, disabled, themeOptions = {}) => {
         return {
             type: "colorSelect",
             data: defaultState,
@@ -244,7 +244,7 @@ module.exports = {
             themeOptions
         };
     },
-    embedBuilder: (defaultSettings, disabled, themeOptions={}) => {
+    embedBuilder: (defaultSettings, disabled, themeOptions = {}) => {
         return {
             type: "embedBuilder",
             data: defaultSettings,
