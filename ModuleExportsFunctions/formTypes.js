@@ -1,3 +1,5 @@
+const discordPermissions = require("./discordPermissions");
+
 module.exports = {
     select: (list, disabled, themeOptions = {}) => {
         if (!list) throw new Error(err("List in the 'select' form type cannot be empty."));
@@ -84,7 +86,7 @@ module.exports = {
             themeOptions
         };
     },
-    channelsSelect: (disabled, channelTypes = ['GUILD_TEXT'], themeOptions = {}) => {
+    channelsSelect: (disabled, channelTypes = ['GUILD_TEXT'], hideNSFW, onlyNSFW, themeOptions = {}) => {
         return {
             type: "channelsSelect",
             function: (client, guildid) => {
@@ -94,6 +96,8 @@ module.exports = {
                 };
                 client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
                     if (!channelTypes.includes(channel.type)) return;
+                    if (hideNSFW && channel.nsfw) return;
+                    if (onlyNSFW && !channel.nsfw) return;
                     listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
                     if (list[channel.name]) list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
                     else list[channel.name] = channel.id;
@@ -121,7 +125,7 @@ module.exports = {
             themeOptions
         };
     },
-    channelsMultiSelect: (disabled, required, channelTypes = ['GUILD_TEXT'], themeOptions = {}) => {
+    channelsMultiSelect: (disabled, required, channelTypes = ['GUILD_TEXT'], hideNSFW, onlyNSFW, themeOptions = {}) => {
         return {
             type: "channelsMultiSelect",
             function: (client, guildid) => {
@@ -131,6 +135,8 @@ module.exports = {
                 };
                 client.guilds.cache.get(guildid).channels.cache.forEach(channel => {
                     if (!channelTypes.includes(channel.type)) return;
+                    if (hideNSFW && channel.nsfw) return;
+                    if (onlyNSFW && !channel.nsfw) return;
                     listCount[channel.name] ? listCount[channel.name] = listCount[channel.name] + 1 : listCount[channel.name] = 1;
                     if (list[channel.name]) list[`${channel.name} (${listCount[channel.name]})`] = channel.id;
                     else list[channel.name] = channel.id;
