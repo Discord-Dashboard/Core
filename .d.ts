@@ -259,6 +259,8 @@ interface formTypes {
 	channelsSelect: (
 		disabled?: boolean,
 		channelTypes?: string[],
+		hideNSFW?: boolean,
+		onlyNSFW?: boolean,
 		themeOptions?: object,
 	) => {
 		type: string;
@@ -271,6 +273,8 @@ interface formTypes {
 		disabled?: boolean,
 		required?: boolean,
 		channelTypes?: string[],
+		hideNSFW?: boolean,
+		onlyNSFW?: boolean,
 		themeOptions?: object,
 	) => {
 		type: string;
