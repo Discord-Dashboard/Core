@@ -1,3 +1,4 @@
+const { PermissionFlagsBits } = require("discord.js");
 const Discord = require("discord.js");
 const router = require('express').Router();
 
@@ -39,7 +40,7 @@ module.exports = (app, config, themeConfig) => {
         if (!req.session.user) return res.redirect('/discord?r=/manage');
         let customThemeOptions;
         if (themeConfig?.customThemeOptions?.manage) {
-            customThemeOptions = await themeConfig.customThemeOptions.manage({req: req, res: res, config: config});
+            customThemeOptions = await themeConfig.customThemeOptions.manage({ req: req, res: res, config: config });
         }
         res.render('guilds', {
             req: req,
@@ -77,7 +78,14 @@ module.exports = (app, config, themeConfig) => {
             }
         }
         for (let PermissionRequired of req.requiredPermissions) {
-            if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(PermissionRequired[0])) return res.redirect('/manage?error=noPermsToManageGuild');
+            let converted = PermissionRequired[0];
+            const DiscordJsVersion = Discord.version.split('.')[0]
+
+            if (DiscordJsVersion === "14") converted = await convert14(PermissionRequired[0])
+
+
+
+            if (!bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id).permissions.has(converted)) return res.redirect('/manage?error=noPermsToManageGuild');
         }
 
         if (bot.guilds.cache.get(req.params.id).channels.cache.size < 1) {
@@ -101,11 +109,11 @@ module.exports = (app, config, themeConfig) => {
             if (!canUseList[s.categoryId]) canUseList[s.categoryId] = {};
             for (const c of s.categoryOptionsList) {
                 if (c.allowedCheck) {
-                    const canUse = await c.allowedCheck({guild: {id: req.params.id}, user: {id: req.session.user.id}});
+                    const canUse = await c.allowedCheck({ guild: { id: req.params.id }, user: { id: req.session.user.id } });
                     if (typeof (canUse) != 'object') throw new TypeError(`${s.categoryId} category option with id ${c.optionId} allowedCheck function need to return {allowed: Boolean, errorMessage: String | null}`);
                     canUseList[s.categoryId][c.optionId] = canUse;
                 } else {
-                    canUseList[s.categoryId][c.optionId] = {allowed: true, errorMessage: null};
+                    canUseList[s.categoryId][c.optionId] = { allowed: true, errorMessage: null };
                 }
 
                 if (c.optionType == 'spacer') {
@@ -181,7 +189,14 @@ module.exports = (app, config, themeConfig) => {
         if (!bot.guilds.cache.get(req.params.guildId)) return res.redirect('/manage?error=noPermsToManageGuild');
         await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
         for (let PermissionRequired of req.requiredPermissions) {
-            if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(PermissionRequired[0])) return res.redirect('/manage?error=noPermsToManageGuild');
+            let converted2 = PermissionRequired[0];
+            const DiscordJsVersion2 = Discord.version.split('.')[0]
+
+            if (DiscordJsVersion2 === "14") converted2 = await convert14(PermissionRequired[0])
+
+
+
+            if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(converted2)) return res.redirect('/manage?error=noPermsToManageGuild');
         }
         let cid = req.params.categoryId;
         let settings = config.settings;
@@ -204,13 +219,13 @@ module.exports = (app, config, themeConfig) => {
             let canUse = {};
 
             if (option.allowedCheck) {
-                canUse = await option.allowedCheck({guild: {id: req.params.guildId}, user: {id: req.session.user.id}});
+                canUse = await option.allowedCheck({ guild: { id: req.params.guildId }, user: { id: req.session.user.id } });
             } else {
-                canUse = {allowed: true, errorMessage: null};
+                canUse = { allowed: true, errorMessage: null };
             }
 
             if (canUse.allowed == false) {
-                setNewRes = {error: canUse.errorMessage}
+                setNewRes = { error: canUse.errorMessage }
                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
             } else {
                 if (option.optionType == "spacer") {
@@ -362,7 +377,7 @@ module.exports = (app, config, themeConfig) => {
                                 },
                                 newData: option.optionType.data
                             }) || {};
-                            setNewRes = {error: 'JSON parse for embed builder went wrong, your settings have been reset.'}
+                            setNewRes = { error: 'JSON parse for embed builder went wrong, your settings have been reset.' }
                             if (setNewRes.error) {
                                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
                             } else {
@@ -425,7 +440,7 @@ module.exports = (app, config, themeConfig) => {
 
         req.DBDEvents.emit('guildSettingsUpdated', {
             user: req.session.user,
-            changes: {successesForDBDEvent, errorsForDBDEvent}
+            changes: { successesForDBDEvent, errorsForDBDEvent }
         });
 
         if (errors[0]) {
@@ -441,4 +456,82 @@ module.exports = (app, config, themeConfig) => {
     });
 
     return router;
+}
+
+async function convert14(perm) {
+    var final = "NULL";
+
+    switch (perm) {
+        case "CREATE_INSTANT_INVITE":
+            final = "CreateInstantInvite"
+            break;
+        case "KICK_MEMBERS":
+            final = "KickMembers"
+            break;
+        case "BAN_MEMBERS":
+            final = "BanMembers"
+            break;
+        case "ADMINISTRATOR":
+            final = "Administrator"
+            break;
+        case "MANAGE_CHANNELS":
+            final = "ManageChannels"
+            break;
+        case "MANAGE_GUILD":
+            final = "ManageGuild"
+            break;
+        case "ADD_REACTIONS":
+            final = "AddReactions"
+            break;
+        case "VIEW_AUDIT_LOG":
+            final = "ViewAuditLog"
+            break;
+        case "PRIORITY_SPEAKER":
+            final = "PrioritySpeaker"
+            break;
+        case "STREAM":
+            final = "Stream"
+            break;
+        case "VIEW_CHANNEL":
+            final = "ViewChannel"
+            break;
+        case "SEND_MESSAGES":
+            final = "SendMessages"
+            break;
+        case "SEND_TTS_MESSAGES":
+            final = "SendTTSMessages"
+            break;
+        case "MANAGE_MESSAGES":
+            final = "ManageMessages"
+            break;
+        case "EMBED_LINKS":
+            final = "ManageMessages"
+            break;
+        case "ATTACH_FILES":
+            final = "AttachFiles"
+            break;
+        case "READ_MESSAGE_HISTORY":
+            final = "ReadMessageHistory"
+            break;
+        case "MENTION_EVERYONE":
+            final = "MentionEveryone"
+            break;
+        case "USE_EXTERNAL_EMOJIS":
+            final = "UseExternalEmojis"
+            break;
+        case "VIEW_GUILD_INSIGHTS":
+            final = "ViewGuildInsughts"
+            break;
+        case "CONNECT":
+            final = "Connect"
+            break;
+        case "SPEAK":
+            final = "Speak"
+            break;
+
+
+
+    }
+
+    return final
 }
