@@ -1,7 +1,7 @@
 {
   "name": "discord-dashboard",
-  "version": "2.3.44",
-  "description": "The best way to create a Web Dashboard for your Discord Bot! No need to edit files or write the server from scratch!",
+  "version": "2.3.45",
+  "description": "Create an Dashboard for your bot in 10 minutes without APIs knowledge and slapping code from scratch!",
   "main": "index.js",
   "directories": {
     "test": "test"
