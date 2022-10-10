@@ -81,7 +81,7 @@ module.exports = (app, config, themeConfig) => {
             let converted = PermissionRequired[0];
             const DiscordJsVersion = Discord.version.split('.')[0]
 
-            if (DiscordJsVersion === "14") converted = await convert14(PermissionRequired[0])
+            if (DiscordJsVersion === "14") converted = convert14(PermissionRequired[0])
 
 
 
@@ -458,8 +458,8 @@ module.exports = (app, config, themeConfig) => {
     return router;
 }
 
-async function convert14(perm) {
-    var final = "NULL";
+function convert14(perm) {
+    let final = "NULL";
 
     switch (perm) {
         case "CREATE_INSTANT_INVITE":
@@ -528,9 +528,6 @@ async function convert14(perm) {
         case "SPEAK":
             final = "Speak"
             break;
-
-
-
     }
 
     return final
