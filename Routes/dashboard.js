@@ -431,11 +431,15 @@ module.exports = (app, config, themeConfig) => {
         let errorsForDBDEvent = [];
 
         successes.forEach(item => {
-            successesForDBDEvent.push(item.split('%is%'));
+            if(typeof(item) == "string"){
+                successesForDBDEvent.push(item.split('%is%'));
+            }
         });
 
         errors.forEach(item => {
-            errorsForDBDEvent.push(item.split('%is%'));
+            if(typeof(item) == "string"){
+                errorsForDBDEvent.push(item.split('%is%'));
+            }
         });
 
         req.DBDEvents.emit('guildSettingsUpdated', {
