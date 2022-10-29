@@ -40,7 +40,7 @@ Join our Discord Support Server
     - ***#3.1.*** [Connect domain with the dashboard](https://learnit.assistantscenter.com/discord-dashboard-tutorial-3-1-connect-domain-with-the-dashboard/)
     - ***#2.2.*** [Make dashboard HTTPS (SSL)](https://learnit.assistantscenter.com/discord-dashboard-tutorial-3-2-make-dashboard-https-ssl/)
 
-Straight-written DOCS can be found at the URL: https://assistantscenter.com/dbd-docs/
+Straight-written DOCS can be found at the URL: https://dbd-docs.assistantscenter.com/
 
 We'd prefer using Tutorial 😅
 
