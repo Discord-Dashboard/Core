@@ -138,7 +138,6 @@ module.exports = (app, config, themeConfig) => {
         }
         else for (const category of config.settings) {
             if (!canUseList[category.categoryId]) canUseList[category.categoryId] = {};
-
             const catGAS = await category.getActualSet({
                 guild: {
                     id: req.params.id,
@@ -149,7 +148,7 @@ module.exports = (app, config, themeConfig) => {
                     object: bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id),
                 }
             });
-
+            
             for (const o of catGAS) {
                 if (!o || !o?.optionId) console.log("WARNING: You haven't set the optionId for a category option in your config. This is required for the category option to work.");
                 else {
@@ -178,14 +177,14 @@ module.exports = (app, config, themeConfig) => {
                                 actual[category.categoryId] = {};
                             }
                             if (!actual[category.categoryId][option.optionId]) {
-                                actual[category.categoryId][category.optionId] = o.data;
+                                actual[category.categoryId][option.optionId] = o.data;
                             }
                         }
                     } else console.log(`WARNING: Option ${o.optionId} in category ${category.categoryId} doesn't exist in your config.`);
                 }
             }
         }
-
+        
         let errors;
         let success;
 
@@ -225,6 +224,7 @@ module.exports = (app, config, themeConfig) => {
 
     router.post('/settings/update/:guildId/:categoryId', RateFunctions.settingsUpdatePostAPI ? RateFunctions.settingsUpdatePostAPI : NoRL, async (req, res) => {
         if (!req.session.user) return res.redirect('/discord?r=/guild/' + req.params.guildId);
+        
         let customThemeOptions;
         if (themeConfig?.customThemeOptions?.settingsUpdate) {
             customThemeOptions = await themeConfig.customThemeOptions.settingsUpdate({
@@ -235,6 +235,7 @@ module.exports = (app, config, themeConfig) => {
             });
         }
         let bot = config.bot;
+        
         if (!bot.guilds.cache.get(req.params.guildId)) return res.redirect('/manage?error=noPermsToManageGuild');
         await bot.guilds.cache.get(req.params.guildId).members.fetch(req.session.user.id);
         for (let PermissionRequired of req.requiredPermissions) {
@@ -247,6 +248,7 @@ module.exports = (app, config, themeConfig) => {
 
             if (!bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id).permissions.has(converted2)) return res.redirect('/manage?error=noPermsToManageGuild');
         }
+        
         let cid = req.params.categoryId;
         let settings = config.settings;
 
@@ -256,7 +258,7 @@ module.exports = (app, config, themeConfig) => {
             error: true,
             message: "No category found"
         });
-
+        
         let setNewRes;
         let errors = [];
         let successes = [];
@@ -267,7 +269,7 @@ module.exports = (app, config, themeConfig) => {
 
         for (let option of category.categoryOptionsList) {
             let canUse = {};
-
+            
             if (option.allowedCheck) {
                 canUse = await option.allowedCheck({ guild: { id: req.params.guildId }, user: { id: req.session.user.id } });
             } else {
@@ -530,7 +532,27 @@ module.exports = (app, config, themeConfig) => {
                 }
             }
         }
-
+        
+        if (config.useCategorySet && catO.length) {
+            let sNR = await category.setNew({
+                guild: {
+                    id: req.params.guildId,
+                    object: guildObject,
+                },
+                user: {
+                    id: req.session.user.id,
+                    object: userGuildMemberObject,
+                },
+                data: catO
+            });
+            sNR ? null : sNR = {};
+            if (sNR.error) {
+                errors.push(category.categoryId + '%is%' + sNR.error);
+            } else {
+                successes.push(category.categoryId);
+            }
+        }
+        
         let successesForDBDEvent = [];
         let errorsForDBDEvent = [];
 
