@@ -105,7 +105,7 @@ module.exports = (app, config, themeConfig) => {
         let actual = {};
 
         let canUseList = {};
-        for (const s of config.settings) {
+        if (!config.useCategorySet) for (const s of config.settings) {
             if (!canUseList[s.categoryId]) canUseList[s.categoryId] = {};
             for (const c of s.categoryOptionsList) {
                 if (c.allowedCheck) {
@@ -133,6 +133,55 @@ module.exports = (app, config, themeConfig) => {
                             }
                         });
                     }
+                }
+            }
+        }
+        else for (const category of config.settings) {
+            if (!canUseList[category.categoryId]) canUseList[category.categoryId] = {};
+
+            const catGAS = await category.getActualSet({
+                guild: {
+                    id: req.params.id,
+                    object: bot.guilds.cache.get(req.params.id),
+                },
+                user: {
+                    id: req.session.user.id,
+                    object: bot.guilds.cache.get(req.params.id).members.cache.get(req.session.user.id),
+                }
+            });
+
+            for (const o of catGAS) {
+                if (!o || !o?.optionId) console.log("WARNING: You haven't set the optionId for a category option in your config. This is required for the category option to work.");
+                else {
+                    const option = category.categoryOptionsList.find(c => c.optionId == o.optionId);
+                    if (option) {
+                        if (option.allowedCheck) {
+                            const canUse = await option.allowedCheck({
+                                guild: {
+                                    id: req.params.id
+                                },
+                                user: {
+                                    id: req.session.user.id
+                                }
+                            });
+                            if (typeof (canUse) != 'object') throw new TypeError(`${category.categoryId} category option with id ${option.optionId} allowedCheck function need to return {allowed: Boolean, errorMessage: String | null}`);
+                            canUseList[category.categoryId][option.optionId] = canUse;
+                        } else {
+                            canUseList[category.categoryId][option.optionId] = {
+                                allowed: true,
+                                errorMessage: null
+                            };
+                        }
+
+                        if (option.optionType !== 'spacer') {
+                            if (!actual[category.categoryId]) {
+                                actual[category.categoryId] = {};
+                            }
+                            if (!actual[category.categoryId][option.optionId]) {
+                                actual[category.categoryId][category.optionId] = o.data;
+                            }
+                        }
+                    } else console.log(`WARNING: Option ${o.optionId} in category ${category.categoryId} doesn't exist in your config.`);
                 }
             }
         }
@@ -211,6 +260,7 @@ module.exports = (app, config, themeConfig) => {
         let setNewRes;
         let errors = [];
         let successes = [];
+        let catO = [];
 
         const userGuildMemberObject = bot.guilds.cache.get(req.params.guildId).members.cache.get(req.session.user.id);
         const guildObject = bot.guilds.cache.get(req.params.guildId)
@@ -227,145 +277,160 @@ module.exports = (app, config, themeConfig) => {
             if (canUse.allowed == false) {
                 setNewRes = { error: canUse.errorMessage }
                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-            } else {
-                if (option.optionType == "spacer") {
-
-                } else if (option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect') {
-                    if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId,
-                                object: guildObject,
-                            },
-                            user: {
-                                id: req.session.user.id,
-                                object: userGuildMemberObject,
-                            },
-                            newData: []
+            } else if (option.optionType != "spacer") {
+                if (config.useCategorySet) {
+                    if (option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect') {
+                        if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) catO.push({
+                            optionId: option.optionId,
+                            data: []
                         });
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
+                        else if (typeof (req.body[option.optionId]) != 'object') catO.push({
+                            optionId: option.optionId,
+                            data: [req.body[option.optionId]]
+                        });
+                        else catO.push({
+                            optionId: option.optionId,
+                            data: req.body[option.optionId]
+                        });
+                    } else if (option.optionType.type == "switch") {
+                        if (req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                            if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) catO.push({
+                                optionId: option.optionId,
+                                data: false
+                            });
+                            else catO.push({
+                                optionId: option.optionId,
+                                data: true
+                            });
                         }
-                    } else if (typeof (req.body[option.optionId]) != 'object') {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId,
-                                object: guildObject,
-                            },
-                            user: {
-                                id: req.session.user.id,
-                                object: userGuildMemberObject,
-                            },
-                            newData: [req.body[option.optionId]]
+                    } else if (option.optionType.type == "embedBuilder") {
+                        if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) catO.push({
+                            optionId: option.optionId,
+                            data: option.optionType.data
                         });
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
+                        else {
+                            try {
+                                const parsedResponse = JSON.parse(req.body[option.optionId]);
+                                catO.push({
+                                    optionId: option.optionId,
+                                    data: parsedResponse
+                                });
+                            } catch (err) {
+                                catO.push({
+                                    optionId: option.optionId,
+                                    data: option.optionType.data
+                                });
+                            }
                         }
                     } else {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId,
-                                object: guildObject,
-                            },
-                            user: {
-                                id: req.session.user.id,
-                                object: userGuildMemberObject,
-                            },
-                            newData: req.body[option.optionId]
+                        if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) catO.push({
+                            optionId: option.optionId,
+                            data: null
                         });
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
-                        }
+                        else catO.push({
+                            optionId: option.optionId,
+                            data: req.body[option.optionId]
+                        });
                     }
-                } else if (option.optionType.type == "switch") {
-                    if (req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                } else {
+                    if (option.optionType.type == "rolesMultiSelect" || option.optionType.type == 'channelsMultiSelect' || option.optionType.type == 'multiSelect') {
+                        if (!req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId,
+                                    object: guildObject,
+                                },
+                                user: {
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
+                                },
+                                newData: []
+                            });
+                            setNewRes ? null : setNewRes = {};
+                            if (setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            } else {
+                                successes.push(option.optionName);
+                            }
+                        } else if (typeof (req.body[option.optionId]) != 'object') {
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId,
+                                    object: guildObject,
+                                },
+                                user: {
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
+                                },
+                                newData: [req.body[option.optionId]]
+                            });
+                            setNewRes ? null : setNewRes = {};
+                            if (setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            } else {
+                                successes.push(option.optionName);
+                            }
+                        } else {
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId,
+                                    object: guildObject,
+                                },
+                                user: {
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
+                                },
+                                newData: req.body[option.optionId]
+                            });
+                            setNewRes ? null : setNewRes = {};
+                            if (setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            } else {
+                                successes.push(option.optionName);
+                            }
+                        }
+                    } else if (option.optionType.type == "switch") {
+                        if (req.body[option.optionId] || req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                            if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
+                                setNewRes = await option.setNew({
+                                    guild: {
+                                        id: req.params.guildId,
+                                        object: guildObject,
+                                    },
+                                    user: {
+                                        id: req.session.user.id,
+                                        object: userGuildMemberObject,
+                                    },
+                                    newData: false
+                                }) || {};
+                                setNewRes ? null : setNewRes = {};
+                                if (setNewRes.error) {
+                                    errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                                } else {
+                                    successes.push(option.optionName);
+                                }
+                            } else {
+                                setNewRes = await option.setNew({
+                                    guild: {
+                                        id: req.params.guildId,
+                                        object: guildObject,
+                                    },
+                                    user: {
+                                        id: req.session.user.id,
+                                        object: userGuildMemberObject,
+                                    },
+                                    newData: true
+                                }) || {};
+                                setNewRes ? null : setNewRes = {};
+                                if (setNewRes.error) {
+                                    errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                                } else {
+                                    successes.push(option.optionName);
+                                }
+                            }
+                        }
+                    } else if (option.optionType.type == "embedBuilder") {
                         if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
-                            setNewRes = await option.setNew({
-                                guild: {
-                                    id: req.params.guildId,
-                                    object: guildObject,
-                                },
-                                user: {
-                                    id: req.session.user.id,
-                                    object: userGuildMemberObject,
-                                },
-                                newData: false
-                            }) || {};
-                            setNewRes ? null : setNewRes = {};
-                            if (setNewRes.error) {
-                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                            } else {
-                                successes.push(option.optionName);
-                            }
-                        } else {
-                            setNewRes = await option.setNew({
-                                guild: {
-                                    id: req.params.guildId,
-                                    object: guildObject,
-                                },
-                                user: {
-                                    id: req.session.user.id,
-                                    object: userGuildMemberObject,
-                                },
-                                newData: true
-                            }) || {};
-                            setNewRes ? null : setNewRes = {};
-                            if (setNewRes.error) {
-                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                            } else {
-                                successes.push(option.optionName);
-                            }
-                        }
-                    }
-                } else if (option.optionType.type == "embedBuilder") {
-                    if (req.body[option.optionId] == null || req.body[option.optionId] == undefined) {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId,
-                                object: guildObject,
-                            },
-                            user: {
-                                id: req.session.user.id,
-                                object: userGuildMemberObject,
-                            },
-                            newData: option.optionType.data
-                        }) || {};
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                        } else {
-                            successes.push(option.optionName);
-                        }
-                    } else {
-                        try {
-                            const parsedResponse = JSON.parse(req.body[option.optionId]);
-                            setNewRes = await option.setNew({
-                                guild: {
-                                    id: req.params.guildId,
-                                    object: guildObject,
-                                },
-                                user: {
-                                    id: req.session.user.id,
-                                    object: userGuildMemberObject,
-                                },
-                                newData: parsedResponse
-                            }) || {};
-                            setNewRes ? null : setNewRes = {};
-                            if (setNewRes.error) {
-                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
-                            } else {
-                                successes.push(option.optionName);
-                            }
-                        } catch (err) {
                             setNewRes = await option.setNew({
                                 guild: {
                                     id: req.params.guildId,
@@ -377,50 +442,89 @@ module.exports = (app, config, themeConfig) => {
                                 },
                                 newData: option.optionType.data
                             }) || {};
-                            setNewRes = { error: 'JSON parse for embed builder went wrong, your settings have been reset.' }
+                            setNewRes ? null : setNewRes = {};
                             if (setNewRes.error) {
                                 errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
                             } else {
                                 successes.push(option.optionName);
                             }
-                        }
-                    }
-                } else {
-                    if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId,
-                                object: guildObject,
-                            },
-                            user: {
-                                id: req.session.user.id,
-                                object: userGuildMemberObject,
-                            },
-                            newData: null
-                        }) || {};
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
                         } else {
-                            successes.push(option.optionName);
+                            try {
+                                const parsedResponse = JSON.parse(req.body[option.optionId]);
+                                setNewRes = await option.setNew({
+                                    guild: {
+                                        id: req.params.guildId,
+                                        object: guildObject,
+                                    },
+                                    user: {
+                                        id: req.session.user.id,
+                                        object: userGuildMemberObject,
+                                    },
+                                    newData: parsedResponse
+                                }) || {};
+                                setNewRes ? null : setNewRes = {};
+                                if (setNewRes.error) {
+                                    errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                                } else {
+                                    successes.push(option.optionName);
+                                }
+                            } catch (err) {
+                                setNewRes = await option.setNew({
+                                    guild: {
+                                        id: req.params.guildId,
+                                        object: guildObject,
+                                    },
+                                    user: {
+                                        id: req.session.user.id,
+                                        object: userGuildMemberObject,
+                                    },
+                                    newData: option.optionType.data
+                                }) || {};
+                                setNewRes = { error: 'JSON parse for embed builder went wrong, your settings have been reset.' }
+                                if (setNewRes.error) {
+                                    errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                                } else {
+                                    successes.push(option.optionName);
+                                }
+                            }
                         }
                     } else {
-                        setNewRes = await option.setNew({
-                            guild: {
-                                id: req.params.guildId,
-                                object: guildObject,
-                            },
-                            user: {
-                                id: req.session.user.id,
-                                object: userGuildMemberObject,
-                            },
-                            newData: req.body[option.optionId]
-                        }) || {};
-                        setNewRes ? null : setNewRes = {};
-                        if (setNewRes.error) {
-                            errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                        if (req.body[option.optionId] == undefined || req.body[option.optionId] == null) {
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId,
+                                    object: guildObject,
+                                },
+                                user: {
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
+                                },
+                                newData: null
+                            }) || {};
+                            setNewRes ? null : setNewRes = {};
+                            if (setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            } else {
+                                successes.push(option.optionName);
+                            }
                         } else {
-                            successes.push(option.optionName);
+                            setNewRes = await option.setNew({
+                                guild: {
+                                    id: req.params.guildId,
+                                    object: guildObject,
+                                },
+                                user: {
+                                    id: req.session.user.id,
+                                    object: userGuildMemberObject,
+                                },
+                                newData: req.body[option.optionId]
+                            }) || {};
+                            setNewRes ? null : setNewRes = {};
+                            if (setNewRes.error) {
+                                errors.push(option.optionName + '%is%' + setNewRes.error + '%is%' + option.optionId);
+                            } else {
+                                successes.push(option.optionName);
+                            }
                         }
                     }
                 }
@@ -431,13 +535,13 @@ module.exports = (app, config, themeConfig) => {
         let errorsForDBDEvent = [];
 
         successes.forEach(item => {
-            if(typeof(item) == "string"){
+            if (typeof (item) == "string") {
                 successesForDBDEvent.push(item.split('%is%'));
             }
         });
 
         errors.forEach(item => {
-            if(typeof(item) == "string"){
+            if (typeof (item) == "string") {
                 errorsForDBDEvent.push(item.split('%is%'));
             }
         });
