@@ -1,6 +1,22 @@
-module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191', '#ffc247'], buildingsColor='#ff6347', craneDivBorderColor='#ff6347', craneArmColor='#f88f7c', craneWeightColor='#f88f7c', outerCraneColor='#ff6347', craneLineColor='#ff6347', craneCabinColor='#f88f7c', craneStandColors=['#ff6347', '#f29b8b']}, loggedIn) => {
-    let logged = "<a class='text' href='/discord'>Login</a>";
-    if(loggedIn) logged = "<a class='text' href='/discord/logout'>Logout</a>";
+module.exports = (
+    {
+        title,
+        contentTitle,
+        texts = [],
+        bodyBackgroundColors = ["#ffa191", "#ffc247"],
+        buildingsColor = "#ff6347",
+        craneDivBorderColor = "#ff6347",
+        craneArmColor = "#f88f7c",
+        craneWeightColor = "#f88f7c",
+        outerCraneColor = "#ff6347",
+        craneLineColor = "#ff6347",
+        craneCabinColor = "#f88f7c",
+        craneStandColors = ["#ff6347", "#f29b8b"],
+    },
+    loggedIn
+) => {
+    let logged = "<a class='text' href='/discord'>Login</a>"
+    if (loggedIn) logged = "<a class='text' href='/discord/logout'>Logout</a>"
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -147,13 +163,19 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                   width: 5%;
                   right: 25%;
                   z-index: 1;
-                  background: linear-gradient(to top, ${craneStandColors[0]},  ${craneStandColors[1]});
+                  background: linear-gradient(to top, ${
+                      craneStandColors[0]
+                  },  ${craneStandColors[1]});
                 }
                 .craneTwo .stand {
-                  background: linear-gradient(to top, ${craneStandColors[0]},  ${craneStandColors[1]});
+                  background: linear-gradient(to top, ${
+                      craneStandColors[0]
+                  },  ${craneStandColors[1]});
                 }
                 .craneThree .stand {
-                  background: linear-gradient(to top, ${craneStandColors[0]},  ${craneStandColors[1]});
+                  background: linear-gradient(to top, ${
+                      craneStandColors[0]
+                  },  ${craneStandColors[1]});
                 }
                 .weight {
                   height: 20%;
@@ -327,7 +349,9 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
                   box-sizing: border-box;
                 }
                 body {
-                  background: linear-gradient(to top, ${bodyBackgroundColors[0]}, ${bodyBackgroundColors[1]});
+                  background: linear-gradient(to top, ${
+                      bodyBackgroundColors[0]
+                  }, ${bodyBackgroundColors[1]});
                   -webkit-font-smoothing: antialiased;
                   -moz-osx-font-smoothing: grayscale;
                   text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
@@ -617,7 +641,9 @@ module.exports = ({title, contentTitle, texts=[], bodyBackgroundColors=['#ffa191
         <body style="margin: 0px !important;">
             <div id="content">
                 <h1 id="content-title">${contentTitle}</h1>
-                ${texts.map(text=>'<p class="text">'+text+'</p>').join('')}
+                ${texts
+                    .map((text) => '<p class="text">' + text + "</p>")
+                    .join("")}
                 <br><br><br>
                 ${logged}
             </div>

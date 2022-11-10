@@ -29,4 +29,4 @@ module.exports = (websiteTitle) => `<!DOCTYPE html>
 </body>
 
 </html>
-`;
+`

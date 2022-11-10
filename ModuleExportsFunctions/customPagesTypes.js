@@ -3,21 +3,21 @@ module.exports = {
         return {
             type: "redirect",
             endpoint: endpoint,
-            getEndpoint: getDataFunction
-        };
+            getEndpoint: getDataFunction,
+        }
     },
     renderHtml: (endpoint, getDataFunction) => {
         return {
             type: "html",
             endpoint: endpoint,
-            getHtml: getDataFunction
-        };
+            getHtml: getDataFunction,
+        }
     },
     sendJson: (endpoint, getDataFunction) => {
         return {
             type: "json",
             endpoint: endpoint,
-            getJson: getDataFunction
-        };
+            getJson: getDataFunction,
+        }
     },
 }

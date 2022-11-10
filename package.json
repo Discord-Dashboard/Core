@@ -1,53 +1,55 @@
 {
-  "name": "discord-dashboard",
-  "version": "2.3.50",
-  "description": "Create an Dashboard for your bot in 10 minutes without APIs knowledge and slapping code from scratch!",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "typings": ".d.ts",
-  "dependencies": {
-    "assistants-safe-storage": "^1.0.0",
-    "body-parser": "^1.20.0",
-    "colors": "^1.4.0",
-    "cookie-parser": "^1.4.6",
-    "discord-dashboard": "^2.3.39",
-    "discord-dashboard-pp-system": "^1.0.2",
-    "discord-oauth2": "^2.10.0",
-    "discord.js": "*",
-    "ejs": "^3.1.8",
-    "express": "^4.17.3",
-    "express-partials": "^0.3.0",
-    "express-rate-limit": "^6.4.0",
-    "express-session": "^1.17.3",
-    "https": "^1.0.0",
-    "node-fetch": "^2.6.7",
-    "readline-sync": "^1.4.10",
-    "socket.io": "^4.5.1",
-    "uuid": "^8.3.2"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "breftejk",
-  "license": "CC BY-NC-SA 4.0",
-  "homepage": "https://assistantscenter.com/dbd-docs/",
-  "keywords": [
-    "discord",
-    "discord.js",
-    "discordjs",
-    "discord dashboard",
-    "discord web dashboard",
-    "web dashboard",
-    "dashboard"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Assistants-Center/Discord.js-Web-Dashboard.git"
-  },
-  "devDependencies": {
-    "dbd-dark-dashboard": "^1.6.58",
-    "javascript-obfuscator": "^4.0.0"
-  }
+    "name": "discord-dashboard",
+    "version": "2.3.51",
+    "description": "Create an Dashboard for your bot in 10 minutes without APIs knowledge and slapping code from scratch!",
+    "main": "index.js",
+    "directories": {
+        "test": "test"
+    },
+    "typings": ".d.ts",
+    "dependencies": {
+        "assistants-safe-storage": "^1.0.0",
+        "body-parser": "^1.20.0",
+        "colors": "^1.4.0",
+        "cookie-parser": "^1.4.6",
+        "discord-dashboard": "^2.3.39",
+        "discord-dashboard-pp-system": "^1.0.2",
+        "discord-oauth2": "^2.10.0",
+        "discord.js": "*",
+        "ejs": "^3.1.8",
+        "express": "^4.17.3",
+        "express-partials": "^0.3.0",
+        "express-rate-limit": "^6.4.0",
+        "express-session": "^1.17.3",
+        "https": "^1.0.0",
+        "keyv": "^4.5.2",
+        "node-fetch": "^2.6.7",
+        "readline-sync": "^1.4.10",
+        "socket.io": "^4.5.1",
+        "uuid": "^8.3.2"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "breftejk",
+    "license": "CC BY-NC-SA 4.0",
+    "homepage": "https://dbd-docs.assistantscenter.com/",
+    "keywords": [
+        "discord",
+        "discord.js",
+        "discordjs",
+        "discord dashboard",
+        "discord web dashboard",
+        "web dashboard",
+        "dashboard"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Assistants-Center/Discord.js-Web-Dashboard.git"
+    },
+    "devDependencies": {
+        "dbd-dark-dashboard": "^1.6.58",
+        "javascript-obfuscator": "^4.0.0",
+        "prettier": "2.7.1"
+    }
 }

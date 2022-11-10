@@ -1,5 +1,15 @@
-module.exports = ({fileName, domain, port, token, licenseId, clientSecret, clientId}) => {
-    require('fs').writeFileSync(`${fileName}.js`, `
+module.exports = ({
+    fileName,
+    domain,
+    port,
+    token,
+    licenseId,
+    clientSecret,
+    clientId,
+}) => {
+    require("fs").writeFileSync(
+        `${fileName}.js`,
+        `
 
 /* --- DISCORD.JS CLIENT --- */
 
@@ -118,5 +128,6 @@ let langsSettings = {};
     Dashboard.init();
 })();
 
-       `)
+       `
+    )
 }
