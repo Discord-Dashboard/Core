@@ -285,8 +285,8 @@ interface formTypes {
     }
 
     rolesSelect: (
-        disabled?: boolean,
         includeBots: boolean,
+        disabled?: boolean,
         themeOptions?: object
     ) => {
         type: string
@@ -296,9 +296,9 @@ interface formTypes {
     }
 
     rolesMultiSelect: (
+        includeBots: boolean,
         disabled?: boolean,
         required?: boolean,
-        includeBots: boolean,
         themeOptions?: object
     ) => {
         type: string
