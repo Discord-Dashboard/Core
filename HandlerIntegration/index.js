@@ -1,4 +1,4 @@
-const prefix = "[DBD-Settings-Handler]"
+const prefix = "[DBD-Storage-Handler]"
 const colors = require("colors")
 const Keyv = require("keyv")
 const { join } = require("path")
