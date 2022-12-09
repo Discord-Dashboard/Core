@@ -791,6 +791,7 @@ module.exports = (app, config, themeConfig) => {
             req.DBDEvents.emit("guildSettingsUpdated", {
                 user: req.session.user,
                 changes: { successesForDBDEvent, errorsForDBDEvent },
+                guildId: req.params.guildId,
             })
 
             if (errors[0]) {
