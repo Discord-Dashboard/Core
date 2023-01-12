@@ -61,18 +61,22 @@ module.exports = (app, config, themeConfig, modules) => {
                 }&guild_id=${req.query.g}${config.invite.otherParams || ""}`
             )
 
-        if (req.query.g)
+        if (req.query.g) {
+            let thingymabob = config.invite.redirectUri
+                        ? `&response_type=code&redirect_uri=${config.invite.redirectUri}`
+                        : null;
+            if(!thingymabob) thingymabob = config.invite.specialredirectUri
+                        ? `&response_type=code&redirect_uri=${config.invite.specialRedirectUri.replace("{SERVER}", req.query.g)}`
+                        : "";
+            
             return res.redirect(
                 `https://discord.com/oauth2/authorize?client_id=${
                     config.invite.clientId || config.bot.user.id
                 }&scope=${scopes.join("%20")}&permissions=${
                     config.invite.permissions || "0"
-                }${
-                    config.invite.redirectUri
-                        ? `&response_type=code&redirect_uri=${config.invite.redirectUri}`
-                        : ""
-                }&guild_id=${req.query.g}${config.invite.otherParams || ""}`
+                }${thingymabob}&guild_id=${req.query.g}${config.invite.otherParams || ""}`
             )
+        }
 
         res.redirect(
             `https://discord.com/oauth2/authorize?client_id=${
