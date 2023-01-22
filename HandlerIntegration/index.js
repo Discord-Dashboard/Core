@@ -4,9 +4,8 @@ const Keyv = require("keyv")
 const { join } = require("path")
 
 const err = (text) => {
-    return `🐧${text} Do you need help? Join our Discord server: ${
-        "https://discord.gg/CzfMGtrdaA".blue
-    }`
+    return `🐧${text} Do you need help? Join our Discord server: ${"https://discord.gg/CzfMGtrdaA".blue
+        }`
 }
 
 class Handler {
@@ -27,6 +26,10 @@ class Handler {
 
     async fetch(guildId, optionId) {
         return await this.db.get(`${guildId}.options.${optionId}`)
+    }
+
+    db() {
+        return this.db
     }
 }
 
