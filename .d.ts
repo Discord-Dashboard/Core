@@ -86,7 +86,10 @@ interface Dashboard {
         bot: any
         theme: any
         settings: category[]
-        requiredPermissions?: object
+        requiredPermissions?: object,
+        ownerIDs: array,
+        useTheme404: boolean,
+        useThemeMaintenance: boolean,
         acceptPrivacyPolicy?: boolean
         noCreateServer?: boolean
         SSL?: {
