@@ -94,7 +94,7 @@ interface Dashboard {
             key: string
             cert: string
         }
-        minimizedConsoleLog?: boolean
+        minimizedConsoleLogs?: boolean
         rateLimits?: {
             manage?: RateLimitSettingsObject
             guildPage?: RateLimitSettingsObject
