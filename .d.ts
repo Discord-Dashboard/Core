@@ -264,6 +264,7 @@ interface formTypes {
         channelTypes?: string[],
         hideNSFW?: boolean,
         onlyNSFW?: boolean,
+        hideNoAccess?: boolean,
         themeOptions?: object
     ) => {
         type: string
@@ -278,6 +279,7 @@ interface formTypes {
         channelTypes?: string[],
         hideNSFW?: boolean,
         onlyNSFW?: boolean,
+        hideNoAccess?: boolean,
         themeOptions?: object
     ) => {
         type: string
@@ -290,6 +292,7 @@ interface formTypes {
     rolesSelect: (
         includeBots: boolean,
         disabled?: boolean,
+        hideHigherRoles?: boolean,
         themeOptions?: object
     ) => {
         type: string
@@ -302,6 +305,7 @@ interface formTypes {
         includeBots: boolean,
         disabled?: boolean,
         required?: boolean,
+        hideHigherRoles?: boolean,
         themeOptions?: object
     ) => {
         type: string
