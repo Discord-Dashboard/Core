@@ -201,9 +201,7 @@ module.exports = {
             type: "channelsMultiSelect",
             function: (client, guildid, userid) => {
                 let listCount = {}
-                let list = {
-                    "-": "",
-                }
+                let list = {}
                 const guild = client.guilds.cache.get(guildid)
                 const user = guild.members.cache.get(userid)
                 const bot = guild.members.cache.get(client.user.id)
@@ -256,13 +254,14 @@ module.exports = {
             type: "rolesMultiSelect",
             function: (client, guildid, userid) => {
                 let listCount = {}
-                const list = [{ key: '-', value: '' }]
+                const list = []
                 const guild = client.guilds.cache.get(guildid)
                 const user = guild.members.cache.get(userid)
                 const bot = guild.members.cache.get(client.user.id)
 
                 client.guilds.cache.get(guildid).roles.cache.forEach((role) => {
                     if (role.managed && !includeBots) return
+                    if (role.id === guildid) return // @everyone role
                     if (hideHigherRoles) {
                         if (role.position >= user.roles.highest.position) return
                         if (role.position >= bot.roles.highest.position) return
