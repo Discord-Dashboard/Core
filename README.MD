@@ -71,4 +71,4 @@ The v3 version of the project designed using solutions like Fastify+Next.js is c
 
 <hr>
 
-© 2020-2022 Assistants Center, All rights reserved
+© 2020-2023 Assistants Center, All rights reserved
