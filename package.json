@@ -19,7 +19,7 @@
         "ejs": "^3.1.8",
         "express": "^4.17.3",
         "express-partials": "^0.3.0",
-        "express-rate-limit": "^6.4.0",
+        "express-rate-limit": "^6.7.0",
         "express-session": "^1.17.3",
         "https": "^1.0.0",
         "keyv": "^4.5.2",
