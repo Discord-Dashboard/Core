@@ -12,7 +12,7 @@
         "body-parser": "^1.20.0",
         "colors": "^1.4.0",
         "cookie-parser": "^1.4.6",
-        "discord-dashboard": "^2.3.39",
+        "discord-dashboard": "^2.3.492",
         "discord-dashboard-pp-system": "^1.0.2",
         "discord-oauth2": "^2.10.0",
         "discord.js": "*",
