@@ -25,7 +25,7 @@
         "keyv": "^4.5.2",
         "node-fetch": "^2.6.7",
         "readline-sync": "^1.4.10",
-        "socket.io": "^4.5.1",
+        "socket.io": "^4.5.2",
         "uuid": "^8.3.2"
     },
     "scripts": {
