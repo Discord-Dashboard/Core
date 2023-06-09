@@ -106,7 +106,7 @@ module.exports = (db) => {
          * @returns
          */
         setCategorySet(categorySet) {
-            if (!this.categoryOptionsList.length) throw new Error("You must add options by calling .addOptions to the category before setting it as a category set!")
+            if (!this?.categoryOptionsList?.length) throw new Error("You must add options by calling .addOptions to the category before setting it as a category set!")
             if (categorySet) {
                 this.getActualSet = async ({ guild }) => {
                     let data = await Promise.all(this.categoryOptionsList.map(async (option) => {
