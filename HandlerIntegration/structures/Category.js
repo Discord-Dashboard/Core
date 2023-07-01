@@ -100,42 +100,5 @@ module.exports = (db) => {
 
             return this
         }
-
-        /**
-         * @param {boolean} categorySet
-         * @returns
-         */
-        setCategorySet(categorySet) {
-            if (!this?.categoryOptionsList?.length) throw new Error("You must add options by calling .addOptions to the category before setting it as a category set!")
-            if (categorySet) {
-                this.getActualSet = async ({ guild }) => {
-                    let data = await Promise.all(this.categoryOptionsList.map(async (option) => {
-                        return {
-                            optionId: option.optionId,
-                            data: await this.db.get(`${guild.id}.categories.${this.categoryId}.${option.optionId}`),
-                        }
-                    }))
-
-                    if (this.toggleable)
-                        data.push({
-                            optionId: "categoryToggle",
-                            data: await this.db.get(`${guild.id}.categories.${this.categoryId}.toggle`),
-                        })
-
-                    return data
-                }
-
-                this.setNew = async ({ guild, data }) => {
-                    for (const option of data) {
-                        await this.db.set(
-                            `${guild.id}.categories.${this.categoryId}.${option.optionId === "categoryToggle" ? "toggle" : option.optionId}`,
-                            option.data
-                        )
-                    }
-                }
-            }
-
-            return this
-        }
     }
 }
