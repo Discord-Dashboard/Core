@@ -31,3 +31,4 @@ updateObfuscatedIndex.js
 .idea
 .idea
 yarn-error.log
+HandlerIntegration/database.sqlite
