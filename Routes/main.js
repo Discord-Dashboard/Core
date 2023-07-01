@@ -2,32 +2,6 @@ const Discord = require("discord.js")
 const router = require("express").Router()
 
 module.exports = (app, config, themeConfig, modules) => {
-    router.get(
-        themeConfig.landingPage?.enabled ? "/dash" : "/",
-        async (req, res) => {
-            let customThemeOptions
-            if (themeConfig?.customThemeOptions?.index) {
-                customThemeOptions = await themeConfig.customThemeOptions.index(
-                    { req: req, res: res, config: config }
-                )
-            }
-            res.render("index", {
-                req: req,
-                themeConfig: req.themeConfig,
-                bot: config.bot,
-                customThemeOptions: customThemeOptions || {},
-                config,
-                require,
-            })
-        }
-    )
-
-    if (themeConfig.landingPage?.enabled)
-        router.get("/", async (req, res) => {
-            res.setHeader("Content-Type", "text/html")
-            res.send(await themeConfig.landingPage.getLandingPage(req, res))
-        })
-
     router.get("/loading", async (req, res) => {
         if (!req.session?.discordAuthStatus?.loading)
             return res.redirect("/manage")
@@ -42,51 +16,40 @@ module.exports = (app, config, themeConfig, modules) => {
 
         if (req.query.redirect && !req.query.g)
             return res.redirect(
-                `https://discord.com/oauth2/authorize?client_id=${
-                    config.invite.clientId || config.bot.user.id
-                }&scope=${scopes.join("%20")}&permissions=${
-                    config.invite.permissions || "0"
-                }&response_type=code&redirect_uri=${req.query.redirect}${
-                    config.invite.otherParams || ""
+                `https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id
+                }&scope=${scopes.join("%20")}&permissions=${config.invite.permissions || "0"
+                }&response_type=code&redirect_uri=${req.query.redirect}${config.invite.otherParams || ""
                 }`
             )
         if (req.query.redirect && req.query.g)
             return res.redirect(
-                `https://discord.com/oauth2/authorize?client_id=${
-                    config.invite.clientId || config.bot.user.id
-                }&scope=${scopes.join("%20")}&permissions=${
-                    config.invite.permissions || "0"
-                }&response_type=code&redirect_uri=${
-                    req.query.redirect
+                `https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id
+                }&scope=${scopes.join("%20")}&permissions=${config.invite.permissions || "0"
+                }&response_type=code&redirect_uri=${req.query.redirect
                 }&guild_id=${req.query.g}${config.invite.otherParams || ""}`
             )
 
         if (req.query.g) {
             let thingymabob = config.invite.redirectUri
-                        ? `&response_type=code&redirect_uri=${config.invite.redirectUri}`
-                        : null;
-            if(!thingymabob) thingymabob = config.invite.specialredirectUri
-                        ? `&response_type=code&redirect_uri=${config.invite.specialRedirectUri.replace("{SERVER}", req.query.g)}`
-                        : "";
-            
+                ? `&response_type=code&redirect_uri=${config.invite.redirectUri}`
+                : null;
+            if (!thingymabob) thingymabob = config.invite.specialredirectUri
+                ? `&response_type=code&redirect_uri=${config.invite.specialRedirectUri.replace("{SERVER}", req.query.g)}`
+                : "";
+
             return res.redirect(
-                `https://discord.com/oauth2/authorize?client_id=${
-                    config.invite.clientId || config.bot.user.id
-                }&scope=${scopes.join("%20")}&permissions=${
-                    config.invite.permissions || "0"
+                `https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id
+                }&scope=${scopes.join("%20")}&permissions=${config.invite.permissions || "0"
                 }${thingymabob}&guild_id=${req.query.g}${config.invite.otherParams || ""}`
             )
         }
 
         res.redirect(
-            `https://discord.com/oauth2/authorize?client_id=${
-                config.invite.clientId || config.bot.user.id
-            }&scope=${scopes.join("%20")}&permissions=${
-                config.invite.permissions || "0"
-            }${
-                config.invite.redirectUri
-                    ? `&response_type=code&redirect_uri=${config.invite.redirectUri}`
-                    : ""
+            `https://discord.com/oauth2/authorize?client_id=${config.invite.clientId || config.bot.user.id
+            }&scope=${scopes.join("%20")}&permissions=${config.invite.permissions || "0"
+            }${config.invite.redirectUri
+                ? `&response_type=code&redirect_uri=${config.invite.redirectUri}`
+                : ""
             }${config.invite.otherParams || ""}`
         )
     })
