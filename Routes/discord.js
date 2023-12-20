@@ -150,6 +150,24 @@ module.exports = (app, config, themeConfig) => {
         Save user token in Assistants Secure Storage
         */
 
+            const isBlacklisted = await config?.blacklisted({ userId: OAuth2UserResponse.id }) || false
+            if (isBlacklisted) {
+                req.session.discordAuthStatus = {
+                    loading: false,
+                    success: false,
+                    state: {
+                        error: "blacklisted",
+                        data: null,
+                    },
+                }
+                req.session.user = {
+                    blacklisted: true
+                }
+                req.session.save(function (err) {})
+                return
+            }
+
+
             try {
                 req.AssistantsSecureStorage.SaveUser(
                     OAuth2UserResponse.id,
