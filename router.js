@@ -3,6 +3,7 @@ module.exports = (app, config, themeConfig, modules) => {
 
     app.use((req, res, next) => {
         req.bot = config.bot
+        if (req?.session?.user?.blacklisted && (req.url != "/blacklisted/") && (req.url != "/discord/logout/")) return res.redirect("/blacklisted")
         next()
     })
 
