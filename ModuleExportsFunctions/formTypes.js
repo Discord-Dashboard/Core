@@ -130,6 +130,7 @@ module.exports = {
     channelsSelect: (
         disabled,
         channelTypes = ["GUILD_TEXT"],
+        sortAlphabetical,
         hideNSFW,
         onlyNSFW,
         hideNoAccess,
@@ -171,7 +172,10 @@ module.exports = {
                     i = null,
                     len = keys.length
 
-                keys.sort()
+                if (sortAlphabetical === true) {
+                    keys.sort()
+                }
+
                 list = {}
 
                 for (i = 0; i < len; i++) {

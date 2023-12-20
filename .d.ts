@@ -262,6 +262,7 @@ interface formTypes {
     channelsSelect: (
         disabled?: boolean,
         channelTypes?: string[],
+        sortAlphabetical?: boolean,
         hideNSFW?: boolean,
         onlyNSFW?: boolean,
         hideNoAccess?: boolean,
