@@ -494,7 +494,7 @@ module.exports = (app, config, themeConfig) => {
                                         option.optionId
                                     )
                                 } else {
-                                    successes.push(option.optionName)
+                                    successes.push(option.optionId)
                                 }
                             } else if (
                                 typeof req.body[option.optionId] != "object"
@@ -520,7 +520,7 @@ module.exports = (app, config, themeConfig) => {
                                         option.optionId
                                     )
                                 } else {
-                                    successes.push(option.optionName)
+                                    successes.push(option.optionId)
                                 }
                             } else {
                                 setNewRes = await option.setNew({
@@ -544,7 +544,7 @@ module.exports = (app, config, themeConfig) => {
                                         option.optionId
                                     )
                                 } else {
-                                    successes.push(option.optionName)
+                                    successes.push(option.optionId)
                                 }
                             }
                         } else if (option.optionType.type == "switch") {
@@ -579,7 +579,7 @@ module.exports = (app, config, themeConfig) => {
                                             option.optionId
                                         )
                                     } else {
-                                        successes.push(option.optionName)
+                                        successes.push(option.optionId)
                                     }
                                 } else {
                                     setNewRes =
@@ -604,7 +604,7 @@ module.exports = (app, config, themeConfig) => {
                                             option.optionId
                                         )
                                     } else {
-                                        successes.push(option.optionName)
+                                        successes.push(option.optionId)
                                     }
                                 }
                             }
@@ -635,7 +635,7 @@ module.exports = (app, config, themeConfig) => {
                                         option.optionId
                                     )
                                 } else {
-                                    successes.push(option.optionName)
+                                    successes.push(option.optionId)
                                 }
                             } else {
                                 try {
@@ -664,7 +664,7 @@ module.exports = (app, config, themeConfig) => {
                                             option.optionId
                                         )
                                     } else {
-                                        successes.push(option.optionName)
+                                        successes.push(option.optionId)
                                     }
                                 } catch (err) {
                                     setNewRes =
@@ -691,7 +691,7 @@ module.exports = (app, config, themeConfig) => {
                                             option.optionId
                                         )
                                     } else {
-                                        successes.push(option.optionName)
+                                        successes.push(option.optionId)
                                     }
                                 }
                             }
@@ -722,7 +722,7 @@ module.exports = (app, config, themeConfig) => {
                                         option.optionId
                                     )
                                 } else {
-                                    successes.push(option.optionName)
+                                    successes.push(option.optionId)
                                 }
                             } else {
                                 setNewRes =
@@ -747,7 +747,7 @@ module.exports = (app, config, themeConfig) => {
                                         option.optionId
                                     )
                                 } else {
-                                    successes.push(option.optionName)
+                                    successes.push(option.optionId)
                                 }
                             }
                         }
