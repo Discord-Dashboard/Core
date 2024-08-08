@@ -61,6 +61,10 @@ The project is covered by a **Shareware (CC BY-NC-SA 4.0) licence**. This means 
 
 #### You can generate OpenSource License there: https://licenses.assistantscenter.com/
 
+# Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Discord-Dashboard/Core&type=Date)](https://star-history.com/#Discord-Dashboard/Core&Date)
+
 # v3 Info
 
 The v3 version of the project designed using solutions like Fastify+Next.js is coming!
