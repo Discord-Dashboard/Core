@@ -1,6 +1,4 @@
 
-
-## GitAds Sponsored
 [![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=discord-dashboard/core@github)](https://gitads.dev/v1/ad-track?source=discord-dashboard/core@github)
 
 <img src="https://cdn.assistantscenter.com/kxlrosdn">
