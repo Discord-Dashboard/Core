@@ -1,5 +1,7 @@
 <img src="https://cdn.assistantscenter.com/kxlrosdn">
 
+<!-- GitAds-Verify: JLRHDDY4GU6O671JDF54PP9R1QUWNFFP -->
+
 <p align="center"><img src="https://nodei.co/npm/discord-dashboard.png"></p>
 <p align="center"><img src="https://img.shields.io/npm/v/discord-dashboard"> <img src="https://img.shields.io/github/repo-size/breftejk/Discord.js-Web-Dashboard"> <img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg"> <img src="https://img.shields.io/github/contributors/breftejk/Discord.js-Web-Dashboard?color=green"> <img src="https://img.shields.io/badge/node.js-16.6.0+-blue"> <img src="https://img.shields.io/github/package-json/dependency-version/breftejk/Discord.js-Web-Dashboard/discord.js"> <img src="https://img.shields.io/github/package-json/dependency-version/breftejk/Discord.js-Web-Dashboard/express"> </p>
 <p align="center"><a href="https://discord.gg/Nkc8MWxHRD"> <img src="https://discordapp.com/api/guilds/803034737261936670/widget.png" alt="Discord server"/></a></p>
