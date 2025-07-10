@@ -7,7 +7,8 @@ const theme: ThemeDefinition = {
     config: {},
     pages: {
         '/': LandingPage,
-        '/commands': CommandsPage
+        '/commands': CommandsPage,
+        '/cmds': CommandsPage
     }
 }
 
