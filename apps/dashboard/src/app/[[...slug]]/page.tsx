@@ -1,18 +1,39 @@
-import { notFound } from 'next/navigation'
-import { match as createMatcher, MatchFunction } from 'path-to-regexp'
 import Theme from '@/config/theme'
 import type { ThemeDefinition } from '@discord-dashboard/contracts'
+import { match as createMatcher } from 'path-to-regexp'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 
-type PageEntry = {
-    matcher: MatchFunction<Record<string, string>>
-    Component: React.ComponentType<{ params: Record<string, string> }>
+type Entry = {
+    matcher: ReturnType<typeof createMatcher>
+    Component: React.ComponentType<any>
+    pattern: string
 }
 
-const entries: PageEntry[] = Object.entries((Theme as ThemeDefinition).pages || {})
+const entries: Entry[] = Object.entries((Theme as ThemeDefinition).pages || {})
     .map(([pattern, Component]) => ({
         matcher: createMatcher(pattern, { decode: decodeURIComponent }),
         Component,
+        pattern,
     }))
+
+export async function generateMetadata({
+                                           params,
+                                       }: {
+    params: Promise<{ slug?: string[] }>
+}): Promise<Metadata> {
+    const { slug } = await params
+    const slugArr = slug || []
+    const path = slugArr.length ? '/' + slugArr.join('/') : '/'
+
+    for (const { matcher, pattern } of entries) {
+        if (matcher(path)) {
+            return (Theme as ThemeDefinition).metadata?.[pattern] ?? {}
+        }
+    }
+
+    return (Theme as ThemeDefinition).metadata['404'] || { title: "404 - Not Found" }
+}
 
 export default async function CatchAll({
                                            params,
@@ -20,7 +41,6 @@ export default async function CatchAll({
     params: Promise<{ slug?: string[] }>
 }) {
     const { slug } = await params
-
     const path = slug && slug.length > 0
         ? '/' + slug.join('/')
         : '/'
@@ -32,5 +52,6 @@ export default async function CatchAll({
         }
     }
 
-    return notFound()
+    const NotFoundPage = (Theme as ThemeDefinition).pages?.['404'];
+    return NotFoundPage ? <NotFoundPage /> : notFound();
 }

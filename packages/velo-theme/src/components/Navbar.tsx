@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useAuth } from "@discord-dashboard/auth"
 
 export default function Navbar() {
@@ -17,27 +18,15 @@ export default function Navbar() {
           </span>
         </span>
                 <div className="hidden md:flex space-x-8">
-                    <a
-                        key={"home"}
-                        href="/"
-                        className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-blue-600 transition"
-                    >
+                    <Link key="home" href="/" className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-blue-600 transition">
                         Home
-                    </a>
-                    <a
-                        key={"manage-guilds"}
-                        href="/guilds"
-                        className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-blue-600 transition"
-                    >
+                    </Link>
+                    <Link key="manage-guilds" href="/guilds" className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-blue-600 transition">
                         Manage Guilds
-                    </a>
-                    <a
-                        key={"commands"}
-                        href="/commands"
-                        className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-blue-600 transition"
-                    >
+                    </Link>
+                    <Link key="commands" href="/commands" className="px-3 py-2 text-sm font-medium text-gray-900 hover:text-blue-600 transition">
                         Commands
-                    </a>
+                    </Link>
                 </div>
                 <div className="relative">
                     <button

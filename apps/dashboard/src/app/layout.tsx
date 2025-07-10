@@ -8,14 +8,10 @@ import Theme from '@/config/theme'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
-        <html lang="en">
-            <body>
-                <AuthProvider>
-                    <Contexts.ThemeProvider config={Theme.config}>
-                        {children}
-                    </Contexts.ThemeProvider>
-                </AuthProvider>
-            </body>
-        </html>
+        <AuthProvider>
+            <Contexts.ThemeProvider config={Theme.config}>
+                {children}
+            </Contexts.ThemeProvider>
+        </AuthProvider>
     );
 }
