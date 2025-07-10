@@ -1,4 +1,7 @@
-tsconfig.tsbuildinfo
+.idea
+.DS_Store
 node_modules
-.next
-dist
+apps/dashboard/.env
+apps/dashboard/node_modules
+apps/dashboard/.next
+apps/dashboard/dist
