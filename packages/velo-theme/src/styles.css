@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/* custom animations */
+@keyframes fadeIn { to { opacity: 1 } }
+.animate-fade-in {
+    opacity: 0;
+    animation: fadeIn 0.8s ease-in forwards;
+}
+.delay-100 { animation-delay: 100ms }
+.delay-200 { animation-delay: 200ms }
+.delay-300 { animation-delay: 300ms }
+.delay-400 { animation-delay: 300ms }
+.delay-500 { animation-delay: 300ms }
+.delay-600 { animation-delay: 300ms }
+.delay-700 { animation-delay: 300ms }
+.delay-800 { animation-delay: 300ms }
+
+.dynamic-accent {
+    position: absolute;
+    z-index: 1;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.15;
+    animation: move 20s infinite alternate;
+}
+
+@keyframes move {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(50px, 30px); }
+    50% { transform: translate(100px, -20px); }
+    75% { transform: translate(-30px, 40px); }
+    100% { transform: translate(-50px, -30px); }
+}

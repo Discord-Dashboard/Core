@@ -3,24 +3,16 @@
 import React, { createContext, useContext } from 'react'
 import type { ThemeDefinition } from '@discord-dashboard/contracts'
 
-const ThemeComponents = createContext<ThemeDefinition['components']>({})
-const ThemePages      = createContext<NonNullable<ThemeDefinition['pages']>>({})
+const ThemeConfig = createContext<ThemeDefinition['config']>({})
 
-export function ThemeProvider({ children, theme }: { children: React.ReactNode, theme: ThemeDefinition }) {
-    const def: ThemeDefinition = theme
-
+export function ThemeProvider({ children, config }: { children: React.ReactNode, config: ThemeDefinition["config"] }) {
     return (
-        <ThemeComponents.Provider value={def.components}>
-            <ThemePages.Provider value={def.pages || {}}>
-                {children}
-            </ThemePages.Provider>
-        </ThemeComponents.Provider>
+        <ThemeConfig.Provider value={config}>
+            {children}
+        </ThemeConfig.Provider>
     )
 }
 
-export function useThemeComponents() {
-    return useContext(ThemeComponents)
-}
-export function useThemePages() {
-    return useContext(ThemePages)
+export function useThemeConfig() {
+    return useContext(ThemeConfig)
 }

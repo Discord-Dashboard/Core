@@ -1,18 +1,12 @@
 {
+  "references": [
+    { "path": "packages/auth" },
+    { "path": "packages/api" },
+    { "path": "packages/react" },
+    { "path": "packages/contracts" },
+    { "path": "packages/velo-theme" },
+  ],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@discord-dashboard/core": ["packages/core/src"],
-      "@discord-dashboard/ui": ["packages/ui/src"],
-      "@discord-dashboard/options": ["packages/options/src"],
-      "@discord-dashboard/form-types": ["packages/form-types/src"],
-      "@discord-dashboard/api": ["packages/api/src"],
-      "@discord-dashboard/auth": ["packages/auth/src"],
-      "@discord-dashboard/db": ["packages/db/src"],
-      "@discord-dashboard/plugins/*": ["packages/plugins/*/src"],
-      "@discord-dashboard/cli": ["packages/cli/src"],
-      "@discord-dashboard/config": ["packages/config/src"]
-    },
     "jsx": "react-jsx",
     "target": "ES2021",
     "module": "ESNext",

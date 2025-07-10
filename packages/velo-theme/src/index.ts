@@ -1,12 +1,13 @@
 import { ThemeDefinition } from "@discord-dashboard/contracts";
-import TestPage from "./pages/TestPage";
+
 import LandingPage from "./pages/LandingPage";
+import CommandsPage from "./pages/CommandsPage"
 
 const theme: ThemeDefinition = {
-    components: {},
+    config: {},
     pages: {
         '/': LandingPage,
-        '/test': TestPage
+        '/commands': CommandsPage
     }
 }
 

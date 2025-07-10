@@ -1,21 +1,17 @@
-import './global.css';
+import './globals.css';
+
 import { ReactNode } from 'react';
 import { Contexts } from "@discord-dashboard/react";
 import { AuthProvider } from "@discord-dashboard/auth";
 
 import Theme from '@/config/theme'
 
-export const metadata = {
-    title: 'Dashboard',
-    description: 'Your Discord Dashboard'
-};
-
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="en">
-            <body className="bg-gray-50 text-gray-900">
+            <body>
                 <AuthProvider>
-                    <Contexts.ThemeProvider theme={Theme}>
+                    <Contexts.ThemeProvider config={Theme.config}>
                         {children}
                     </Contexts.ThemeProvider>
                 </AuthProvider>
