@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .idea
 .DS_Store
 node_modules
@@ -5,3 +6,9 @@ apps/dashboard/.env
 apps/dashboard/node_modules
 apps/dashboard/.next
 apps/dashboard/dist
+=======
+tsconfig.tsbuildinfo
+node_modules
+.next
+dist
+>>>>>>> api/main
