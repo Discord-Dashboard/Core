@@ -16,7 +16,8 @@
     "@discord-dashboard/velo-theme": "workspace:*",
     "@discord-dashboard/api": "workspace:*",
     "@discord-dashboard/react": "workspace:*",
-    "@discord-dashboard/auth": "workspace:*"
+    "@discord-dashboard/auth": "workspace:*",
+    "path-to-regexp": "^8.2.0"
   },
   "devDependencies": {
     "@types/node": "24.0.12",

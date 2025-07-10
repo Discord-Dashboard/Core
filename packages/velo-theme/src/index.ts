@@ -8,7 +8,6 @@ const theme: ThemeDefinition = {
     pages: {
         '/': LandingPage,
         '/commands': CommandsPage,
-        '/cmds': CommandsPage
     }
 }
 
