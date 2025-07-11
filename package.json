@@ -1,0 +1,26 @@
+{
+  "name": "@discord-dashboard/form-types",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "@discord-dashboard/contracts": "workspace:*",
+    "discord.js": "^14.21.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/react": "^19.1.8",
+    "rimraf": "^6.0.1"
+  }
+}
