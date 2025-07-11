@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
+import {JWTPayload} from "jose";
+import { signJwt, verifyJwt } from "./jwt";
 
 const {
     JWT_SECRET = 'CHANGE_ME',
@@ -10,7 +11,6 @@ const {
     DISCORD_REDIRECT_URI
 } = process.env;
 
-// threshold in seconds before actual expiry to trigger a refresh
 const REFRESH_THRESHOLD = 60 * 60; // 1 hour
 
 export async function middleware(req: NextRequest) {
@@ -19,19 +19,18 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/api/auth/login', req.url));
     }
 
-    let payload: any;
+    let payload: JWTPayload;
     try {
-        // ignore JWT expiry because we control it separately
-        payload = jwt.verify(cookie, JWT_SECRET, { ignoreExpiration: true });
-    } catch {
-        // bad signature or malformed
+        console.log("checking payload")
+        payload = await verifyJwt(cookie);
+    } catch (err) {
+        console.error("JWT VERIFY ERROR:", err);
         return NextResponse.redirect(new URL('/api/auth/login', req.url));
     }
 
     const now = Math.floor(Date.now() / 1000);
 
-    // if OAuth token is near expiry, refresh it automatically
-    if (payload.oauthExp && now > payload.oauthExp - REFRESH_THRESHOLD) {
+    if (payload.exp && now > payload.exp - REFRESH_THRESHOLD) {
         try {
             const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
                 method: 'POST',
@@ -40,24 +39,21 @@ export async function middleware(req: NextRequest) {
                     client_id:     DISCORD_CLIENT_ID!,
                     client_secret: DISCORD_CLIENT_SECRET!,
                     grant_type:    'refresh_token',
-                    refresh_token: payload.refreshToken as string,
+                    refresh_token: payload.refresh_token as string,
                 })
             }).then(r => r.json());
 
             if (tokenRes.access_token && tokenRes.expires_in) {
                 const newOauthExp = now + tokenRes.expires_in;
-                const newRefresh  = tokenRes.refresh_token || payload.refreshToken;
+                const newRefresh  = tokenRes.refresh_token || payload.refresh_token;
 
-                // re-sign JWT with updated tokens
-                const newJwt = jwt.sign(
+                const newJwt = await signJwt(
                     {
-                        discordId:    payload.discordId,
-                        username:     payload.username,
-                        refreshToken: newRefresh,
-                        oauthExp:       newOauthExp
-                    },
-                    JWT_SECRET,
-                    { expiresIn: '30d' }
+                        sub:    payload.sub,
+                        name:     payload.name,
+                        refresh_token: newRefresh,
+                        exp:       newOauthExp
+                    }
                 );
 
                 const res = NextResponse.next();
@@ -72,13 +68,9 @@ export async function middleware(req: NextRequest) {
                 return res;
             }
         } catch {
-            // fallback: force re-login
             return NextResponse.redirect(new URL('/api/auth/login', req.url));
         }
     }
 
-    // all good: proceed
     return NextResponse.next();
 }
-
-export const matcher = ['/settings/:path*'];

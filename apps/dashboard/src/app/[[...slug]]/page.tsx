@@ -1,7 +1,7 @@
 import Theme from '@/config/theme'
 import type { ThemeDefinition } from '@discord-dashboard/contracts'
 import { match as createMatcher } from 'path-to-regexp'
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
 import { notFound } from 'next/navigation'
 
 type Entry = {
@@ -21,7 +21,7 @@ export async function generateMetadata({
                                            params,
                                        }: {
     params: Promise<{ slug?: string[] }>
-}): Promise<Metadata> {
+}): Promise<Metadata | undefined | null> {
     const { slug } = await params
     const slugArr = slug || []
     const path = slugArr.length ? '/' + slugArr.join('/') : '/'
@@ -32,7 +32,7 @@ export async function generateMetadata({
         }
     }
 
-    return (Theme as ThemeDefinition).metadata['404'] || { title: "404 - Not Found" }
+    return (Theme as ThemeDefinition).metadata?.["404"] || { title: "404 - Not Found" }
 }
 
 export default async function CatchAll({

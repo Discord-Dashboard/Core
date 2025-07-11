@@ -9,7 +9,9 @@
     "clean": "rimraf dist"
   },
   "peerDependencies": {
-    "react": "^18.0.0"
+    "react": "^19.1.0",
+    "discord.js": "^14.21.0",
+    "next": "^15.3.5"
   },
   "devDependencies": {
     "typescript": "^5.8.3",

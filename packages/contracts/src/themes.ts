@@ -1,22 +1,11 @@
-// packages/contracts/src/themes/index.ts
 import type React from 'react'
 
-/** Theme names (e.g. 'default', 'dark', 'cyberpunk'). */
+import type { Metadata } from 'next'
+
 export type ThemeName = string
 
-export interface PageMetadata {
-    title?: string;
-    description?: string;
-}
-
-/**
- * Everything a theme can override.
- */
 export interface ThemeDefinition {
-    /** arbitrary Next.js routes → page components */
     pages?: Record<string, React.ComponentType<any>>
-    /** arbitrary Next.js routes → page components */
-    metadata?: Record<string, PageMetadata>
-    /** metadata */
+    metadata?: Record<string, Metadata>
     config?: Record<string, any>
 }

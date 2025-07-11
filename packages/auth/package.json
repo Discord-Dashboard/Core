@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "discord.js": "^14.21.0",
-    "jsonwebtoken": "^9.0.2",
+    "jose": "^6.0.11",
     "cookie": "^1.0.2"
   },
   "peerDependencies": {

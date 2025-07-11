@@ -12,9 +12,9 @@ const theme: ThemeDefinition = {
         '404': NotFoundPage
     },
     metadata: {
-        '/': { title: "HomePage", description: "Hello, world!" },
-        '/commands': { title: "Commands", description: "Commands!!!" },
-        '404': { title: "Not Found :(", description: "Website not found!!!" }
+        '/': { title: "VeloTheme", description: "VeloTheme - Discord-Dashboard v3 theme." },
+        '/commands': { title: "VeloTheme - Commands", description: "A complete list of bot's commands." },
+        '404': { title: "VeloTheme - Not Found :(", description: "Requested resource doesn't exist or has been moved.", robots: { index: false, follow: false }, }
     }
 }
 

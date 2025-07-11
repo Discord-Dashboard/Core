@@ -14,7 +14,8 @@
     "@discord-dashboard/react": "workspace:*",
     "react": "^19.1.0",
     "@heroicons/react": "^2.2.0",
-    "@discord-dashboard/auth": "workspace:*"
+    "@discord-dashboard/auth": "workspace:*",
+    "@discord-dashboard/form-types": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.1.0",

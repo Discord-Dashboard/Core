@@ -9,10 +9,15 @@
     "clean": "rimraf dist"
   },
   "peerDependencies": {
-    "next": "^15.3.5"
+    "next": "^15.3.5",
+    "discord.js": "^14.21.0",
+    "@discord-dashboard/form-types": "workspace:*",
+    "@discord-dashboard/auth": "workspace:*"
   },
   "dependencies": {
-    "@discord-dashboard/contracts": "workspace:*"
+    "@discord-dashboard/contracts": "workspace:*",
+    "http-errors": "^2.0.0",
+    "zlib-sync": "^0.1.10"
   },
   "devDependencies": {
     "typescript": "^5.8.3",

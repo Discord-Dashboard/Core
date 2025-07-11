@@ -17,7 +17,9 @@
     "@discord-dashboard/api": "workspace:*",
     "@discord-dashboard/react": "workspace:*",
     "@discord-dashboard/auth": "workspace:*",
-    "path-to-regexp": "^8.2.0"
+    "@discord-dashboard/form-types": "workspace:*",
+    "path-to-regexp": "^8.2.0",
+    "discord.js": "^14.21.0"
   },
   "devDependencies": {
     "@types/node": "24.0.12",
