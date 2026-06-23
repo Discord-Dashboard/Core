@@ -1,0 +1,18 @@
+{
+  "name": "@discord-dashboard/ui",
+  "version": "3.0.0-alpha.0",
+  "description": "Component library, design tokens and themes for discord-dashboard.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "echo \"no lint yet\"",
+    "test": "echo \"no tests yet\""
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  }
+}

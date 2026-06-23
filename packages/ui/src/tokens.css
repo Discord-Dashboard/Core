@@ -1,0 +1,18 @@
+/* Design tokens. Override these to rebrand without touching components. */
+:root {
+  --dd-color-bg: #0b0d12;
+  --dd-color-surface: #151922;
+  --dd-color-text: #e6e9ef;
+  --dd-color-muted: #9aa4b2;
+  --dd-color-primary: #5865f2;
+  --dd-color-accent: #00b3a4;
+  --dd-radius: 12px;
+  --dd-space: 8px;
+}
+
+:root[data-theme="light"] {
+  --dd-color-bg: #f6f7f9;
+  --dd-color-surface: #ffffff;
+  --dd-color-text: #1b1f27;
+  --dd-color-muted: #5a6472;
+}
