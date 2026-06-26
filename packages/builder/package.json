@@ -1,0 +1,22 @@
+{
+  "name": "@discord-dashboard/builder",
+  "version": "3.0.0-alpha.0",
+  "description": "Drag and drop page builder and AI page generation.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "echo \"no lint yet\"",
+    "test": "echo \"no tests yet\""
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "@measured/puck": "^0.16.0",
+    "react": "^18.3.1"
+  }
+}
