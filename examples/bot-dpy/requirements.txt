@@ -1,0 +1,2 @@
+discord-dashboard
+websockets>=12.0
