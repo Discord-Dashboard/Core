@@ -184,6 +184,12 @@ importers:
         specifier: workspace:*
         version: link:../../schema
 
+  packages/modules/autoresponder:
+    dependencies:
+      '@discord-dashboard/schema':
+        specifier: workspace:*
+        version: link:../../schema
+
   packages/modules/giveaways:
     dependencies:
       '@discord-dashboard/schema':
@@ -197,6 +203,12 @@ importers:
         version: link:../../schema
 
   packages/modules/onboarding:
+    dependencies:
+      '@discord-dashboard/schema':
+        specifier: workspace:*
+        version: link:../../schema
+
+  packages/modules/reaction-roles:
     dependencies:
       '@discord-dashboard/schema':
         specifier: workspace:*
