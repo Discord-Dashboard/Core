@@ -10,12 +10,14 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
+    "test": "vitest run",
     "format": "prettier --write ."
   },
   "devDependencies": {
     "prettier": "^3.3.3",
     "turbo": "^2.0.9",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "vitest": "^4.1.10",
+    "zod": "^4.4.3"
   }
 }

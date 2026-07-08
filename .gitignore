@@ -12,3 +12,4 @@ coverage/
 *.sqlite
 *.sqlite-journal
 .DS_Store
+package-lock.json
