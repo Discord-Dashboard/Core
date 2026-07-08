@@ -29,6 +29,19 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   await app.register(rateLimit, { max: 100, timeWindow: "1 minute" })
   await app.register(cors, { origin: config.allowedOrigins, credentials: true })
 
+  // CSRF mitigation for cookie auth: a state changing request coming from a
+  // browser carries an Origin header, and it must be an allowed origin.
+  // Webhooks are server to server and exempt.
+  const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"])
+  app.addHook("onRequest", async (req, reply) => {
+    if (!MUTATING.has(req.method)) return
+    if (req.url.startsWith("/webhooks/")) return
+    const origin = req.headers.origin
+    if (origin && !config.allowedOrigins.includes(origin)) {
+      return reply.code(403).send({ error: "bad origin" })
+    }
+  })
+
   app.get("/health", async () => ({ ok: true }))
 
   await registerAuthRoutes(app, config, sessions)
