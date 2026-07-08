@@ -1,7 +1,6 @@
 import type { FastifyInstance } from "fastify"
-import type { BotAdapter } from "@discord-dashboard/core"
+import type { BotAdapter, Entitlements } from "@discord-dashboard/core"
 import { SettingsService } from "@discord-dashboard/core"
-import { AllowAll } from "@discord-dashboard/core"
 import type { SettingsDef } from "@discord-dashboard/schema"
 import { SESSION_COOKIE, type SessionStore } from "../auth/session.js"
 
@@ -9,13 +8,14 @@ export interface SettingsDeps {
   def: SettingsDef
   adapter: BotAdapter
   sessions: SessionStore
+  entitlements: Entitlements
 }
 
 export async function registerSettingsRoutes(
   app: FastifyInstance,
   deps: SettingsDeps
 ) {
-  const service = new SettingsService(deps.def, deps.adapter, AllowAll)
+  const service = new SettingsService(deps.def, deps.adapter, deps.entitlements)
 
   app.get("/api/schema", async () => deps.adapter.describeSchema())
 
