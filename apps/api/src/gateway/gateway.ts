@@ -25,6 +25,7 @@ export type SecretLookup = (botId: string) => Promise<string | null>
 export interface Gateway {
   sessions: Map<string, BotSession>
   call<R = unknown>(botId: string, method: string, params?: unknown): Promise<R>
+  close(): void
 }
 
 export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
@@ -98,7 +99,12 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
     })
   }
 
-  return { sessions, call: call as Gateway["call"] }
+  function closeGateway() {
+    for (const client of wss.clients) client.terminate()
+    wss.close()
+  }
+
+  return { sessions, call: call as Gateway["call"], close: closeGateway }
 }
 
 function close(socket: WebSocket, code: number) {

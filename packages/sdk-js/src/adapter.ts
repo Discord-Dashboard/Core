@@ -46,6 +46,10 @@ export class Adapter {
     return this
   }
 
+  disconnect() {
+    this.ws?.close()
+  }
+
   private send(obj: unknown) {
     this.ws?.send(JSON.stringify(obj))
   }
