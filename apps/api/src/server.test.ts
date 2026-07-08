@@ -61,3 +61,35 @@ describe("api server (integration)", () => {
     expect(res.json()).toEqual({ received: true })
   })
 })
+
+import { describe as d2, it as i2, expect as e2, beforeAll as b2, afterAll as a2 } from "vitest"
+import { buildServer as build2 } from "./server.js"
+import { InProcessAdapter as IPA2, MemoryStore as MS2 } from "@discord-dashboard/core"
+import { defineSettings as ds2 } from "@discord-dashboard/schema"
+
+d2("api robustness", () => {
+  let app2: import("fastify").FastifyInstance
+  const cfg2 = {
+    port: 0,
+    cookieSecret: "test-secret-at-least-32-chars-long-000",
+    allowedOrigins: ["http://localhost:3000"],
+    discord: { clientId: "c", clientSecret: "s", redirectUri: "http://localhost/cb" },
+  }
+  const def2 = ds2(() => ({}))
+  b2(async () => {
+    app2 = await build2(cfg2, { def: def2, adapter: new IPA2(def2, new MS2()) })
+  })
+  a2(async () => {
+    await app2.close()
+  })
+  i2("returns a json 404 for unknown routes", async () => {
+    const res = await app2.inject({ method: "GET", url: "/nope" })
+    e2(res.statusCode).toBe(404)
+    e2(res.json()).toEqual({ error: "not found" })
+  })
+  i2("exposes the protocol version", async () => {
+    const res = await app2.inject({ method: "GET", url: "/version" })
+    e2(res.statusCode).toBe(200)
+    e2((res.json() as { protocol: string }).protocol).toMatch(/^\d+\.\d+\.\d+$/)
+  })
+})

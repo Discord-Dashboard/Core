@@ -6,6 +6,7 @@ import rateLimit from "@fastify/rate-limit"
 import type { BotAdapter } from "@discord-dashboard/core"
 import type { SettingsDef } from "@discord-dashboard/schema"
 import { createEntitlements } from "@discord-dashboard/billing"
+import { PROTOCOL_VERSION } from "@discord-dashboard/protocol"
 import type { ApiConfig } from "./config.js"
 import { SessionStore } from "./auth/session.js"
 import { registerAuthRoutes } from "./auth/routes.js"
@@ -43,6 +44,14 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   })
 
   app.get("/health", async () => ({ ok: true }))
+  app.get("/version", async () => ({ protocol: PROTOCOL_VERSION }))
+
+  // Structured errors, and never leak internals to the client.
+  app.setNotFoundHandler((_req, reply) => reply.code(404).send({ error: "not found" }))
+  app.setErrorHandler((err, req, reply) => {
+    req.log.error(err)
+    reply.code(err.statusCode ?? 500).send({ error: "internal error" })
+  })
 
   await registerAuthRoutes(app, config, sessions)
   await registerSettingsRoutes(app, {
