@@ -23,3 +23,22 @@ describe("builder", () => {
     expect(r.success).toBe(false)
   })
 })
+
+import { generatePage as gen2 } from "./ai.js"
+
+describe("builder repair loop", () => {
+  it("recovers after one invalid attempt", async () => {
+    let n = 0
+    const flaky = {
+      async complete() {
+        n++
+        return n === 1
+          ? "not json"
+          : JSON.stringify({ version: 1, root: { title: "t" }, content: [] })
+      },
+    }
+    const res = await gen2(flaky, "x", ["Heading"], 3)
+    expect(res.ok).toBe(true)
+    expect(n).toBe(2)
+  })
+})
