@@ -16,6 +16,6 @@
     "@discord-dashboard/core": "workspace:*"
   },
   "peerDependencies": {
-    "stripe": "^16.6.0"
+    "stripe": "^22.3.0"
   }
 }

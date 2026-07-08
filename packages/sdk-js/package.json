@@ -15,9 +15,9 @@
   "dependencies": {
     "@discord-dashboard/protocol": "workspace:*",
     "@discord-dashboard/schema": "workspace:*",
-    "ws": "^8.18.0"
+    "ws": "^8.21.0"
   },
   "devDependencies": {
-    "@types/ws": "^8.5.12"
+    "@types/ws": "^8.18.1"
   }
 }

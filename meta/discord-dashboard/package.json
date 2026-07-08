@@ -18,9 +18,11 @@
     "@discord-dashboard/schema": "workspace:*"
   },
   "peerDependencies": {
-    "discord.js": "^14.15.3"
+    "discord.js": "^14.26.4"
   },
   "peerDependenciesMeta": {
-    "discord.js": { "optional": true }
+    "discord.js": {
+      "optional": true
+    }
   }
 }
