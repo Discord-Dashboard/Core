@@ -14,8 +14,8 @@ export interface Field {
   zod: z.ZodTypeAny
 }
 
-function make(type: string, zod: z.ZodTypeAny, opts: Record<string, unknown>): Field {
-  return { type, zod, opts }
+function make(type: string, zod: z.ZodTypeAny, opts: BaseFieldOpts = {}): Field {
+  return { type, zod, opts: { ...opts } as Record<string, unknown> }
 }
 
 // Field factories. These replace the v2 formTypes helpers but carry a Zod type
@@ -67,10 +67,10 @@ export const f = {
     return make("color", z.string().optional(), opts)
   },
   list(item: Field, opts: BaseFieldOpts & { max?: number } = {}): Field {
-    return make("list", z.array(item.zod), { ...opts, item: item.type })
+    return make("list", z.array(item.zod), { ...opts, item: item.type } as BaseFieldOpts)
   },
   embed(opts: BaseFieldOpts & { default?: unknown } = {}): Field {
-    return make("embed", z.record(z.unknown()).optional(), opts)
+    return make("embed", z.record(z.string(), z.unknown()).optional(), opts)
   },
 }
 

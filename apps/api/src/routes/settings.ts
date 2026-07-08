@@ -22,7 +22,11 @@ export async function registerSettingsRoutes(
   app.get("/api/guilds/:guildId/settings/:category/:option", async (req, reply) => {
     const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
-    const { guildId, category, option } = req.params as Record<string, string>
+    const { guildId, category, option } = req.params as {
+      guildId: string
+      category: string
+      option: string
+    }
     const value = await service.get({ guildId, userId: session.userId }, category, option)
     return { value }
   })
@@ -30,7 +34,11 @@ export async function registerSettingsRoutes(
   app.post("/api/guilds/:guildId/settings/:category/:option", async (req, reply) => {
     const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
-    const { guildId, category, option } = req.params as Record<string, string>
+    const { guildId, category, option } = req.params as {
+      guildId: string
+      category: string
+      option: string
+    }
     const { value } = (req.body ?? {}) as { value?: unknown }
     const result = await service.set(
       { guildId, userId: session.userId },

@@ -15,7 +15,7 @@ export const COMPONENT_TYPES = [
 
 export const blockSchema = z.object({
   type: z.enum(COMPONENT_TYPES),
-  props: z.record(z.unknown()).default({}),
+  props: z.record(z.string(), z.unknown()).default({}),
 })
 
 export const pageSchema = z.object({
