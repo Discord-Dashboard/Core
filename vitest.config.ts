@@ -17,6 +17,7 @@ export default defineConfig({
       pkg("@discord-dashboard/core", "packages/core/src/index.ts"),
       pkg("@discord-dashboard/billing", "packages/billing/src/index.ts"),
       pkg("@discord-dashboard/sdk-js", "packages/sdk-js/src/index.ts"),
+      pkg("@discord-dashboard/api", "apps/api/src/index.ts"),
     ],
   },
   plugins: [
@@ -44,6 +45,7 @@ export default defineConfig({
     include: [
       "packages/**/src/**/*.test.ts",
       "apps/**/src/**/*.test.ts",
+      "meta/**/src/**/*.test.ts",
     ],
   },
 })
