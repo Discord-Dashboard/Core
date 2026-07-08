@@ -7,11 +7,12 @@
   "main": "./src/index.ts",
   "license": "MIT",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src/main.ts",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "echo \"no lint yet\"",
-    "test": "echo \"no tests yet\""
+    "test": "echo \"no tests yet\"",
+    "start": "node dist/main.js"
   },
   "dependencies": {
     "@discord-dashboard/core": "workspace:*",
