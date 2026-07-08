@@ -1,4 +1,4 @@
-import Fastify from "fastify"
+import Fastify, { type FastifyError } from "fastify"
 import cookie from "@fastify/cookie"
 import cors from "@fastify/cors"
 import helmet from "@fastify/helmet"
@@ -48,7 +48,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
 
   // Structured errors, and never leak internals to the client.
   app.setNotFoundHandler((_req, reply) => reply.code(404).send({ error: "not found" }))
-  app.setErrorHandler((err, req, reply) => {
+  app.setErrorHandler((err: FastifyError, req, reply) => {
     req.log.error(err)
     reply.code(err.statusCode ?? 500).send({ error: "internal error" })
   })
