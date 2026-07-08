@@ -1,14 +1,15 @@
 import { SettingsForm } from "./SettingsForm"
 
-export default function GuildDashboard({
+export default async function GuildDashboard({
   params,
 }: {
-  params: { guildId: string }
+  params: Promise<{ guildId: string }>
 }) {
+  const { guildId } = await params
   return (
     <main style={{ padding: 48 }}>
-      <h1>Guild {params.guildId}</h1>
-      <SettingsForm guildId={params.guildId} />
+      <h1>Guild {guildId}</h1>
+      <SettingsForm guildId={guildId} />
     </main>
   )
 }
