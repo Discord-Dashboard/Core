@@ -1,0 +1,52 @@
+import { buildServer, type ApiConfig } from "@discord-dashboard/api"
+import {
+  InProcessAdapter,
+  MemoryStore,
+  type KeyValueStore,
+} from "@discord-dashboard/core"
+import type { SettingsDef } from "@discord-dashboard/schema"
+import { discordSourceFromClient } from "./discord-source.js"
+
+export { defineSettings, f } from "@discord-dashboard/schema"
+
+export interface CreateDashboardOptions {
+  client?: unknown
+  discord: { clientId: string; clientSecret: string; redirectUri?: string }
+  settings: SettingsDef
+  storage?: KeyValueStore
+  port?: number
+}
+
+// One call sets up the whole lite dashboard: the in process adapter, the
+// server, OAuth and the settings API. No license, no external services.
+export function createDashboard(opts: CreateDashboardOptions) {
+  const port = opts.port ?? 3001
+  const config: ApiConfig = {
+    port,
+    cookieSecret: process.env.COOKIE_SECRET ?? "change-me-in-production",
+    allowedOrigins: (process.env.ALLOWED_ORIGINS ?? "http://localhost:3000")
+      .split(",")
+      .map((o) => o.trim()),
+    discord: {
+      clientId: opts.discord.clientId,
+      clientSecret: opts.discord.clientSecret,
+      redirectUri:
+        opts.discord.redirectUri ?? `http://localhost:${port}/auth/callback`,
+    },
+  }
+
+  const source = opts.client ? discordSourceFromClient(opts.client) : undefined
+  const adapter = new InProcessAdapter(
+    opts.settings,
+    opts.storage ?? new MemoryStore(),
+    source
+  )
+
+  return {
+    async listen(listenPort = port) {
+      const app = await buildServer(config, { def: opts.settings, adapter })
+      await app.listen({ port: listenPort, host: "0.0.0.0" })
+      return app
+    },
+  }
+}
