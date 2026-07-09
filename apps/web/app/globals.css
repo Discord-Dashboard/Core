@@ -1,0 +1,42 @@
+/* Base styling built on the design tokens, so a theme swap restyles everything. */
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--dd-color-bg);
+  color: var(--dd-color-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  line-height: 1.5;
+}
+a {
+  color: var(--dd-color-primary);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 {
+  font-size: 1.6rem;
+}
+h2 {
+  font-size: 1.15rem;
+  color: var(--dd-color-muted);
+}
+main {
+  max-width: 820px;
+  margin: 0 auto;
+}
+section {
+  background: var(--dd-color-surface);
+  border-radius: var(--dd-radius);
+  padding: 16px 20px;
+}
+input,
+select {
+  background: var(--dd-color-bg);
+  color: var(--dd-color-text);
+  border: 1px solid var(--dd-color-muted);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
