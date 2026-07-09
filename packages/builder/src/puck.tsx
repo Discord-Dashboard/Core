@@ -38,5 +38,23 @@ export const puckConfig: Config = {
       fields: { src: { type: "text" }, alt: { type: "text" } },
       render: ({ src, alt }) => <img src={src} alt={alt} style={{ maxWidth: "100%" }} />,
     },
+    Grid: {
+      fields: { columns: { type: "number" } },
+      render: ({ columns }) => (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${columns || 2}, 1fr)`,
+            gap: 16,
+          }}
+        />
+      ),
+    },
+    SettingsPanel: {
+      fields: { category: { type: "text" } },
+      render: ({ category }) => (
+        <div data-settings-panel={category}>Settings: {category}</div>
+      ),
+    },
   },
 }
