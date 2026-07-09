@@ -54,6 +54,15 @@ async function main() {
     def = localDef
   }
 
+  // Users allowed to edit builder pages, by Discord id. Unset means nobody can,
+  // so the page editor is closed until the operator opts specific people in.
+  const editorIds = new Set(
+    (process.env.PAGE_EDITOR_IDS ?? "")
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean)
+  )
+
   const app = await buildServer(config, {
     def,
     adapter,
@@ -62,6 +71,9 @@ async function main() {
     // This deployment serves a single bot; only its stats are readable, and
     // only to a logged in user. Multi tenant profiles swap in an owner lookup.
     botAccess: botId ? (_session, id) => id === botId : undefined,
+    canEditPages: editorIds.size
+      ? (session) => Boolean(session.userId && editorIds.has(session.userId))
+      : undefined,
   })
   await app.listen({ port: config.port, host: "0.0.0.0" })
 }

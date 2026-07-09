@@ -11,6 +11,8 @@ import { SessionStore } from "./auth/session.js"
 import { registerAuthRoutes } from "./auth/routes.js"
 import { registerSettingsRoutes } from "./routes/settings.js"
 import { registerBillingRoutes } from "./routes/billing.js"
+import { registerPageRoutes } from "./routes/pages.js"
+import { MemoryPageStore, type PageStore } from "./pages/store.js"
 import { MemoryGrantStore } from "./billing.js"
 import { StatsRegistry } from "./stats.js"
 import { EventHub } from "./events-hub.js"
@@ -30,6 +32,9 @@ export interface ServerDeps {
   // Authorizes reading a bot's stats. Defaults to deny, so a bot's data is
   // never exposed to an arbitrary authenticated user who guesses its id.
   botAccess?: (session: SessionData, botId: string) => boolean | Promise<boolean>
+  // Where builder pages live, and who may edit them. Editing defaults to deny.
+  pages?: PageStore
+  canEditPages?: (session: SessionData) => boolean | Promise<boolean>
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
@@ -50,6 +55,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   const grants = new MemoryGrantStore()
   const stats = deps.stats ?? new StatsRegistry()
   const events = deps.events ?? new EventHub()
+  const pages = deps.pages ?? new MemoryPageStore()
   const entitlements = createEntitlements(grants)
 
   await app.register(helmet)
@@ -121,6 +127,11 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     entitlements,
   })
   await registerBillingRoutes(app, grants, config.webhookSecret)
+  await registerPageRoutes(app, {
+    pages,
+    sessions,
+    canEditPages: deps.canEditPages,
+  })
 
   return app
 }

@@ -41,6 +41,9 @@ importers:
       '@discord-dashboard/billing':
         specifier: workspace:*
         version: link:../../packages/billing
+      '@discord-dashboard/builder':
+        specifier: workspace:*
+        version: link:../../packages/builder
       '@discord-dashboard/core':
         specifier: workspace:*
         version: link:../../packages/core
