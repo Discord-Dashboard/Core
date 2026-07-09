@@ -11,15 +11,17 @@ from .fields import PROTOCOL_VERSION, to_wire
 
 
 class Adapter:
-    def __init__(self, bot_id: str, secret: str, gateway: str):
+    def __init__(self, bot_id: str, secret: str, gateway: str, reconnect_ms: int = 1000):
         self.bot_id = bot_id
         self.secret = secret
         self.gateway = gateway
+        self.reconnect_ms = reconnect_ms
         self._schema = None
         self._getter = None
         self._setter = None
         self._action = None
         self._ws = None
+        self._closed = False
 
     def settings(self, schema):
         self._schema = schema
@@ -43,8 +45,22 @@ class Adapter:
                 json.dumps({"jsonrpc": "2.0", "method": method, "params": params})
             )
 
+    def disconnect(self):
+        self._closed = True
+
     def run(self):
-        asyncio.run(self._loop())
+        asyncio.run(self._run_forever())
+
+    # Reconnect automatically so the bot survives a dashboard restart.
+    async def _run_forever(self):
+        while not self._closed:
+            try:
+                await self._loop()
+            except Exception:
+                pass
+            if self._closed or self.reconnect_ms <= 0:
+                break
+            await asyncio.sleep(self.reconnect_ms / 1000)
 
     async def _loop(self):
         async with websockets.connect(self.gateway) as ws:
