@@ -62,6 +62,16 @@ describe("monetization gating over http", () => {
     const after = await write()
     expect(after.statusCode).toBe(200)
     expect((after.json() as { ok: boolean }).ok).toBe(true)
+
+    // Now the entitlement is revoked (a delete webhook). Access must end, not
+    // linger behind a stale active grant.
+    const revoke = await app.inject({
+      method: "POST",
+      url: "/webhooks/discord",
+      payload: { guild_id: "g", sku_id: "pro", deleted: true },
+    })
+    expect(revoke.statusCode).toBe(200)
+    expect((await write()).statusCode).toBe(400)
   })
 })
 

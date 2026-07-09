@@ -7,7 +7,19 @@ export class MemoryGrantStore implements GrantStore {
   private readonly grants: Grant[] = []
 
   add(grant: Grant) {
-    this.grants.push(grant)
+    // Upsert on the grant's identity so a later webhook (for example a
+    // cancellation) replaces the earlier one instead of leaving a stale active
+    // grant behind, which would keep access alive after it was revoked. This
+    // also makes redelivered webhooks idempotent.
+    const i = this.grants.findIndex(
+      (g) =>
+        g.subjectType === grant.subjectType &&
+        g.subjectId === grant.subjectId &&
+        g.feature === grant.feature &&
+        g.source === grant.source
+    )
+    if (i >= 0) this.grants[i] = grant
+    else this.grants.push(grant)
   }
 
   async find(subject: EntitlementSubject, feature: string) {
