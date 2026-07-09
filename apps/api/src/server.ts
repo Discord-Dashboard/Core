@@ -14,7 +14,7 @@ import { registerBillingRoutes } from "./routes/billing.js"
 import { MemoryGrantStore } from "./billing.js"
 import { StatsRegistry } from "./stats.js"
 import { EventHub } from "./events-hub.js"
-import { SESSION_COOKIE } from "./auth/session.js"
+import { SESSION_COOKIE, canManageGuild } from "./auth/session.js"
 
 export interface ServerDeps {
   def: DefSource
@@ -69,6 +69,8 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   app.get("/health", async () => ({ ok: true }))
   app.get("/version", async () => ({ protocol: PROTOCOL_VERSION }))
   app.get("/api/bots/:botId/stats", async (req, reply) => {
+    const session = sessions.get(req.cookies[SESSION_COOKIE])
+    if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
     const { botId } = req.params as { botId: string }
     const value = stats.get(botId)
     if (!value) return reply.code(404).send({ error: "no stats" })
@@ -80,6 +82,9 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     const session = sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
     const { guildId } = req.params as { guildId: string }
+    if (!canManageGuild(session, guildId)) {
+      return reply.code(403).send({ error: "no access to this guild" })
+    }
     reply.raw.writeHead(200, {
       "content-type": "text/event-stream",
       "cache-control": "no-cache",

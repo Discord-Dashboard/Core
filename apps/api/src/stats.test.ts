@@ -53,15 +53,23 @@ describe("stats", () => {
     const registry = new StatsRegistry()
     registry.record("b1", { guilds: 2, users: 50 })
     const def = defineSettings(() => ({}))
+    const { SessionStore, SESSION_COOKIE } = await import("./auth/session.js")
+    const sessions = new SessionStore()
+    const sid = sessions.create()
+    sessions.set(sid, { userId: "u1" })
+    const cookie = `${SESSION_COOKIE}=${sid}`
     const app = await buildServer(config, {
       def,
       adapter: new InProcessAdapter(def, new MemoryStore()),
       stats: registry,
+      sessions,
     })
-    const ok = await app.inject({ method: "GET", url: "/api/bots/b1/stats" })
+    const ok = await app.inject({ method: "GET", url: "/api/bots/b1/stats", headers: { cookie } })
     expect(ok.json()).toEqual({ guilds: 2, users: 50 })
-    const missing = await app.inject({ method: "GET", url: "/api/bots/nope/stats" })
+    const missing = await app.inject({ method: "GET", url: "/api/bots/nope/stats", headers: { cookie } })
     expect(missing.statusCode).toBe(404)
+    const noauth = await app.inject({ method: "GET", url: "/api/bots/b1/stats" })
+    expect(noauth.statusCode).toBe(401)
     await app.close()
   })
 })
