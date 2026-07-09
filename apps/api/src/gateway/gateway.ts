@@ -114,7 +114,12 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
     })
 
     socket.on("close", () => {
-      if (session) sessions.delete(session.botId)
+      // Only clear the session if it is still the current one. A reconnect with
+      // the same bot id must not have its fresh session removed by the old
+      // socket closing.
+      if (session && sessions.get(session.botId) === session) {
+        sessions.delete(session.botId)
+      }
     })
   })
 
