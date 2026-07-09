@@ -1,4 +1,5 @@
 import type { Config } from "@measured/puck"
+import { safeUrl } from "./url.js"
 
 // The whitelist of components a page may use. Rendering only goes through this
 // map, so a page can never introduce raw markup or scripts.
@@ -23,7 +24,7 @@ export const puckConfig: Config = {
     },
     Button: {
       fields: { label: { type: "text" }, href: { type: "text" } },
-      render: ({ label, href }) => <a href={href}>{label}</a>,
+      render: ({ label, href }) => <a href={safeUrl(href)}>{label}</a>,
     },
     Card: {
       fields: { title: { type: "text" }, body: { type: "textarea" } },
@@ -36,7 +37,9 @@ export const puckConfig: Config = {
     },
     Image: {
       fields: { src: { type: "text" }, alt: { type: "text" } },
-      render: ({ src, alt }) => <img src={src} alt={alt} style={{ maxWidth: "100%" }} />,
+      render: ({ src, alt }) => (
+        <img src={safeUrl(src)} alt={alt} style={{ maxWidth: "100%" }} />
+      ),
     },
     Grid: {
       fields: { columns: { type: "number" } },

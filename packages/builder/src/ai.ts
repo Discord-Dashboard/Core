@@ -1,4 +1,4 @@
-import { pageSchema, type Page } from "./schema.js"
+import { pageSchemaFor, type Page } from "./schema.js"
 
 export interface LlmClient {
   // Returns a JSON string the model produced for the given instruction.
@@ -19,6 +19,9 @@ export async function generatePage(
   catalog: string[],
   maxAttempts = 3
 ): Promise<GenerateResult> {
+  // The catalog is enforced, not merely suggested: the model can only produce
+  // components the caller allowed for this context.
+  const schema = pageSchemaFor(catalog)
   let lastError = "no attempts"
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const raw = await llm.complete(
@@ -33,7 +36,7 @@ export async function generatePage(
       lastError = "not valid json"
       continue
     }
-    const result = pageSchema.safeParse(parsed)
+    const result = schema.safeParse(parsed)
     if (result.success) return { ok: true, page: result.data }
     lastError = result.error.message
   }
