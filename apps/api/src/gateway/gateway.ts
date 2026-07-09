@@ -45,6 +45,9 @@ export interface Gateway {
 
 export interface GatewayOptions {
   heartbeatMs?: number
+  // A socket that does not authenticate within this window is dropped, so idle
+  // unauthenticated connections cannot pile up.
+  authTimeoutMs?: number
 }
 
 export function startGateway(
@@ -53,6 +56,7 @@ export function startGateway(
   options: GatewayOptions = {}
 ): Gateway {
   const heartbeatMs = options.heartbeatMs ?? 30000
+  const authTimeoutMs = options.authTimeoutMs ?? 10000
   const wss = new WebSocketServer({ server, path: "/gateway" })
   const sessions = new Map<string, BotSession>()
   const listeners: EventListener[] = []
@@ -73,7 +77,16 @@ export function startGateway(
       isAlive = false
       socket.ping()
     }, heartbeatMs)
-    socket.on("close", () => clearInterval(heartbeat))
+
+    // Drop a connection that never authenticates.
+    const authTimer = setTimeout(() => {
+      if (!session) close(socket, ProtocolErrorCode.Unauthorized)
+    }, authTimeoutMs)
+
+    socket.on("close", () => {
+      clearInterval(heartbeat)
+      clearTimeout(authTimer)
+    })
 
     socket.send(
       JSON.stringify({ type: "challenge", nonce, protocolVersion: PROTOCOL_VERSION })
@@ -103,11 +116,16 @@ export function startGateway(
         const expected = crypto
           .createHmac("sha256", secret)
           .update(nonce)
-          .digest("hex")
-        if (expected !== params.nonceSig) {
+          .digest()
+        const got = Buffer.from(String(params.nonceSig ?? ""), "hex")
+        if (
+          expected.length !== got.length ||
+          !crypto.timingSafeEqual(expected, got)
+        ) {
           return close(socket, ProtocolErrorCode.Unauthorized)
         }
 
+        clearTimeout(authTimer)
         session = { botId: params.botId, socket, pending: new Map() }
         sessions.set(params.botId, session)
         socket.send(
@@ -121,10 +139,20 @@ export function startGateway(
         return
       }
 
-      if (typeof frame.id !== "undefined" && "result" in frame) {
+      // A response to a call we made: either a result or an error. Both settle
+      // the pending promise so a failed call rejects at once instead of hanging
+      // until the timeout.
+      if (typeof frame.id !== "undefined" && ("result" in frame || "error" in frame)) {
         const pending = session.pending.get(String(frame.id))
-        pending?.resolve(frame.result)
-        session.pending.delete(String(frame.id))
+        if (pending) {
+          session.pending.delete(String(frame.id))
+          if ("error" in frame) {
+            const err = frame.error as { message?: string; code?: number }
+            pending.reject(new Error(err?.message ?? "rpc error"))
+          } else {
+            pending.resolve(frame.result)
+          }
+        }
         return
       }
 
@@ -136,10 +164,16 @@ export function startGateway(
     })
 
     socket.on("close", () => {
+      if (!session) return
+      // Fail any in flight calls right away rather than letting them time out.
+      for (const pending of session.pending.values()) {
+        pending.reject(new Error("connection closed"))
+      }
+      session.pending.clear()
       // Only clear the session if it is still the current one. A reconnect with
       // the same bot id must not have its fresh session removed by the old
       // socket closing.
-      if (session && sessions.get(session.botId) === session) {
+      if (sessions.get(session.botId) === session) {
         sessions.delete(session.botId)
       }
     })
