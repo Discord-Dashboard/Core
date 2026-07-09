@@ -133,4 +133,28 @@ export async function registerSettingsRoutes(
     if (!requireGuild(req, reply, guildId)) return
     return { entries: deps.audit?.list(guildId) ?? [] }
   })
+
+  // Which gated features this guild currently has, so the dashboard knows what
+  // to unlock. The set of features is derived from the schema's entitlement
+  // gates, then each is resolved through the entitlements store.
+  app.get("/api/guilds/:guildId/entitlements", async (req, reply) => {
+    const { guildId } = req.params as { guildId: string }
+    if (!requireGuild(req, reply, guildId)) return
+    const features = new Set<string>()
+    for (const category of Object.values(resolveDef().categories)) {
+      if (category.entitlement) features.add(category.entitlement)
+      for (const option of Object.values(category.options)) {
+        const gate = (option.opts as { entitlement?: string }).entitlement
+        if (gate) features.add(gate)
+      }
+    }
+    const entitlements: Record<string, boolean> = {}
+    for (const feature of features) {
+      entitlements[feature] = await deps.entitlements.has(
+        { type: "guild", id: guildId },
+        feature
+      )
+    }
+    return { entitlements }
+  })
 }

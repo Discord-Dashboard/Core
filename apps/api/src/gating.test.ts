@@ -71,6 +71,46 @@ import { SessionStore as SSG, SESSION_COOKIE as SCG } from "./auth/session.js"
 import { InProcessAdapter as IPAG, MemoryStore as MSG } from "@discord-dashboard/core"
 import { defineSettings as dsG } from "@discord-dashboard/schema"
 
+import { describe as dE, it as iE, expect as eE } from "vitest"
+
+dE("entitlements endpoint reports gated features", () => {
+  iE("reflects the gate state before and after a grant", async () => {
+    const sessions = new SessionStore()
+    const sid = sessions.create()
+    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    const cookie = `${SESSION_COOKIE}=${sid}`
+    const app = await buildServer(config, {
+      def,
+      adapter: new InProcessAdapter(def, new MemoryStore()),
+      sessions,
+    })
+    const read = async () => {
+      const res = await app.inject({
+        method: "GET",
+        url: "/api/guilds/g/entitlements",
+        headers: { cookie },
+      })
+      return (res.json() as { entitlements: Record<string, boolean> }).entitlements
+    }
+    eE((await read()).pro).toBe(false)
+    await app.inject({
+      method: "POST",
+      url: "/webhooks/discord",
+      payload: { guild_id: "g", sku_id: "pro" },
+    })
+    eE((await read()).pro).toBe(true)
+
+    // A user who does not manage the guild is refused.
+    const forbidden = await app.inject({
+      method: "GET",
+      url: "/api/guilds/other/entitlements",
+      headers: { cookie },
+    })
+    eE(forbidden.statusCode).toBe(403)
+    await app.close()
+  })
+})
+
 import { describe as dS, it as iS, expect as eS } from "vitest"
 
 dS("stripe subscription unlocks a gated setting", () => {
