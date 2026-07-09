@@ -50,6 +50,11 @@ export class Adapter {
     this.ws?.close()
   }
 
+  // Push a notification to the dashboard, such as setting.changed.
+  push(method: string, params?: unknown) {
+    this.send({ jsonrpc: "2.0", method, params })
+  }
+
   private send(obj: unknown) {
     this.ws?.send(JSON.stringify(obj))
   }

@@ -22,15 +22,25 @@ export interface BotSession {
 // means the bot is unknown and the connection is refused.
 export type SecretLookup = (botId: string) => Promise<string | null>
 
+export interface GatewayEvent {
+  botId: string
+  method: string
+  params: unknown
+}
+
+export type EventListener = (event: GatewayEvent) => void
+
 export interface Gateway {
   sessions: Map<string, BotSession>
   call<R = unknown>(botId: string, method: string, params?: unknown): Promise<R>
+  onEvent(listener: EventListener): void
   close(): void
 }
 
 export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
   const wss = new WebSocketServer({ server, path: "/gateway" })
   const sessions = new Map<string, BotSession>()
+  const listeners: EventListener[] = []
 
   wss.on("connection", (socket) => {
     const nonce = crypto.randomBytes(16).toString("hex")
@@ -78,6 +88,13 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
         const pending = session.pending.get(String(frame.id))
         pending?.resolve(frame.result)
         session.pending.delete(String(frame.id))
+        return
+      }
+
+      // A notification the bot pushes, such as setting.changed or stats.push.
+      if (typeof frame.method === "string" && typeof frame.id === "undefined") {
+        const event = { botId: session.botId, method: frame.method, params: frame.params }
+        for (const listener of listeners) listener(event)
       }
     })
 
@@ -104,7 +121,16 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
     wss.close()
   }
 
-  return { sessions, call: call as Gateway["call"], close: closeGateway }
+  function onEvent(listener: EventListener) {
+    listeners.push(listener)
+  }
+
+  return {
+    sessions,
+    call: call as Gateway["call"],
+    onEvent,
+    close: closeGateway,
+  }
 }
 
 function close(socket: WebSocket, code: number) {
