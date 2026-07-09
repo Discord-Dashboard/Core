@@ -1,4 +1,4 @@
-import { buildServer, type ApiConfig } from "@discord-dashboard/api"
+import { buildServer, type ApiConfig, type LlmClient } from "@discord-dashboard/api"
 import {
   InProcessAdapter,
   MemoryStore,
@@ -15,6 +15,11 @@ export interface CreateDashboardOptions {
   settings: SettingsDef
   storage?: KeyValueStore
   port?: number
+  // Discord user ids allowed to edit builder pages. Empty means page editing
+  // stays closed.
+  pageEditors?: string[]
+  // Optional AI provider that powers page generation.
+  ai?: LlmClient
 }
 
 // One call sets up the whole lite dashboard: the in process adapter, the
@@ -42,6 +47,12 @@ export function createDashboard(opts: CreateDashboardOptions) {
     source
   )
 
+  const editors = new Set(opts.pageEditors ?? [])
+  const canEditPages = editors.size
+    ? (session: { userId?: string }) =>
+        Boolean(session.userId && editors.has(session.userId))
+    : undefined
+
   return {
     async listen(listenPort = port) {
       // Keep the OAuth redirect uri in step with the port we actually bind. If
@@ -51,7 +62,12 @@ export function createDashboard(opts: CreateDashboardOptions) {
       if (!opts.discord.redirectUri && listenPort !== port) {
         config.discord.redirectUri = `http://localhost:${listenPort}/auth/callback`
       }
-      const app = await buildServer(config, { def: opts.settings, adapter })
+      const app = await buildServer(config, {
+        def: opts.settings,
+        adapter,
+        canEditPages,
+        llm: opts.ai,
+      })
       await app.listen({ port: listenPort, host: "0.0.0.0" })
       return app
     },
