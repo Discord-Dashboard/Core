@@ -16,17 +16,26 @@ interface WireCategory {
   options: WireOption[]
 }
 
-// Renders any schema returned by the bot. New field types render without a
-// frontend change as long as the type is known here.
+// Loads the schema and the current values in parallel, then renders a form
+// that saves each change back to the api.
 export function SettingsForm({ guildId }: { guildId: string }) {
   const [categories, setCategories] = useState<WireCategory[] | null>(null)
+  const [values, setValues] = useState<Record<string, unknown>>({})
 
   useEffect(() => {
-    fetch(`${API}/api/schema`, { credentials: "include" })
-      .then((r) => r.json())
-      .then((s) => setCategories(s.categories ?? []))
+    const opts = { credentials: "include" as const }
+    Promise.all([
+      fetch(`${API}/api/schema`, opts).then((r) => r.json()),
+      fetch(`${API}/api/guilds/${guildId}/values`, opts)
+        .then((r) => (r.ok ? r.json() : { values: {} }))
+        .catch(() => ({ values: {} })),
+    ])
+      .then(([schema, valuesRes]) => {
+        setCategories(schema.categories ?? [])
+        setValues(valuesRes.values ?? {})
+      })
       .catch(() => setCategories([]))
-  }, [])
+  }, [guildId])
 
   if (!categories) return <p>Loading...</p>
 
@@ -41,6 +50,7 @@ export function SettingsForm({ guildId }: { guildId: string }) {
               guildId={guildId}
               categoryId={cat.id}
               option={opt}
+              initial={values[`${cat.id}.${opt.id}`]}
             />
           ))}
         </section>
@@ -53,12 +63,14 @@ function Field({
   guildId,
   categoryId,
   option,
+  initial,
 }: {
   guildId: string
   categoryId: string
   option: WireOption
+  initial: unknown
 }) {
-  const [value, setValue] = useState<unknown>("")
+  const [value, setValue] = useState<unknown>(initial ?? "")
 
   async function save(next: unknown) {
     setValue(next)
@@ -91,10 +103,7 @@ function Field({
           ))}
         </select>
       ) : (
-        <input
-          value={String(value)}
-          onChange={(e) => save(e.target.value)}
-        />
+        <input value={String(value)} onChange={(e) => save(e.target.value)} />
       )}
     </label>
   )
