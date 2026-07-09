@@ -28,6 +28,25 @@ const dash = createDashboard({
 await dash.listen(3001)
 ```
 
+## Feature modules
+
+Reference modules (leveling, tickets, automod, giveaways, onboarding, reaction
+roles, autoresponder) each declare their own settings schema. Pick the ones you
+want and compose them into a single dashboard schema:
+
+```js
+import { createDashboard } from "discord-dashboard"
+import { composeModules } from "@discord-dashboard/modules"
+import { leveling } from "@discord-dashboard/module-leveling"
+import { tickets } from "@discord-dashboard/module-tickets"
+
+const settings = composeModules([leveling, tickets])
+const dash = createDashboard({ discord: { clientId, clientSecret }, settings })
+```
+
+Category ids must be unique across the modules you compose; a collision throws
+so a setting is never silently dropped.
+
 ## Any language (protocol mode)
 
 Run `@discord-dashboard/core` as a service and connect your bot with an SDK.
