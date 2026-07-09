@@ -28,3 +28,16 @@ export function loadConfig(): ApiConfig {
     webhookSecret: process.env.WEBHOOK_SECRET,
   }
 }
+
+// Non fatal configuration warnings surfaced at startup.
+export function validateConfig(config: ApiConfig): string[] {
+  const warnings: string[] = []
+  if (!config.discord.clientId) warnings.push("DISCORD_CLIENT_ID is not set")
+  if (!config.discord.clientSecret) {
+    warnings.push("DISCORD_CLIENT_SECRET is not set")
+  }
+  if (process.env.NODE_ENV === "production" && !config.webhookSecret) {
+    warnings.push("WEBHOOK_SECRET is not set; billing webhooks are unauthenticated")
+  }
+  return warnings
+}

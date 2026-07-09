@@ -1,5 +1,5 @@
 import { createServer } from "node:http"
-import { loadConfig } from "./config.js"
+import { loadConfig, validateConfig } from "./config.js"
 import { buildServer } from "./server.js"
 import { startGateway } from "./gateway/gateway.js"
 import { RemoteAdapter } from "./gateway/remote-adapter.js"
@@ -18,6 +18,7 @@ import { defineSettings, type SettingsDef } from "@discord-dashboard/schema"
 // that bot's schema whenever it connects.
 async function main() {
   const config = loadConfig()
+  for (const warning of validateConfig(config)) console.warn(warning)
   const stats = new StatsRegistry()
   const events = new EventHub()
 
