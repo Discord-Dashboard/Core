@@ -63,6 +63,13 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
       if (!session) {
         if (frame.method !== "hello") return
         const params = frame.params as HelloParams
+
+        // Reject a bot speaking an incompatible protocol major version.
+        const major = (v: string) => v.split(".")[0]
+        if (major(params.protocolVersion ?? "") !== major(PROTOCOL_VERSION)) {
+          return close(socket, ProtocolErrorCode.VersionMismatch)
+        }
+
         const secret = (await lookup?.(params.botId)) ?? null
         if (!secret) return close(socket, ProtocolErrorCode.Unauthorized)
 
