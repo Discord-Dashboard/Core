@@ -71,6 +71,50 @@ import { SessionStore as SSG, SESSION_COOKIE as SCG } from "./auth/session.js"
 import { InProcessAdapter as IPAG, MemoryStore as MSG } from "@discord-dashboard/core"
 import { defineSettings as dsG } from "@discord-dashboard/schema"
 
+import { describe as dS, it as iS, expect as eS } from "vitest"
+
+dS("stripe subscription unlocks a gated setting", () => {
+  iS("grants the entitlement from a stripe webhook end to end", async () => {
+    const sessions = new SessionStore()
+    const sid = sessions.create()
+    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    const cookie = `${SESSION_COOKIE}=${sid}`
+    const app = await buildServer(config, {
+      def,
+      adapter: new InProcessAdapter(def, new MemoryStore()),
+      sessions,
+    })
+    const write = () =>
+      app.inject({
+        method: "POST",
+        url: "/api/guilds/g/settings/pro/color",
+        headers: { origin, cookie },
+        payload: { value: "blue" },
+      })
+
+    expect((await write()).statusCode).toBe(400)
+
+    const hook = await app.inject({
+      method: "POST",
+      url: "/webhooks/stripe",
+      payload: {
+        type: "customer.subscription.created",
+        data: {
+          object: {
+            id: "sub_1",
+            status: "active",
+            metadata: { subjectType: "guild", subjectId: "g", feature: "pro" },
+          },
+        },
+      },
+    })
+    eS(hook.statusCode).toBe(200)
+
+    eS((await write()).statusCode).toBe(200)
+    await app.close()
+  })
+})
+
 dG("guild access control", () => {
   iG("forbids managing a guild the user does not manage", async () => {
     const sessions = new SSG()
