@@ -43,7 +43,16 @@ export interface Gateway {
   close(): void
 }
 
-export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
+export interface GatewayOptions {
+  heartbeatMs?: number
+}
+
+export function startGateway(
+  server: Server,
+  lookup?: SecretLookup,
+  options: GatewayOptions = {}
+): Gateway {
+  const heartbeatMs = options.heartbeatMs ?? 30000
   const wss = new WebSocketServer({ server, path: "/gateway" })
   const sessions = new Map<string, BotSession>()
   const listeners: EventListener[] = []
@@ -52,6 +61,19 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
   wss.on("connection", (socket) => {
     const nonce = crypto.randomBytes(16).toString("hex")
     let session: BotSession | null = null
+
+    // Detect dead (half open) connections: ping periodically and drop a socket
+    // that has not ponged since the last ping.
+    let isAlive = true
+    socket.on("pong", () => {
+      isAlive = true
+    })
+    const heartbeat = setInterval(() => {
+      if (!isAlive) return socket.terminate()
+      isAlive = false
+      socket.ping()
+    }, heartbeatMs)
+    socket.on("close", () => clearInterval(heartbeat))
 
     socket.send(
       JSON.stringify({ type: "challenge", nonce, protocolVersion: PROTOCOL_VERSION })
@@ -92,7 +114,7 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
           JSON.stringify({
             jsonrpc: "2.0",
             id: frame.id,
-            result: { sessionId: crypto.randomUUID(), heartbeatMs: 30000 },
+            result: { sessionId: crypto.randomUUID(), heartbeatMs },
           })
         )
         for (const listener of connectListeners) listener(params.botId)
