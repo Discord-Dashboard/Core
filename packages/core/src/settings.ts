@@ -22,7 +22,16 @@ export class SettingsService {
   }
 
   async get(ctx: SettingsContext, categoryId: string, optionId: string) {
-    return this.adapter.getSetting(ctx.guildId, `${categoryId}.${optionId}`)
+    const value = await this.adapter.getSetting(
+      ctx.guildId,
+      `${categoryId}.${optionId}`
+    )
+    // Fall back to the declared default when the setting has never been set.
+    if (value === null || value === undefined) {
+      const fallback = this.field(categoryId, optionId)?.opts.default
+      if (fallback !== undefined) return fallback
+    }
+    return value
   }
 
   async set(

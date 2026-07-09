@@ -42,3 +42,27 @@ describe("SettingsService", () => {
     expect(r.error).toContain("entitlement")
   })
 })
+
+import { describe as d5, it as i5, expect as e5 } from "vitest"
+import { SettingsService as SS5 } from "./settings.js"
+import { InProcessAdapter as IPA5, MemoryStore as MS5 } from "./inprocess.js"
+import { AllowAll as AA5 } from "./entitlements.js"
+import { defineSettings as ds5, f as f5 } from "@discord-dashboard/schema"
+
+d5("SettingsService defaults", () => {
+  const def5 = ds5((s) => ({
+    general: s.category({
+      name: "General",
+      options: { prefix: f5.text({ max: 3, default: "!" }) },
+    }),
+  }))
+  i5("returns the declared default when unset", async () => {
+    const svc = new SS5(def5, new IPA5(def5, new MS5()), AA5)
+    expect(await svc.get({ guildId: "g", userId: "u" }, "general", "prefix")).toBe("!")
+  })
+  i5("returns the stored value once set", async () => {
+    const svc = new SS5(def5, new IPA5(def5, new MS5()), AA5)
+    await svc.set({ guildId: "g", userId: "u" }, "general", "prefix", "?")
+    expect(await svc.get({ guildId: "g", userId: "u" }, "general", "prefix")).toBe("?")
+  })
+})
