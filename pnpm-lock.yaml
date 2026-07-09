@@ -163,6 +163,8 @@ importers:
         specifier: workspace:*
         version: link:../schema
 
+  packages/create: {}
+
   packages/db:
     dependencies:
       drizzle-orm:

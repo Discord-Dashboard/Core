@@ -1,0 +1,16 @@
+{
+  "name": "create-discord-dashboard",
+  "version": "3.0.0-alpha.0",
+  "description": "Scaffold a new discord-dashboard project.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "bin": { "create-discord-dashboard": "./bin.js" },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "echo \"no lint yet\""
+  }
+}
