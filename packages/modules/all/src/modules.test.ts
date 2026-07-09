@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { modules } from "./index.js"
+import { modules, composeModules } from "./index.js"
 import { toWire } from "@discord-dashboard/schema"
 
 describe("reference modules", () => {
@@ -15,3 +15,21 @@ describe("reference modules", () => {
     }
   })
 })
+
+describe("composeModules", () => {
+  it("merges every module's categories into one schema", () => {
+    const composed = composeModules(modules)
+    const total = modules.reduce(
+      (n, m) => n + Object.keys(m.settings.categories).length,
+      0
+    )
+    expect(Object.keys(composed.categories)).toHaveLength(total)
+    // The composed schema serializes like any other.
+    expect(toWire(composed).categories.length).toBe(total)
+  })
+  it("throws on a duplicate category id", () => {
+    expect(() => composeModules([leveling, leveling])).toThrow(/duplicate/)
+  })
+})
+
+import { leveling } from "@discord-dashboard/module-leveling"
