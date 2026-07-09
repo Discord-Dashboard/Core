@@ -16,12 +16,14 @@ JSON-RPC 2.0. Either side can be the caller.
 - guild.channels `{ guildId, filter? }`
 - guild.roles `{ guildId, filter? }`
 - guild.member.permissions `{ guildId, userId }`
-- setting.get `{ guildId, key }`
-- setting.set `{ guildId, key, value }`
+- setting.get `{ guildId, key, actor? }`
+- setting.set `{ guildId, key, value, actor? }`
 - action.invoke `{ guildId, name, payload? }`
 
 The guild id is always supplied by the server from the authorized request, so a
 bot must act on that guild and never trust a guild id found inside a payload.
+The optional `actor` carries the acting user (`{ userId }`) so a bot can record
+who changed a setting.
 
 ## Notifications (bot to dashboard)
 
