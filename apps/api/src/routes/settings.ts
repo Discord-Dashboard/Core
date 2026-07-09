@@ -6,8 +6,9 @@ import {
   canManageGuild,
   type SessionStore,
 } from "../auth/session.js"
+import { ProtocolEvent } from "@discord-dashboard/protocol"
 import type { AuditLog } from "../audit.js"
-import type { EventHub } from "../events-hub.js"
+import { DASHBOARD_SOURCE, type EventHub } from "../events-hub.js"
 
 export interface SettingsDeps {
   def: DefSource
@@ -126,8 +127,8 @@ export async function registerSettingsRoutes(
     deps.audit?.record({ guildId, userId: auth.userId, key, value })
     // Fan the change out to any admins watching this guild's live stream.
     deps.events?.publish({
-      botId: "dashboard",
-      method: "setting.changed",
+      botId: DASHBOARD_SOURCE,
+      method: ProtocolEvent.SettingChanged,
       params: { guildId, key, value },
     })
     return result

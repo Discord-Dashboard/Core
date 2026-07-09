@@ -1,6 +1,11 @@
 import { WebSocket } from "ws"
 import crypto from "node:crypto"
-import { PROTOCOL_VERSION } from "@discord-dashboard/protocol"
+import {
+  PROTOCOL_VERSION,
+  JSONRPC_VERSION,
+  HandshakeType,
+  RpcMethod,
+} from "@discord-dashboard/protocol"
 import { toWire, type SettingsDef } from "@discord-dashboard/schema"
 
 interface Actor {
@@ -85,7 +90,7 @@ export class Adapter {
 
   // Push a notification to the dashboard, such as setting.changed.
   push(method: string, params?: unknown) {
-    this.send({ jsonrpc: "2.0", method, params })
+    this.send({ jsonrpc: JSONRPC_VERSION, method, params })
   }
 
   private send(obj: unknown) {
@@ -100,16 +105,16 @@ export class Adapter {
       return
     }
 
-    if (frame.type === "challenge") {
+    if (frame.type === HandshakeType.Challenge) {
       const nonce = String(frame.nonce)
       const nonceSig = crypto
         .createHmac("sha256", this.opts.secret)
         .update(nonce)
         .digest("hex")
       this.send({
-        jsonrpc: "2.0",
-        id: "hello",
-        method: "hello",
+        jsonrpc: JSONRPC_VERSION,
+        id: HandshakeType.Hello,
+        method: HandshakeType.Hello,
         params: {
           protocolVersion: PROTOCOL_VERSION,
           botId: this.opts.botId,
@@ -125,17 +130,17 @@ export class Adapter {
         frame.method,
         frame.params as Record<string, unknown> | undefined
       )
-      this.send({ jsonrpc: "2.0", id: frame.id, result })
+      this.send({ jsonrpc: JSONRPC_VERSION, id: frame.id, result })
     }
   }
 
   private async dispatch(method: string, params?: Record<string, unknown>) {
     switch (method) {
-      case "settings.describe":
+      case RpcMethod.SettingsDescribe:
         return this.schema
           ? toWire(this.schema, params?.locale as string | undefined)
           : { version: "1.0", categories: [] }
-      case "setting.get": {
+      case RpcMethod.SettingGet: {
         const value = await this.getter?.(
           String(params?.guildId),
           String(params?.key),
@@ -143,7 +148,7 @@ export class Adapter {
         )
         return { value }
       }
-      case "setting.set": {
+      case RpcMethod.SettingSet: {
         await this.setter?.(
           String(params?.guildId),
           String(params?.key),
@@ -152,7 +157,7 @@ export class Adapter {
         )
         return { ok: true }
       }
-      case "action.invoke":
+      case RpcMethod.ActionInvoke:
         return (
           (await this.action?.(
             String(params?.guildId),

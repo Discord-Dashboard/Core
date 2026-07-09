@@ -55,3 +55,22 @@ export interface BotToDashboard {
 
 export type MethodName = keyof DashboardToBot
 export type EventName = keyof BotToDashboard
+
+// Runtime constants for the wire method and event names, so no code hardcodes
+// the strings. The values match the type keys above.
+export enum RpcMethod {
+  SettingsDescribe = "settings.describe",
+  GuildChannels = "guild.channels",
+  GuildRoles = "guild.roles",
+  GuildMemberPermissions = "guild.member.permissions",
+  SettingGet = "setting.get",
+  SettingSet = "setting.set",
+  ActionInvoke = "action.invoke",
+}
+
+export enum ProtocolEvent {
+  SettingChanged = "setting.changed",
+  GuildUpdated = "guild.updated",
+  StatsPush = "stats.push",
+  ModuleEvent = "module.event",
+}

@@ -1,3 +1,12 @@
+// The JSON-RPC protocol version string, so no frame hardcodes it.
+export const JSONRPC_VERSION = "2.0"
+
+// Handshake frame types exchanged before the JSON-RPC session begins.
+export enum HandshakeType {
+  Challenge = "challenge",
+  Hello = "hello",
+}
+
 // JSON-RPC 2.0 frames. Both sides may act as caller.
 export interface JsonRpcRequest<P = unknown> {
   jsonrpc: "2.0"

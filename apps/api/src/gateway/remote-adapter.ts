@@ -1,9 +1,10 @@
 import type { BotAdapter, SettingActor } from "@discord-dashboard/core"
-import type {
-  SchemaDescriptor,
-  OptionListItem,
-  ChannelFilter,
-  RoleFilter,
+import {
+  RpcMethod,
+  type SchemaDescriptor,
+  type OptionListItem,
+  type ChannelFilter,
+  type RoleFilter,
 } from "@discord-dashboard/protocol"
 import type { Gateway } from "./gateway.js"
 
@@ -16,18 +17,18 @@ export class RemoteAdapter implements BotAdapter {
   ) {}
 
   describeSchema(locale?: string) {
-    return this.gateway.call<SchemaDescriptor>(this.botId, "settings.describe", {
+    return this.gateway.call<SchemaDescriptor>(this.botId, RpcMethod.SettingsDescribe, {
       locale,
     })
   }
   getChannels(guildId: string, filter?: ChannelFilter) {
-    return this.gateway.call<OptionListItem[]>(this.botId, "guild.channels", {
+    return this.gateway.call<OptionListItem[]>(this.botId, RpcMethod.GuildChannels, {
       guildId,
       filter,
     })
   }
   getRoles(guildId: string, filter?: RoleFilter) {
-    return this.gateway.call<OptionListItem[]>(this.botId, "guild.roles", {
+    return this.gateway.call<OptionListItem[]>(this.botId, RpcMethod.GuildRoles, {
       guildId,
       filter,
     })
@@ -35,7 +36,7 @@ export class RemoteAdapter implements BotAdapter {
   async getMemberPermissions(guildId: string, userId: string) {
     const res = await this.gateway.call<{ permissions: string[] }>(
       this.botId,
-      "guild.member.permissions",
+      RpcMethod.GuildMemberPermissions,
       { guildId, userId }
     )
     return res.permissions
@@ -43,7 +44,7 @@ export class RemoteAdapter implements BotAdapter {
   async getSetting(guildId: string, key: string, actor?: SettingActor) {
     const res = await this.gateway.call<{ value: unknown }>(
       this.botId,
-      "setting.get",
+      RpcMethod.SettingGet,
       { guildId, key, actor }
     )
     return res.value
@@ -51,12 +52,12 @@ export class RemoteAdapter implements BotAdapter {
   setSetting(guildId: string, key: string, value: unknown, actor?: SettingActor) {
     return this.gateway.call<{ ok: boolean; error?: string }>(
       this.botId,
-      "setting.set",
+      RpcMethod.SettingSet,
       { guildId, key, value, actor }
     )
   }
   invokeAction(guildId: string, name: string, payload?: unknown) {
-    return this.gateway.call<unknown>(this.botId, "action.invoke", {
+    return this.gateway.call<unknown>(this.botId, RpcMethod.ActionInvoke, {
       guildId,
       name,
       payload,

@@ -1,3 +1,4 @@
+import { ProtocolEvent } from "@discord-dashboard/protocol"
 import type { Gateway } from "./gateway/gateway.js"
 
 export interface BotStats {
@@ -19,7 +20,7 @@ export class StatsRegistry {
 
 export function wireStats(gateway: Gateway, registry: StatsRegistry) {
   gateway.onEvent((e) => {
-    if (e.method !== "stats.push") return
+    if (e.method !== ProtocolEvent.StatsPush) return
     const p = (e.params ?? {}) as Partial<BotStats>
     registry.record(e.botId, {
       guilds: Number(p.guilds ?? 0),

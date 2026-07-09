@@ -3,6 +3,8 @@ import crypto from "node:crypto"
 import type { Server } from "node:http"
 import {
   PROTOCOL_VERSION,
+  JSONRPC_VERSION,
+  HandshakeType,
   ProtocolErrorCode,
   type HelloParams,
 } from "@discord-dashboard/protocol"
@@ -89,7 +91,7 @@ export function startGateway(
     })
 
     socket.send(
-      JSON.stringify({ type: "challenge", nonce, protocolVersion: PROTOCOL_VERSION })
+      JSON.stringify({ type: HandshakeType.Challenge, nonce, protocolVersion: PROTOCOL_VERSION })
     )
 
     socket.on("message", async (raw) => {
@@ -101,7 +103,7 @@ export function startGateway(
       }
 
       if (!session) {
-        if (frame.method !== "hello") return
+        if (frame.method !== HandshakeType.Hello) return
         const params = frame.params as HelloParams
 
         // Reject a bot speaking an incompatible protocol major version.
@@ -130,7 +132,7 @@ export function startGateway(
         sessions.set(params.botId, session)
         socket.send(
           JSON.stringify({
-            jsonrpc: "2.0",
+            jsonrpc: JSONRPC_VERSION,
             id: frame.id,
             result: { sessionId: crypto.randomUUID(), heartbeatMs },
           })
@@ -204,7 +206,7 @@ export function startGateway(
           reject(err)
         },
       })
-      session.socket.send(JSON.stringify({ jsonrpc: "2.0", id, method, params }))
+      session.socket.send(JSON.stringify({ jsonrpc: JSONRPC_VERSION, id, method, params }))
     })
   }
 
