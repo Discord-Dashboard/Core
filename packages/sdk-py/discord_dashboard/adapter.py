@@ -18,6 +18,8 @@ class Adapter:
         self._schema = None
         self._getter = None
         self._setter = None
+        self._action = None
+        self._ws = None
 
     def settings(self, schema):
         self._schema = schema
@@ -31,11 +33,22 @@ class Adapter:
         self._setter = fn
         return self
 
+    def on_action(self, fn):
+        self._action = fn
+        return self
+
+    async def push(self, method, params=None):
+        if self._ws is not None:
+            await self._ws.send(
+                json.dumps({"jsonrpc": "2.0", "method": method, "params": params})
+            )
+
     def run(self):
         asyncio.run(self._loop())
 
     async def _loop(self):
         async with websockets.connect(self.gateway) as ws:
+            self._ws = ws
             async for raw in ws:
                 await self._handle(ws, json.loads(raw))
 
@@ -83,4 +96,11 @@ class Adapter:
                 if asyncio.iscoroutine(res):
                     await res
             return {"ok": True}
+        if method == "action.invoke":
+            if self._action:
+                res = self._action(params.get("name"), params.get("payload"))
+                if asyncio.iscoroutine(res):
+                    res = await res
+                return res
+            return None
         return {}
