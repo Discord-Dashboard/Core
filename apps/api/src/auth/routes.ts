@@ -88,11 +88,21 @@ export async function registerAuthRoutes(
     const token = await exchangeCode(config, code, session.pkceVerifier ?? "")
     const user = await fetchUser(token.access_token)
     const guilds = await fetchManageableGuilds(token.access_token)
-    sessions.set(sid!, {
+
+    // Rotate the session id on login to prevent session fixation.
+    sessions.destroy(sid)
+    const newSid = sessions.create()
+    sessions.set(newSid, {
       userId: user.id,
       username: user.username,
       avatar: user.avatar,
       guilds,
+    })
+    reply.setCookie(SESSION_COOKIE, newSid, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
     })
     return reply.redirect(config.allowedOrigins[0] ?? "/")
   })

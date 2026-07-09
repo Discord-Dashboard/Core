@@ -72,11 +72,15 @@ describe("oauth flow", () => {
     })
     expect(cb.statusCode).toBe(302)
 
-    const me = await app.inject({ method: "GET", url: "/auth/me", headers: { cookie } })
+    // The session id rotates on login, so use the new cookie afterwards.
+    const newCookie = cookieValue(cb.headers["set-cookie"])
+    expect(newCookie).not.toBe(cookie)
+
+    const me = await app.inject({ method: "GET", url: "/auth/me", headers: { cookie: newCookie } })
     expect(me.statusCode).toBe(200)
     expect((me.json() as { id: string }).id).toBe("u1")
 
-    const guilds = await app.inject({ method: "GET", url: "/api/guilds", headers: { cookie } })
+    const guilds = await app.inject({ method: "GET", url: "/api/guilds", headers: { cookie: newCookie } })
     const list = (guilds.json() as { guilds: { id: string }[] }).guilds
     // Only the owned and Manage Server guilds, not the plain member one.
     expect(list.map((g) => g.id).sort()).toEqual(["g1", "g2"])
