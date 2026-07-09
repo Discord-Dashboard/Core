@@ -17,12 +17,13 @@ export function discordSourceFromClient(client: any): DiscordSource {
       })
       return out
     },
-    async roles(guildId) {
+    async roles(guildId, filter) {
       const guild = client.guilds?.cache?.get(guildId)
       if (!guild) return []
       const out: { label: string; value: string }[] = []
       guild.roles.cache.forEach((r: any) => {
         if (r.id === guildId) return
+        if (r.managed && !filter?.includeBots) return
         out.push({ label: r.name, value: r.id })
       })
       return out

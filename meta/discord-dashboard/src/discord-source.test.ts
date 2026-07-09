@@ -77,3 +77,34 @@ d6("channel nsfw filtering", () => {
     e6(channels.map((c) => c.value)).toEqual(["c2"])
   })
 })
+
+import { describe as d7, it as i7, expect as e7 } from "vitest"
+import { discordSourceFromClient as dsc7 } from "./discord-source.js"
+
+function clientWithManagedRole() {
+  const guild = {
+    channels: { cache: new Map() },
+    roles: {
+      cache: new Map([
+        ["g", { id: "g", name: "@everyone", managed: false }],
+        ["r1", { id: "r1", name: "mod", managed: false }],
+        ["r2", { id: "r2", name: "BotRole", managed: true }],
+      ]),
+    },
+    members: { cache: new Map() },
+  }
+  return { guilds: { cache: new Map([["g", guild]]) } }
+}
+
+d7("role bot filtering", () => {
+  i7("hides managed bot roles by default", async () => {
+    const src = dsc7(clientWithManagedRole())
+    const roles = await src.roles("g")
+    e7(roles.map((r) => r.value)).toEqual(["r1"])
+  })
+  i7("includes bot roles when asked", async () => {
+    const src = dsc7(clientWithManagedRole())
+    const roles = await src.roles("g", { includeBots: true })
+    e7(roles.map((r) => r.value)).toEqual(["r1", "r2"])
+  })
+})
