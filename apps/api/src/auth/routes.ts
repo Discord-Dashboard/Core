@@ -29,6 +29,28 @@ async function fetchUser(accessToken: string) {
   return (await res.json()) as { id: string; username: string; avatar: string | null }
 }
 
+const MANAGE_GUILD = 0x20n
+
+interface DiscordGuild {
+  id: string
+  name: string
+  icon: string | null
+  owner?: boolean
+  permissions?: string
+}
+
+// The guilds a user may manage: ones they own or have Manage Server in.
+async function fetchManageableGuilds(accessToken: string) {
+  const res = await fetch("https://discord.com/api/users/@me/guilds", {
+    headers: { authorization: `Bearer ${accessToken}` },
+  })
+  if (!res.ok) throw new Error("guild fetch failed")
+  const guilds = (await res.json()) as DiscordGuild[]
+  return guilds
+    .filter((g) => g.owner || (BigInt(g.permissions ?? "0") & MANAGE_GUILD) !== 0n)
+    .map((g) => ({ id: g.id, name: g.name, icon: g.icon }))
+}
+
 export async function registerAuthRoutes(
   app: FastifyInstance,
   config: ApiConfig,
@@ -65,12 +87,20 @@ export async function registerAuthRoutes(
     }
     const token = await exchangeCode(config, code, session.pkceVerifier ?? "")
     const user = await fetchUser(token.access_token)
+    const guilds = await fetchManageableGuilds(token.access_token)
     sessions.set(sid!, {
       userId: user.id,
       username: user.username,
       avatar: user.avatar,
+      guilds,
     })
     return reply.redirect(config.allowedOrigins[0] ?? "/")
+  })
+
+  app.get("/api/guilds", async (req, reply) => {
+    const session = sessions.get(req.cookies[SESSION_COOKIE])
+    if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
+    return { guilds: session.guilds ?? [] }
   })
 
   app.get("/auth/logout", async (req, reply) => {

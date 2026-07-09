@@ -28,6 +28,16 @@ describe("oauth flow", () => {
         if (u.includes("/oauth2/token")) {
           return new Response(JSON.stringify({ access_token: "tok" }), { status: 200 })
         }
+        if (u.includes("/users/@me/guilds")) {
+          return new Response(
+            JSON.stringify([
+              { id: "g1", name: "Owned", owner: true, permissions: "0" },
+              { id: "g2", name: "Manager", owner: false, permissions: "32" },
+              { id: "g3", name: "Member", owner: false, permissions: "0" },
+            ]),
+            { status: 200 }
+          )
+        }
         if (u.includes("/users/@me")) {
           return new Response(
             JSON.stringify({ id: "u1", username: "bob", avatar: null }),
@@ -65,6 +75,11 @@ describe("oauth flow", () => {
     const me = await app.inject({ method: "GET", url: "/auth/me", headers: { cookie } })
     expect(me.statusCode).toBe(200)
     expect((me.json() as { id: string }).id).toBe("u1")
+
+    const guilds = await app.inject({ method: "GET", url: "/api/guilds", headers: { cookie } })
+    const list = (guilds.json() as { guilds: { id: string }[] }).guilds
+    // Only the owned and Manage Server guilds, not the plain member one.
+    expect(list.map((g) => g.id).sort()).toEqual(["g1", "g2"])
   })
 
   it("rejects a callback with a mismatched state", async () => {
