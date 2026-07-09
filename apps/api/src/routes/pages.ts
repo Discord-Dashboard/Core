@@ -109,6 +109,31 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
     }
   })
 
+  // Editor: the version history of a page, newest first.
+  app.get("/api/pages/:slug/history", async (req, reply) => {
+    if (!(await requireEditor(req, reply))) return
+    const { slug } = req.params as { slug: string }
+    return {
+      versions: deps.pages
+        .history(slug)
+        .map((p) => ({ version: p.version, status: p.status })),
+    }
+  })
+
+  // Editor: restore an earlier version as a new current version. Lets an editor
+  // undo a bad edit or a generated draft.
+  app.post("/api/pages/:slug/restore", async (req, reply) => {
+    if (!(await requireEditor(req, reply))) return
+    const { slug } = req.params as { slug: string }
+    const { version } = (req.body ?? {}) as { version?: number }
+    if (typeof version !== "number") {
+      return reply.code(400).send({ error: "version is required" })
+    }
+    const page = deps.pages.restore(slug, version)
+    if (!page) return reply.code(404).send({ error: "no such version" })
+    return { slug: page.slug, version: page.version, status: page.status }
+  })
+
   // Editor: delete a page.
   app.delete("/api/pages/:slug", async (req, reply) => {
     if (!(await requireEditor(req, reply))) return

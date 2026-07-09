@@ -107,6 +107,53 @@ describe("page routes", () => {
     await app.close()
   })
 
+  it("keeps version history and restores an earlier version", async () => {
+    const one = { version: 1, root: { title: "one" }, content: [] }
+    const two = { version: 1, root: { title: "two" }, content: [] }
+    const save = (content: unknown) =>
+      app.inject({
+        method: "POST",
+        url: "/api/pages/hist",
+        headers: { ...origin, cookie },
+        payload: { content, status: "published" },
+      })
+    await save(one)
+    await save(two)
+
+    const hist = await app.inject({
+      method: "GET",
+      url: "/api/pages/hist/history",
+      headers: { cookie },
+    })
+    expect(
+      (hist.json() as { versions: { version: number }[] }).versions.map((v) => v.version)
+    ).toEqual([2, 1])
+
+    // Restore version 1: it comes back as a new version 3.
+    const restored = await app.inject({
+      method: "POST",
+      url: "/api/pages/hist/restore",
+      headers: { ...origin, cookie },
+      payload: { version: 1 },
+    })
+    expect((restored.json() as { version: number }).version).toBe(3)
+
+    const got = await app.inject({ method: "GET", url: "/api/pages/hist" })
+    expect(
+      (got.json() as { content: { root: { title: string } } }).content.root.title
+    ).toBe("one")
+
+    // Restoring a version that does not exist is a 404.
+    const missing = await app.inject({
+      method: "POST",
+      url: "/api/pages/hist/restore",
+      headers: { ...origin, cookie },
+      payload: { version: 99 },
+    })
+    expect(missing.statusCode).toBe(404)
+    await app.close()
+  })
+
   it("rejects a page with an unsafe url", async () => {
     const res = await app.inject({
       method: "POST",

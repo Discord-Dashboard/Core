@@ -9,36 +9,59 @@ export interface StoredPage {
   status: PageStatus
 }
 
-// Stores builder pages. Lite mode keeps them in memory; the platform profile
-// swaps this for the db backed pages table behind the same interface.
+// Stores builder pages with their version history. Lite mode keeps them in
+// memory; the platform profile swaps this for the db backed pages table behind
+// the same interface.
 export interface PageStore {
   get(slug: string): StoredPage | undefined
   put(slug: string, content: Page, status: PageStatus): StoredPage
   list(): StoredPage[]
   remove(slug: string): boolean
+  // Every stored version of a page, newest first.
+  history(slug: string): StoredPage[]
+  // Restore an earlier version as a new current version.
+  restore(slug: string, version: number): StoredPage | undefined
 }
 
 export class MemoryPageStore implements PageStore {
-  private readonly pages = new Map<string, StoredPage>()
+  private readonly versions = new Map<string, StoredPage[]>()
+
+  private latest(slug: string): StoredPage | undefined {
+    const list = this.versions.get(slug)
+    return list?.[list.length - 1]
+  }
 
   get(slug: string) {
-    return this.pages.get(slug)
+    return this.latest(slug)
   }
   put(slug: string, content: Page, status: PageStatus): StoredPage {
-    const previous = this.pages.get(slug)
+    const list = this.versions.get(slug) ?? []
     const page: StoredPage = {
       slug,
       content,
       status,
-      version: (previous?.version ?? 0) + 1,
+      version: (list[list.length - 1]?.version ?? 0) + 1,
     }
-    this.pages.set(slug, page)
+    list.push(page)
+    this.versions.set(slug, list)
     return page
   }
   list() {
-    return [...this.pages.values()]
+    return [...this.versions.values()]
+      .map((v) => v[v.length - 1])
+      .filter((p): p is StoredPage => Boolean(p))
   }
   remove(slug: string) {
-    return this.pages.delete(slug)
+    return this.versions.delete(slug)
+  }
+  history(slug: string) {
+    return [...(this.versions.get(slug) ?? [])].reverse()
+  }
+  restore(slug: string, version: number) {
+    const list = this.versions.get(slug)
+    const target = list?.find((p) => p.version === version)
+    if (!target) return undefined
+    // Bring the old content back as a fresh version rather than rewriting.
+    return this.put(slug, target.content, target.status)
   }
 }
