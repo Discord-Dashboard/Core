@@ -54,7 +54,10 @@ export class SettingsService {
     }
 
     const parsed = field.zod.safeParse(value)
-    if (!parsed.success) return { ok: false, error: "invalid value" }
+    if (!parsed.success) {
+      const message = parsed.error.issues[0]?.message ?? "invalid value"
+      return { ok: false, error: message }
+    }
 
     return this.adapter.setSetting(
       ctx.guildId,

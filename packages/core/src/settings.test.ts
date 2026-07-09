@@ -66,3 +66,22 @@ d5("SettingsService defaults", () => {
     expect(await svc.get({ guildId: "g", userId: "u" }, "general", "prefix")).toBe("?")
   })
 })
+
+import { describe as d8, it as i8, expect as e8 } from "vitest"
+import { SettingsService as SS8 } from "./settings.js"
+import { InProcessAdapter as IPA8, MemoryStore as MS8 } from "./inprocess.js"
+import { AllowAll as AA8 } from "./entitlements.js"
+import { defineSettings as ds8, f as f8 } from "@discord-dashboard/schema"
+
+d8("validation error detail", () => {
+  const def8 = ds8((s) => ({
+    general: s.category({ name: "General", options: { prefix: f8.text({ max: 3 }) } }),
+  }))
+  i8("returns a descriptive message, not a generic one", async () => {
+    const svc = new SS8(def8, new IPA8(def8, new MS8()), AA8)
+    const res = await svc.set({ guildId: "g", userId: "u" }, "general", "prefix", "toolong")
+    e8(res.ok).toBe(false)
+    e8(res.error).toBeTruthy()
+    e8(res.error).not.toBe("invalid value")
+  })
+})
