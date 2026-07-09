@@ -8,7 +8,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./schema": "./src/schema.ts",
-    "./url": "./src/url.ts"
+    "./url": "./src/url.ts",
+    "./ai": "./src/ai.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -44,6 +45,10 @@
       "./url": {
         "types": "./dist/url.d.ts",
         "default": "./dist/url.js"
+      },
+      "./ai": {
+        "types": "./dist/ai.d.ts",
+        "default": "./dist/ai.js"
       }
     }
   },

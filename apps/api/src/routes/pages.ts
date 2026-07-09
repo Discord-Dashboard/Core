@@ -1,5 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
-import { pageSchema } from "@discord-dashboard/builder/schema"
+import { pageSchema, COMPONENT_TYPES } from "@discord-dashboard/builder/schema"
+import { generatePage, type LlmClient } from "@discord-dashboard/builder/ai"
 import {
   SESSION_COOKIE,
   type SessionData,
@@ -13,6 +14,9 @@ export interface PageDeps {
   // Authorizes editing pages. Defaults to deny, so pages cannot be changed
   // unless a deployment explicitly says who may edit them.
   canEditPages?: (session: SessionData) => boolean | Promise<boolean>
+  // Optional AI provider for page generation. When absent the generate
+  // endpoint reports that the feature is not configured.
+  llm?: LlmClient
 }
 
 export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
@@ -70,6 +74,36 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
       body.status === "published" ? "published" : "draft"
     const page = deps.pages.put(slug, parsed.data, status)
     return { slug: page.slug, version: page.version, status: page.status }
+  })
+
+  // Editor: generate a page from a prompt. The model output is validated the
+  // same way a hand edited page is, and the result is saved as a draft so a
+  // human reviews it before it goes live. Never runs raw model markup.
+  app.post("/api/pages/:slug/generate", async (req, reply) => {
+    if (!(await requireEditor(req, reply))) return
+    if (!deps.llm) {
+      return reply.code(501).send({ error: "ai generation is not configured" })
+    }
+    const { slug } = req.params as { slug: string }
+    const body = (req.body ?? {}) as { intent?: string; catalog?: string[] }
+    if (!body.intent) {
+      return reply.code(400).send({ error: "intent is required" })
+    }
+    const catalog =
+      Array.isArray(body.catalog) && body.catalog.length > 0
+        ? body.catalog
+        : [...COMPONENT_TYPES]
+    const result = await generatePage(deps.llm, body.intent, catalog)
+    if (!result.ok || !result.page) {
+      return reply.code(422).send({ error: result.error ?? "generation failed" })
+    }
+    const page = deps.pages.put(slug, result.page, "draft")
+    return {
+      slug: page.slug,
+      version: page.version,
+      status: page.status,
+      content: page.content,
+    }
   })
 
   // Editor: delete a page.

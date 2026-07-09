@@ -13,6 +13,7 @@ import { registerSettingsRoutes } from "./routes/settings.js"
 import { registerBillingRoutes } from "./routes/billing.js"
 import { registerPageRoutes } from "./routes/pages.js"
 import { MemoryPageStore, type PageStore } from "./pages/store.js"
+import type { LlmClient } from "@discord-dashboard/builder/ai"
 import { MemoryGrantStore } from "./billing.js"
 import { StatsRegistry } from "./stats.js"
 import { EventHub } from "./events-hub.js"
@@ -35,6 +36,8 @@ export interface ServerDeps {
   // Where builder pages live, and who may edit them. Editing defaults to deny.
   pages?: PageStore
   canEditPages?: (session: SessionData) => boolean | Promise<boolean>
+  // Optional AI provider for the page generation endpoint.
+  llm?: LlmClient
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
@@ -131,6 +134,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     pages,
     sessions,
     canEditPages: deps.canEditPages,
+    llm: deps.llm,
   })
 
   return app

@@ -24,7 +24,7 @@ const validPage = {
   ],
 }
 
-async function make(canEdit: boolean) {
+async function make(canEdit: boolean, llm?: { complete: () => Promise<string> }) {
   const sessions = new SessionStore()
   const sid = sessions.create()
   sessions.set(sid, { userId: "u1" })
@@ -34,6 +34,7 @@ async function make(canEdit: boolean) {
     adapter: new InProcessAdapter(def, new MemoryStore()),
     sessions,
     canEditPages: canEdit ? () => true : undefined,
+    llm,
   })
   return { app, cookie }
 }
@@ -134,6 +135,61 @@ describe("page routes", () => {
     })
     expect(res.statusCode).toBe(400)
     await app.close()
+  })
+
+  it("reports 501 when ai generation is not configured", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/pages/home/generate",
+      headers: { ...origin, cookie },
+      payload: { intent: "a landing page" },
+    })
+    expect(res.statusCode).toBe(501)
+    await app.close()
+  })
+
+  it("generates and stores a validated page as a draft", async () => {
+    await app.close()
+    const good = {
+      async complete() {
+        return JSON.stringify(validPage)
+      },
+    }
+    const made = await make(true, good)
+    const res = await made.app.inject({
+      method: "POST",
+      url: "/api/pages/ai/generate",
+      headers: { ...origin, cookie: made.cookie },
+      payload: { intent: "a welcome page" },
+    })
+    expect(res.statusCode).toBe(200)
+    expect((res.json() as { status: string }).status).toBe("draft")
+    // Not visible publicly until a human publishes it.
+    const hidden = await made.app.inject({ method: "GET", url: "/api/pages/ai" })
+    expect(hidden.statusCode).toBe(404)
+    await made.app.close()
+  })
+
+  it("rejects generated output that fails validation", async () => {
+    await app.close()
+    const evil = {
+      async complete() {
+        return JSON.stringify({
+          version: 1,
+          root: { title: "x" },
+          content: [{ type: "Button", props: { href: "javascript:alert(1)" } }],
+        })
+      },
+    }
+    const made = await make(true, evil)
+    const res = await made.app.inject({
+      method: "POST",
+      url: "/api/pages/ai/generate",
+      headers: { ...origin, cookie: made.cookie },
+      payload: { intent: "hack" },
+    })
+    expect(res.statusCode).toBe(422)
+    await made.app.close()
   })
 
   it("deletes a page", async () => {
