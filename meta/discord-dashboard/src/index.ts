@@ -44,6 +44,13 @@ export function createDashboard(opts: CreateDashboardOptions) {
 
   return {
     async listen(listenPort = port) {
+      // Keep the OAuth redirect uri in step with the port we actually bind. If
+      // the caller listens on a different port than configured and did not set
+      // an explicit redirect uri, a stale uri would break login with a
+      // redirect_uri mismatch, so derive it from the real port here.
+      if (!opts.discord.redirectUri && listenPort !== port) {
+        config.discord.redirectUri = `http://localhost:${listenPort}/auth/callback`
+      }
       const app = await buildServer(config, { def: opts.settings, adapter })
       await app.listen({ port: listenPort, host: "0.0.0.0" })
       return app
