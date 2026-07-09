@@ -13,3 +13,4 @@ coverage/
 *.sqlite-journal
 .DS_Store
 package-lock.json
+*.tsbuildinfo
