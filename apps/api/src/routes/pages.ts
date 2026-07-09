@@ -78,8 +78,11 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
 
   // Editor: generate a page from a prompt. The model output is validated the
   // same way a hand edited page is, and the result is saved as a draft so a
-  // human reviews it before it goes live. Never runs raw model markup.
-  app.post("/api/pages/:slug/generate", async (req, reply) => {
+  // human reviews it before it goes live. Never runs raw model markup. A tight
+  // rate limit protects the paid LLM call from a runaway client.
+  app.post("/api/pages/:slug/generate", {
+    config: { rateLimit: { max: 20, timeWindow: "1 minute" } },
+  }, async (req, reply) => {
     if (!(await requireEditor(req, reply))) return
     if (!deps.llm) {
       return reply.code(501).send({ error: "ai generation is not configured" })

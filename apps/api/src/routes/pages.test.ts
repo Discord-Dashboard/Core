@@ -192,6 +192,28 @@ describe("page routes", () => {
     await made.app.close()
   })
 
+  it("rate limits the expensive generate endpoint", async () => {
+    await app.close()
+    const good = {
+      async complete() {
+        return JSON.stringify(validPage)
+      },
+    }
+    const made = await make(true, good)
+    let limited = false
+    for (let i = 0; i < 22 && !limited; i++) {
+      const res = await made.app.inject({
+        method: "POST",
+        url: "/api/pages/rl/generate",
+        headers: { ...origin, cookie: made.cookie },
+        payload: { intent: "x" },
+      })
+      if (res.statusCode === 429) limited = true
+    }
+    expect(limited).toBe(true)
+    await made.app.close()
+  })
+
   it("deletes a page", async () => {
     await app.inject({
       method: "POST",
