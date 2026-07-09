@@ -39,6 +39,21 @@ export async function registerSettingsRoutes(
     return { values }
   })
 
+  // Options for channel and role pickers, resolved live from the bot.
+  app.get("/api/guilds/:guildId/channels", async (req, reply) => {
+    const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
+    if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
+    const { guildId } = req.params as { guildId: string }
+    return { channels: await deps.adapter.getChannels(guildId) }
+  })
+
+  app.get("/api/guilds/:guildId/roles", async (req, reply) => {
+    const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
+    if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
+    const { guildId } = req.params as { guildId: string }
+    return { roles: await deps.adapter.getRoles(guildId) }
+  })
+
   app.get("/api/guilds/:guildId/settings/:category/:option", async (req, reply) => {
     const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
