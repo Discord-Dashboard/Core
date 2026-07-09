@@ -1,6 +1,6 @@
 import type { SettingsDef } from "@discord-dashboard/schema"
 import type { BotAdapter } from "./adapter.js"
-import type { Entitlements } from "./entitlements.js"
+import { SubjectType, type Entitlements } from "./entitlements.js"
 
 export interface SettingsContext {
   guildId: string
@@ -56,7 +56,7 @@ export class SettingsService {
     const gate = field.opts.entitlement ?? category.entitlement
     if (typeof gate === "string") {
       const allowed = await this.entitlements.has(
-        { type: "guild", id: ctx.guildId },
+        { type: SubjectType.Guild, id: ctx.guildId },
         gate
       )
       if (!allowed) return { ok: false, error: "entitlement required" }

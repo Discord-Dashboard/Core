@@ -6,7 +6,7 @@ import {
   type SessionData,
   type SessionStore,
 } from "../auth/session.js"
-import type { PageStatus, PageStore } from "../pages/store.js"
+import { PageStatus, type PageStore } from "../pages/store.js"
 
 export interface PageDeps {
   pages: PageStore
@@ -42,7 +42,7 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
     return {
       pages: deps.pages
         .list()
-        .filter((p) => p.status === "published")
+        .filter((p) => p.status === PageStatus.Published)
         .map((p) => ({ slug: p.slug, version: p.version })),
     }
   })
@@ -51,7 +51,7 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
   app.get("/api/pages/:slug", async (req, reply) => {
     const { slug } = req.params as { slug: string }
     const page = deps.pages.get(slug)
-    if (!page || page.status !== "published") {
+    if (!page || page.status !== PageStatus.Published) {
       return reply.code(404).send({ error: "not found" })
     }
     return { slug: page.slug, version: page.version, content: page.content }
@@ -85,8 +85,8 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
         .code(400)
         .send({ error: parsed.error.issues[0]?.message ?? "invalid page" })
     }
-    const status: PageStatus =
-      body.status === "published" ? "published" : "draft"
+    const status =
+      body.status === PageStatus.Published ? PageStatus.Published : PageStatus.Draft
     const page = deps.pages.put(slug, parsed.data, status)
     return { slug: page.slug, version: page.version, status: page.status }
   })
@@ -115,7 +115,7 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
     if (!result.ok || !result.page) {
       return reply.code(422).send({ error: result.error ?? "generation failed" })
     }
-    const page = deps.pages.put(slug, result.page, "draft")
+    const page = deps.pages.put(slug, result.page, PageStatus.Draft)
     return {
       slug: page.slug,
       version: page.version,

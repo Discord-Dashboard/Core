@@ -1,4 +1,8 @@
-export type SubjectType = "user" | "guild" | "bot"
+export enum SubjectType {
+  User = "user",
+  Guild = "guild",
+  Bot = "bot",
+}
 
 export interface EntitlementSubject {
   type: SubjectType

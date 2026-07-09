@@ -1,5 +1,7 @@
 """Field factories mirroring the TypeScript schema package."""
 
+from .protocol import WIRE_VERSION
+
 PROTOCOL_VERSION = "1.0.0"
 
 
@@ -56,4 +58,4 @@ def to_wire(settings):
                 "options": options,
             }
         )
-    return {"version": "1.0", "categories": out}
+    return {"version": WIRE_VERSION, "categories": out}

@@ -3,6 +3,7 @@ import crypto from "node:crypto"
 import {
   PROTOCOL_VERSION,
   JSONRPC_VERSION,
+  WIRE_VERSION,
   HandshakeType,
   RpcMethod,
 } from "@discord-dashboard/protocol"
@@ -139,7 +140,7 @@ export class Adapter {
       case RpcMethod.SettingsDescribe:
         return this.schema
           ? toWire(this.schema, params?.locale as string | undefined)
-          : { version: "1.0", categories: [] }
+          : { version: WIRE_VERSION, categories: [] }
       case RpcMethod.SettingGet: {
         const value = await this.getter?.(
           String(params?.guildId),

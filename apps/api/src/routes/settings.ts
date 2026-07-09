@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
 import type { BotAdapter, Entitlements, DefSource } from "@discord-dashboard/core"
-import { SettingsService } from "@discord-dashboard/core"
+import { SettingsService, SubjectType } from "@discord-dashboard/core"
 import {
   SESSION_COOKIE,
   canManageGuild,
@@ -158,7 +158,7 @@ export async function registerSettingsRoutes(
     const entitlements: Record<string, boolean> = {}
     for (const feature of features) {
       entitlements[feature] = await deps.entitlements.has(
-        { type: "guild", id: guildId },
+        { type: SubjectType.Guild, id: guildId },
         feature
       )
     }

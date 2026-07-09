@@ -1,4 +1,8 @@
-import type { Grant } from "./entitlements.js"
+import { SubjectType } from "@discord-dashboard/core"
+import { GrantSource, GrantStatus, type Grant } from "./entitlements.js"
+
+// The literal status the Stripe API sends for an active subscription.
+const STRIPE_ACTIVE = "active"
 
 // Both billing sources reduce to the same Grant shape before they are stored.
 export function grantFromStripeSubscription(sub: {
@@ -11,8 +15,8 @@ export function grantFromStripeSubscription(sub: {
     subjectType: meta.subjectType ?? "",
     subjectId: meta.subjectId ?? "",
     feature: meta.feature ?? "",
-    source: "stripe",
-    status: sub.status === "active" ? "active" : "canceled",
+    source: GrantSource.Stripe,
+    status: sub.status === STRIPE_ACTIVE ? GrantStatus.Active : GrantStatus.Canceled,
   }
 }
 
@@ -23,10 +27,10 @@ export function grantFromDiscordEntitlement(ent: {
   deleted?: boolean
 }): Grant {
   return {
-    subjectType: ent.guild_id ? "guild" : "user",
+    subjectType: ent.guild_id ? SubjectType.Guild : SubjectType.User,
     subjectId: ent.guild_id ?? ent.user_id ?? "",
     feature: ent.sku_id,
-    source: "discord",
-    status: ent.deleted ? "canceled" : "active",
+    source: GrantSource.Discord,
+    status: ent.deleted ? GrantStatus.Canceled : GrantStatus.Active,
   }
 }

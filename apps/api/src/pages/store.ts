@@ -1,6 +1,9 @@
 import type { Page } from "@discord-dashboard/builder/schema"
 
-export type PageStatus = "draft" | "published"
+export enum PageStatus {
+  Draft = "draft",
+  Published = "published",
+}
 
 export interface StoredPage {
   slug: string

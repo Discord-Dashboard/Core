@@ -4,6 +4,7 @@ wire strings."""
 from enum import Enum
 
 JSONRPC_VERSION = "2.0"
+WIRE_VERSION = "1.0"
 
 
 class HandshakeType(str, Enum):

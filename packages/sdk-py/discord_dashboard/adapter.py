@@ -8,7 +8,7 @@ import json
 import websockets
 
 from .fields import PROTOCOL_VERSION, to_wire
-from .protocol import JSONRPC_VERSION, HandshakeType, RpcMethod
+from .protocol import JSONRPC_VERSION, WIRE_VERSION, HandshakeType, RpcMethod
 
 
 class Adapter:
@@ -101,7 +101,7 @@ class Adapter:
 
     async def _dispatch(self, method, params):
         if method == RpcMethod.SETTINGS_DESCRIBE:
-            return to_wire(self._schema) if self._schema else {"version": "1.0", "categories": []}
+            return to_wire(self._schema) if self._schema else {"version": WIRE_VERSION, "categories": []}
         if method == RpcMethod.SETTING_GET:
             value = self._getter(params.get("guildId"), params.get("key")) if self._getter else None
             if asyncio.iscoroutine(value):

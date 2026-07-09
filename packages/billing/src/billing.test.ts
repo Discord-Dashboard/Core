@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest"
-import { createEntitlements, type Grant, type GrantStore } from "./entitlements.js"
+import { SubjectType } from "@discord-dashboard/core"
+import {
+  createEntitlements,
+  GrantSource,
+  GrantStatus,
+  type Grant,
+  type GrantStore,
+} from "./entitlements.js"
 import {
   grantFromStripeSubscription,
   grantFromDiscordEntitlement,
@@ -18,17 +25,17 @@ function store(grants: Grant[]): GrantStore {
 describe("entitlements", () => {
   it("grants access when an active grant exists", async () => {
     const ent = createEntitlements(
-      store([{ subjectType: "guild", subjectId: "g", feature: "pro", source: "stripe", status: "active" }])
+      store([{ subjectType: "guild", subjectId: "g", feature: "pro", source: GrantSource.Stripe, status: GrantStatus.Active }])
     )
-    expect(await ent.has({ type: "guild", id: "g" }, "pro")).toBe(true)
+    expect(await ent.has({ type: SubjectType.Guild, id: "g" }, "pro")).toBe(true)
   })
   it("does not let a user grant satisfy a guild check with the same id", async () => {
     // A user and a guild can share the same snowflake id.
     const ent = createEntitlements(
-      store([{ subjectType: "user", subjectId: "123", feature: "pro", source: "stripe", status: "active" }])
+      store([{ subjectType: "user", subjectId: "123", feature: "pro", source: GrantSource.Stripe, status: GrantStatus.Active }])
     )
-    expect(await ent.has({ type: "user", id: "123" }, "pro")).toBe(true)
-    expect(await ent.has({ type: "guild", id: "123" }, "pro")).toBe(false)
+    expect(await ent.has({ type: SubjectType.User, id: "123" }, "pro")).toBe(true)
+    expect(await ent.has({ type: SubjectType.Guild, id: "123" }, "pro")).toBe(false)
   })
   it("denies access when the grant is expired", async () => {
     const ent = createEntitlements(
@@ -37,13 +44,13 @@ describe("entitlements", () => {
           subjectType: "guild",
           subjectId: "g",
           feature: "pro",
-          source: "stripe",
-          status: "active",
+          source: GrantSource.Stripe,
+          status: GrantStatus.Active,
           expiresAt: 1,
         },
       ])
     )
-    expect(await ent.has({ type: "guild", id: "g" }, "pro")).toBe(false)
+    expect(await ent.has({ type: SubjectType.Guild, id: "g" }, "pro")).toBe(false)
   })
 })
 

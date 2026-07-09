@@ -1,3 +1,6 @@
+// Version of the settings wire descriptor format.
+export const WIRE_VERSION = "1.0"
+
 // Wire representation of a settings schema. A bot in any language returns this
 // shape from settings.describe. The TS schema package builds it from Zod.
 export interface WireEnumOption {
