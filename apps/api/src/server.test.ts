@@ -51,6 +51,19 @@ describe("api server (integration)", () => {
     await notReady.close()
   })
 
+  it("serves an openapi inventory derived from the routes", async () => {
+    const res = await app.inject({ method: "GET", url: "/openapi.json" })
+    expect(res.statusCode).toBe(200)
+    const doc = res.json() as {
+      openapi: string
+      paths: Record<string, Record<string, unknown>>
+    }
+    expect(doc.openapi).toBe("3.1.0")
+    // Fastify :params are rendered as OpenAPI {params}.
+    expect(doc.paths["/api/guilds/{guildId}/values"]?.get).toBeDefined()
+    expect(doc.paths["/api/pages/{slug}"]?.post).toBeDefined()
+  })
+
   it("serves the schema descriptor", async () => {
     const res = await app.inject({ method: "GET", url: "/api/schema" })
     expect(res.statusCode).toBe(200)

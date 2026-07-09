@@ -88,6 +88,35 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     }
   })
 
+  // Collect every registered route so the OpenAPI document is derived from the
+  // real server and never drifts from it.
+  const routes: { method: string; url: string }[] = []
+  app.addHook("onRoute", (r) => {
+    const methods = Array.isArray(r.method) ? r.method : [r.method]
+    for (const method of methods) {
+      if (method === "HEAD" || method === "OPTIONS") continue
+      routes.push({ method, url: r.url })
+    }
+  })
+
+  // A minimal but always accurate OpenAPI 3.1 inventory of the endpoints.
+  app.get("/openapi.json", async () => {
+    const paths: Record<string, Record<string, unknown>> = {}
+    for (const { method, url } of routes) {
+      // Fastify uses :param, OpenAPI uses {param}.
+      const openapiPath = url.replace(/:(\w+)/g, "{$1}")
+      const entry = (paths[openapiPath] ??= {})
+      entry[method.toLowerCase()] = {
+        responses: { "200": { description: "OK" } },
+      }
+    }
+    return {
+      openapi: "3.1.0",
+      info: { title: "discord-dashboard", version: PROTOCOL_VERSION },
+      paths,
+    }
+  })
+
   app.get("/health", async () => ({ ok: true }))
   // Readiness: distinct from liveness. A load balancer should hold traffic until
   // this is ready (for example, until the bot has connected).
