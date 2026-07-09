@@ -15,8 +15,10 @@ export class RemoteAdapter implements BotAdapter {
     private readonly botId: string
   ) {}
 
-  describeSchema() {
-    return this.gateway.call<SchemaDescriptor>(this.botId, "settings.describe")
+  describeSchema(locale?: string) {
+    return this.gateway.call<SchemaDescriptor>(this.botId, "settings.describe", {
+      locale,
+    })
   }
   getChannels(guildId: string, filter?: ChannelFilter) {
     return this.gateway.call<OptionListItem[]>(this.botId, "guild.channels", {

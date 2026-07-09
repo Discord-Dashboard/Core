@@ -66,9 +66,9 @@ export function fromV2(settings: V2Category[]) {
   })
 
   const adapter: BotAdapter = {
-    async describeSchema() {
+    async describeSchema(locale?: string) {
       const { toWire } = await import("@discord-dashboard/schema")
-      return toWire(def)
+      return toWire(def, locale)
     },
     async getChannels() {
       return []

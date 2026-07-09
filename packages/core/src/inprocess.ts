@@ -39,8 +39,8 @@ export class InProcessAdapter implements BotAdapter {
     private readonly actions: Record<string, (payload?: unknown) => unknown> = {}
   ) {}
 
-  async describeSchema() {
-    return toWire(this.def)
+  async describeSchema(locale?: string) {
+    return toWire(this.def, locale)
   }
   async getChannels(guildId: string, filter?: ChannelFilter) {
     return (await this.discord?.channels(guildId, filter)) ?? []

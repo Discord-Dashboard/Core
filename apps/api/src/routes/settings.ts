@@ -17,7 +17,10 @@ export async function registerSettingsRoutes(
 ) {
   const service = new SettingsService(deps.def, deps.adapter, deps.entitlements)
 
-  app.get("/api/schema", async () => deps.adapter.describeSchema())
+  app.get("/api/schema", async (req) => {
+    const { locale } = req.query as { locale?: string }
+    return deps.adapter.describeSchema(locale)
+  })
 
   // Bulk read of all current values for a guild, with defaults applied. The
   // web form uses this to populate itself in one request.

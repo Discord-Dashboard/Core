@@ -105,7 +105,9 @@ export class Adapter {
   private async dispatch(method: string, params?: Record<string, unknown>) {
     switch (method) {
       case "settings.describe":
-        return this.schema ? toWire(this.schema) : { version: "1.0", categories: [] }
+        return this.schema
+          ? toWire(this.schema, params?.locale as string | undefined)
+          : { version: "1.0", categories: [] }
       case "setting.get": {
         const value = await this.getter?.(
           String(params?.guildId),
