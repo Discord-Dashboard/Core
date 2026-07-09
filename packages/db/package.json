@@ -14,10 +14,11 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
+    "better-sqlite3": "^12.11.1",
     "drizzle-orm": "^0.45.2"
   },
   "devDependencies": {
-    "better-sqlite3": "^12.11.1",
+    "@types/better-sqlite3": "^7.6.13",
     "drizzle-kit": "^0.31.10"
   },
   "publishConfig": {
