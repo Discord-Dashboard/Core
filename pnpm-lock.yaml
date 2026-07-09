@@ -178,6 +178,33 @@ importers:
 
   packages/marketplace: {}
 
+  packages/modules/all:
+    dependencies:
+      '@discord-dashboard/module-automod':
+        specifier: workspace:*
+        version: link:../automod
+      '@discord-dashboard/module-autoresponder':
+        specifier: workspace:*
+        version: link:../autoresponder
+      '@discord-dashboard/module-giveaways':
+        specifier: workspace:*
+        version: link:../giveaways
+      '@discord-dashboard/module-leveling':
+        specifier: workspace:*
+        version: link:../leveling
+      '@discord-dashboard/module-onboarding':
+        specifier: workspace:*
+        version: link:../onboarding
+      '@discord-dashboard/module-reaction-roles':
+        specifier: workspace:*
+        version: link:../reaction-roles
+      '@discord-dashboard/module-tickets':
+        specifier: workspace:*
+        version: link:../tickets
+      '@discord-dashboard/schema':
+        specifier: workspace:*
+        version: link:../../schema
+
   packages/modules/automod:
     dependencies:
       '@discord-dashboard/schema':
