@@ -38,7 +38,8 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     }
   }
 
-  const app = Fastify({ logger: true })
+  // Cap request bodies to keep a single request from exhausting memory.
+  const app = Fastify({ logger: true, bodyLimit: 256 * 1024 })
   const sessions = deps.sessions ?? new SessionStore()
   const grants = new MemoryGrantStore()
   const stats = deps.stats ?? new StatsRegistry()

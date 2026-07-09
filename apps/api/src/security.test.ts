@@ -95,3 +95,32 @@ d3("rate limiting", () => {
     await app3.close()
   })
 })
+
+import { describe as d9, it as i9, expect as e9 } from "vitest"
+import { buildServer as build9 } from "./server.js"
+import { InProcessAdapter as IPA9, MemoryStore as MS9 } from "@discord-dashboard/core"
+import { defineSettings as ds9 } from "@discord-dashboard/schema"
+
+d9("body size limit", () => {
+  i9("rejects an oversized request body", async () => {
+    const def9 = ds9(() => ({}))
+    const app9 = await build9(
+      {
+        port: 0,
+        cookieSecret: "test-secret-at-least-32-chars-long-000",
+        allowedOrigins: ["http://localhost:3000"],
+        discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+      },
+      { def: def9, adapter: new IPA9(def9, new MS9()) }
+    )
+    const huge = { value: "x".repeat(300 * 1024) }
+    const res = await app9.inject({
+      method: "POST",
+      url: "/webhooks/discord",
+      headers: { "content-type": "application/json" },
+      payload: JSON.stringify(huge),
+    })
+    e9(res.statusCode).toBe(413)
+    await app9.close()
+  })
+})
