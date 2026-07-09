@@ -57,3 +57,34 @@ describe("bulk values", () => {
     expect(res.statusCode).toBe(401)
   })
 })
+
+import { EventHub } from "./events-hub.js"
+
+describe("live change fan out", () => {
+  it("publishes setting.changed on a dashboard write", async () => {
+    const events = new EventHub()
+    let received: { method: string; params: { value: unknown } } | null = null
+    events.subscribe((e) => {
+      received = e as typeof received
+    }, "g")
+    const sessions = new SessionStore()
+    const sid = sessions.create()
+    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    const app = await buildServer(config, {
+      def,
+      adapter: new InProcessAdapter(def, new MemoryStore()),
+      sessions,
+      events,
+    })
+    await app.inject({
+      method: "POST",
+      url: "/api/guilds/g/settings/general/prefix",
+      headers: { origin: "http://localhost:3000", cookie: `${SESSION_COOKIE}=${sid}` },
+      payload: { value: "!" },
+    })
+    expect(received).not.toBeNull()
+    expect(received!.method).toBe("setting.changed")
+    expect(received!.params.value).toBe("!")
+    await app.close()
+  })
+})

@@ -7,6 +7,7 @@ import {
   type SessionStore,
 } from "../auth/session.js"
 import type { AuditLog } from "../audit.js"
+import type { EventHub } from "../events-hub.js"
 
 export interface SettingsDeps {
   def: DefSource
@@ -14,6 +15,9 @@ export interface SettingsDeps {
   sessions: SessionStore
   entitlements: Entitlements
   audit?: AuditLog
+  // Live change fan out so other admins viewing the same guild update at once,
+  // even in lite mode where no bot echoes the change back.
+  events?: EventHub
 }
 
 export async function registerSettingsRoutes(
@@ -117,12 +121,14 @@ export async function registerSettingsRoutes(
       value
     )
     if (!result.ok) return reply.code(400).send(result)
+    const key = `${category}.${option}`
     // Record who changed what, now that the write succeeded.
-    deps.audit?.record({
-      guildId,
-      userId: auth.userId,
-      key: `${category}.${option}`,
-      value,
+    deps.audit?.record({ guildId, userId: auth.userId, key, value })
+    // Fan the change out to any admins watching this guild's live stream.
+    deps.events?.publish({
+      botId: "dashboard",
+      method: "setting.changed",
+      params: { guildId, key, value },
     })
     return result
   })
