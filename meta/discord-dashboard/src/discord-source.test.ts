@@ -47,3 +47,33 @@ describe("discordSourceFromClient", () => {
     expect(await src.roles("nope")).toEqual([])
   })
 })
+
+import { describe as d6, it as i6, expect as e6 } from "vitest"
+import { discordSourceFromClient as dsc6 } from "./discord-source.js"
+
+function clientWithNsfw() {
+  const guild = {
+    channels: {
+      cache: new Map([
+        ["c1", { id: "c1", name: "general", type: "0", nsfw: false }],
+        ["c2", { id: "c2", name: "spicy", type: "0", nsfw: true }],
+      ]),
+    },
+    roles: { cache: new Map() },
+    members: { cache: new Map() },
+  }
+  return { guilds: { cache: new Map([["g", guild]]) } }
+}
+
+d6("channel nsfw filtering", () => {
+  i6("hides nsfw channels when asked", async () => {
+    const src = dsc6(clientWithNsfw())
+    const channels = await src.channels("g", { hideNsfw: true })
+    e6(channels.map((c) => c.value)).toEqual(["c1"])
+  })
+  i6("returns only nsfw channels when asked", async () => {
+    const src = dsc6(clientWithNsfw())
+    const channels = await src.channels("g", { onlyNsfw: true })
+    e6(channels.map((c) => c.value)).toEqual(["c2"])
+  })
+})

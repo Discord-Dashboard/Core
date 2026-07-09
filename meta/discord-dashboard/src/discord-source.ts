@@ -11,6 +11,8 @@ export function discordSourceFromClient(client: any): DiscordSource {
       const out: { label: string; value: string }[] = []
       guild.channels.cache.forEach((c: any) => {
         if (types && !types.includes(String(c.type))) return
+        if (filter?.hideNsfw && c.nsfw) return
+        if (filter?.onlyNsfw && !c.nsfw) return
         out.push({ label: c.name, value: c.id })
       })
       return out
