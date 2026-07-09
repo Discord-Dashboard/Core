@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { scaffold } from "./src/index.ts"
+import { scaffold } from "./dist/index.js"
 
 const target = process.argv[2] ?? "."
 const result = scaffold(target, { name: process.argv[3] })
