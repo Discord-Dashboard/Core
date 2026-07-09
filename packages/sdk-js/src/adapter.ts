@@ -3,11 +3,19 @@ import crypto from "node:crypto"
 import { PROTOCOL_VERSION } from "@discord-dashboard/protocol"
 import { toWire, type SettingsDef } from "@discord-dashboard/schema"
 
-type Getter = (guildId: string, key: string) => Promise<unknown> | unknown
+interface Actor {
+  userId?: string
+}
+type Getter = (
+  guildId: string,
+  key: string,
+  actor?: Actor
+) => Promise<unknown> | unknown
 type Setter = (
   guildId: string,
   key: string,
-  value: unknown
+  value: unknown,
+  actor?: Actor
 ) => Promise<void> | void
 type ActionHandler = (
   guildId: string,
@@ -130,7 +138,8 @@ export class Adapter {
       case "setting.get": {
         const value = await this.getter?.(
           String(params?.guildId),
-          String(params?.key)
+          String(params?.key),
+          params?.actor as Actor | undefined
         )
         return { value }
       }
@@ -138,7 +147,8 @@ export class Adapter {
         await this.setter?.(
           String(params?.guildId),
           String(params?.key),
-          params?.value
+          params?.value,
+          params?.actor as Actor | undefined
         )
         return { ok: true }
       }

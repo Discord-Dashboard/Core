@@ -31,4 +31,24 @@ describe("compat-v2", () => {
     expect(stored).toBe("!")
     expect(await adapter.getSetting("g", "general.prefix")).toBe("!")
   })
+  it("passes the acting user id into v2 handlers", async () => {
+    let seen: string | undefined
+    const { adapter } = fromV2([
+      {
+        categoryId: "general",
+        categoryName: "General",
+        categoryOptionsList: [
+          {
+            optionId: "prefix",
+            optionType: { type: "input" },
+            setNew: async ({ user }) => {
+              seen = user.id
+            },
+          },
+        ],
+      },
+    ])
+    await adapter.setSetting("g", "general.prefix", "!", { userId: "u42" })
+    expect(seen).toBe("u42")
+  })
 })

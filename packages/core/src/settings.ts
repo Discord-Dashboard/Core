@@ -32,7 +32,8 @@ export class SettingsService {
   async get(ctx: SettingsContext, categoryId: string, optionId: string) {
     const value = await this.adapter.getSetting(
       ctx.guildId,
-      `${categoryId}.${optionId}`
+      `${categoryId}.${optionId}`,
+      { userId: ctx.userId }
     )
     // Fall back to the declared default when the setting has never been set.
     if (value === null || value === undefined) {
@@ -70,7 +71,8 @@ export class SettingsService {
     return this.adapter.setSetting(
       ctx.guildId,
       `${categoryId}.${optionId}`,
-      parsed.data
+      parsed.data,
+      { userId: ctx.userId }
     )
   }
 }

@@ -79,20 +79,20 @@ export function fromV2(settings: V2Category[]) {
     async getMemberPermissions() {
       return []
     },
-    async getSetting(guildId, key) {
+    async getSetting(guildId, key, actor) {
       const option = lookup.get(key)
       return (
         (await option?.getActualSet?.({
           guild: { id: guildId },
-          user: { id: "" },
+          user: { id: actor?.userId ?? "" },
         })) ?? null
       )
     },
-    async setSetting(guildId, key, value) {
+    async setSetting(guildId, key, value, actor) {
       const option = lookup.get(key)
       await option?.setNew?.({
         guild: { id: guildId },
-        user: { id: "" },
+        user: { id: actor?.userId ?? "" },
         newData: value,
       })
       return { ok: true }

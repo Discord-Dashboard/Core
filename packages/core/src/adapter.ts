@@ -5,6 +5,12 @@ import type {
   RoleFilter,
 } from "@discord-dashboard/protocol"
 
+// Who is performing a settings operation. Threaded to the bot so it can key
+// per user data correctly and record who changed a setting (updated_by).
+export interface SettingActor {
+  userId?: string
+}
+
 // A BotAdapter is the boundary between the dashboard and a bot. It has two
 // implementations: in process (lite mode, discord.js in the same process) and
 // remote (a bot connected over the gateway in any language). Both satisfy the
@@ -14,11 +20,12 @@ export interface BotAdapter {
   getChannels(guildId: string, filter?: ChannelFilter): Promise<OptionListItem[]>
   getRoles(guildId: string, filter?: RoleFilter): Promise<OptionListItem[]>
   getMemberPermissions(guildId: string, userId: string): Promise<string[]>
-  getSetting(guildId: string, key: string): Promise<unknown>
+  getSetting(guildId: string, key: string, actor?: SettingActor): Promise<unknown>
   setSetting(
     guildId: string,
     key: string,
-    value: unknown
+    value: unknown,
+    actor?: SettingActor
   ): Promise<{ ok: boolean; error?: string }>
   invokeAction(guildId: string, name: string, payload?: unknown): Promise<unknown>
 }

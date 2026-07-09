@@ -43,6 +43,7 @@ describe("platform end to end", () => {
 
     // A real SDK bot that keeps settings in memory and announces changes.
     const store = new Map<string, unknown>()
+    let setter: string | undefined
     const bot = new Adapter({ botId, secret, gateway: `ws://127.0.0.1:${port}/gateway` })
       .settings(
         defineSettings((s) => ({
@@ -53,7 +54,8 @@ describe("platform end to end", () => {
         }))
       )
       .onGet((guildId, key) => store.get(`${guildId}:${key}`) ?? null)
-      .onSet(async (guildId, key, value) => {
+      .onSet(async (guildId, key, value, actor) => {
+        setter = actor?.userId
         store.set(`${guildId}:${key}`, value)
         await bot.push("setting.changed", { guildId, key, value })
       })
@@ -87,6 +89,8 @@ describe("platform end to end", () => {
         payload: { value: "ab" },
       })
       expect(set.statusCode).toBe(200)
+      // The acting user's id travelled all the way to the bot.
+      expect(setter).toBe("u1")
 
       // Read it back: the value made a full trip to the live bot and returned.
       const get = await app.inject({

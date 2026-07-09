@@ -1,4 +1,4 @@
-import type { BotAdapter } from "./adapter.js"
+import type { BotAdapter, SettingActor } from "./adapter.js"
 import type {
   OptionListItem,
   ChannelFilter,
@@ -54,10 +54,15 @@ export class InProcessAdapter implements BotAdapter {
   async getMemberPermissions(guildId: string, userId: string) {
     return (await this.discord?.memberPermissions(guildId, userId)) ?? []
   }
-  async getSetting(guildId: string, key: string) {
+  async getSetting(guildId: string, key: string, _actor?: SettingActor) {
     return this.store.get(`${guildId}:${key}`)
   }
-  async setSetting(guildId: string, key: string, value: unknown) {
+  async setSetting(
+    guildId: string,
+    key: string,
+    value: unknown,
+    _actor?: SettingActor
+  ) {
     await this.store.set(`${guildId}:${key}`, value)
     return { ok: true }
   }

@@ -1,4 +1,4 @@
-import type { BotAdapter } from "@discord-dashboard/core"
+import type { BotAdapter, SettingActor } from "@discord-dashboard/core"
 import type {
   SchemaDescriptor,
   OptionListItem,
@@ -40,19 +40,19 @@ export class RemoteAdapter implements BotAdapter {
     )
     return res.permissions
   }
-  async getSetting(guildId: string, key: string) {
+  async getSetting(guildId: string, key: string, actor?: SettingActor) {
     const res = await this.gateway.call<{ value: unknown }>(
       this.botId,
       "setting.get",
-      { guildId, key }
+      { guildId, key, actor }
     )
     return res.value
   }
-  setSetting(guildId: string, key: string, value: unknown) {
+  setSetting(guildId: string, key: string, value: unknown, actor?: SettingActor) {
     return this.gateway.call<{ ok: boolean; error?: string }>(
       this.botId,
       "setting.set",
-      { guildId, key, value }
+      { guildId, key, value, actor }
     )
   }
   invokeAction(guildId: string, name: string, payload?: unknown) {
