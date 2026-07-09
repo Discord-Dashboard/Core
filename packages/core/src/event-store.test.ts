@@ -27,4 +27,20 @@ describe("EventSourcedStore", () => {
     await store.set("a", 1)
     expect(await store.rollback("a")).toBe(false)
   })
+  it("walks all the way back through history on repeated rollbacks", async () => {
+    const store = new EventSourcedStore()
+    await store.set("a", "v0")
+    await store.set("a", "v1")
+    await store.set("a", "v2")
+    expect(await store.rollback("a")).toBe(true)
+    expect(await store.get("a")).toBe("v1")
+    expect(await store.rollback("a")).toBe(true)
+    expect(await store.get("a")).toBe("v0")
+    // No further to go.
+    expect(await store.rollback("a")).toBe(false)
+    // A new write returns to the latest and history is intact.
+    await store.set("a", "v3")
+    expect(await store.get("a")).toBe("v3")
+    expect(store.history("a")).toHaveLength(4)
+  })
 })
