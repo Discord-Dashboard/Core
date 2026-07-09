@@ -16,8 +16,8 @@ interface WireCategory {
   options: WireOption[]
 }
 
-// Loads the schema and the current values in parallel, then renders a form
-// that saves each change back to the api.
+// Loads schema and values, saves changes, and subscribes to live updates so the
+// form reflects changes the bot makes while the page is open.
 export function SettingsForm({ guildId }: { guildId: string }) {
   const [categories, setCategories] = useState<WireCategory[] | null>(null)
   const [values, setValues] = useState<Record<string, unknown>>({})
@@ -35,76 +35,69 @@ export function SettingsForm({ guildId }: { guildId: string }) {
         setValues(valuesRes.values ?? {})
       })
       .catch(() => setCategories([]))
+
+    const es = new EventSource(`${API}/api/guilds/${guildId}/stream`, {
+      withCredentials: true,
+    })
+    es.onmessage = (e) => {
+      try {
+        const event = JSON.parse(e.data)
+        if (event.method === "setting.changed") {
+          const { key, value } = event.params ?? {}
+          if (key) setValues((v) => ({ ...v, [key]: value }))
+        }
+      } catch {
+        // ignore malformed events
+      }
+    }
+    return () => es.close()
   }, [guildId])
 
-  if (!categories) return <p>Loading...</p>
+  if (!categories) return <p style={{ padding: 48 }}>Loading...</p>
+
+  async function save(key: string, next: unknown) {
+    setValues((v) => ({ ...v, [key]: next }))
+    await fetch(`${API}/api/guilds/${guildId}/settings/${key.replace(".", "/")}`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ value: next }),
+    })
+  }
 
   return (
     <div>
       {categories.map((cat) => (
         <section key={cat.id} style={{ marginBottom: 24 }}>
           <h2>{cat.name}</h2>
-          {cat.options.map((opt) => (
-            <Field
-              key={opt.id}
-              guildId={guildId}
-              categoryId={cat.id}
-              option={opt}
-              initial={values[`${cat.id}.${opt.id}`]}
-            />
-          ))}
+          {cat.options.map((opt) => {
+            const key = `${cat.id}.${opt.id}`
+            const value = values[key] ?? ""
+            return (
+              <label key={opt.id} style={{ display: "block", margin: "8px 0" }}>
+                <span style={{ marginRight: 8 }}>{opt.label ?? opt.id}</span>
+                {opt.type === "switch" ? (
+                  <input
+                    type="checkbox"
+                    checked={Boolean(value)}
+                    onChange={(e) => save(key, e.target.checked)}
+                  />
+                ) : opt.type === "select" ? (
+                  <select value={String(value)} onChange={(e) => save(key, e.target.value)}>
+                    {(opt.enum ?? []).map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input value={String(value)} onChange={(e) => save(key, e.target.value)} />
+                )}
+              </label>
+            )
+          })}
         </section>
       ))}
     </div>
-  )
-}
-
-function Field({
-  guildId,
-  categoryId,
-  option,
-  initial,
-}: {
-  guildId: string
-  categoryId: string
-  option: WireOption
-  initial: unknown
-}) {
-  const [value, setValue] = useState<unknown>(initial ?? "")
-
-  async function save(next: unknown) {
-    setValue(next)
-    await fetch(
-      `${API}/api/guilds/${guildId}/settings/${categoryId}/${option.id}`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ value: next }),
-      }
-    )
-  }
-
-  return (
-    <label style={{ display: "block", margin: "8px 0" }}>
-      <span style={{ marginRight: 8 }}>{option.label ?? option.id}</span>
-      {option.type === "switch" ? (
-        <input
-          type="checkbox"
-          checked={Boolean(value)}
-          onChange={(e) => save(e.target.checked)}
-        />
-      ) : option.type === "select" ? (
-        <select value={String(value)} onChange={(e) => save(e.target.value)}>
-          {(option.enum ?? []).map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input value={String(value)} onChange={(e) => save(e.target.value)} />
-      )}
-    </label>
   )
 }
