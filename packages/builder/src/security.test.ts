@@ -11,6 +11,10 @@ describe("url safety", () => {
     expect(isSafeUrl("vbscript:msgbox")).toBe(false)
     // A control character must not smuggle a scheme past the check.
     expect(isSafeUrl("java\tscript:alert(1)")).toBe(false)
+    // Protocol-relative and backslash urls point off-origin, not "relative".
+    expect(isSafeUrl("//evil.com")).toBe(false)
+    expect(isSafeUrl("/\\evil.com")).toBe(false)
+    expect(isSafeUrl("\\\\evil.com")).toBe(false)
   })
   it("allows http, https, mailto and relative urls", () => {
     expect(isSafeUrl("https://example.com")).toBe(true)

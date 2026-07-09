@@ -18,7 +18,13 @@ export function isSafeUrl(url: string): boolean {
   const trimmed = url.trim()
   if (trimmed === "") return true
   if (hasControlChar(trimmed)) return false
-  // Relative urls and fragments carry no scheme and are safe.
+  // Browsers normalize backslashes to slashes, so a backslash can disguise a
+  // protocol-relative url (\\evil.com). Reject them outright.
+  if (trimmed.includes("\\")) return false
+  // A protocol-relative url (//host) points at another origin, so it is not a
+  // safe "relative" url even though it starts with a slash.
+  if (trimmed.startsWith("//")) return false
+  // Relative urls, queries and fragments carry no scheme and are safe.
   if (/^[/#?]/.test(trimmed)) return true
   const match = /^([a-z][a-z0-9+.-]*):/i.exec(trimmed)
   // No scheme means a relative path.
