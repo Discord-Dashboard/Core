@@ -43,6 +43,8 @@ export interface ServerDeps {
   // Readiness check for load balancers: for example, whether the bot is
   // connected. Defaults to always ready.
   ready?: () => boolean | Promise<boolean>
+  // Extra gauges to expose on /metrics, for example the connected bot count.
+  metrics?: () => Record<string, number>
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
@@ -126,6 +128,21 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     return { ready: true }
   })
   app.get("/version", async () => ({ protocol: PROTOCOL_VERSION }))
+  // Prometheus style gauges for platform observability. Kept coarse so it leaks
+  // no per user data.
+  app.get("/metrics", async (_req, reply) => {
+    const gauges: Record<string, number> = {
+      dd_up: 1,
+      dd_sessions: sessions.size,
+      ...(deps.metrics ? deps.metrics() : {}),
+    }
+    reply.header("content-type", "text/plain; version=0.0.4")
+    return (
+      Object.entries(gauges)
+        .map(([name, value]) => `${name} ${value}`)
+        .join("\n") + "\n"
+    )
+  })
   app.get("/api/bots/:botId/stats", async (req, reply) => {
     const session = sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })

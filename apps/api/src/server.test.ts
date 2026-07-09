@@ -51,6 +51,14 @@ describe("api server (integration)", () => {
     await notReady.close()
   })
 
+  it("exposes prometheus metrics", async () => {
+    const res = await app.inject({ method: "GET", url: "/metrics" })
+    expect(res.statusCode).toBe(200)
+    expect(res.headers["content-type"]).toContain("text/plain")
+    expect(res.body).toContain("dd_up 1")
+    expect(res.body).toMatch(/dd_sessions \d+/)
+  })
+
   it("serves an openapi inventory derived from the routes", async () => {
     const res = await app.inject({ method: "GET", url: "/openapi.json" })
     expect(res.statusCode).toBe(200)

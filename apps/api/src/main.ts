@@ -76,6 +76,7 @@ async function main() {
       : undefined,
     // In platform mode we are ready once the bot has connected to the gateway.
     ready: botId ? () => gateway.sessions.has(botId) : undefined,
+    metrics: () => ({ dd_bots_connected: gateway.sessions.size }),
   })
   await app.listen({ port: config.port, host: "0.0.0.0" })
 
