@@ -18,6 +18,7 @@ export default defineConfig({
       pkg("@discord-dashboard/billing", "packages/billing/src/index.ts"),
       pkg("@discord-dashboard/sdk-js", "packages/sdk-js/src/index.ts"),
       pkg("@discord-dashboard/api", "apps/api/src/index.ts"),
+      pkg("@discord-dashboard/compat-v2", "packages/compat-v2/src/index.ts"),
     ],
   },
   plugins: [
