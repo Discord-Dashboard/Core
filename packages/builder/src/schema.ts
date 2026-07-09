@@ -12,6 +12,9 @@ export const COMPONENT_TYPES = [
   "Grid",
   "SettingsPanel",
   "Image",
+  "Divider",
+  "Spacer",
+  "List",
 ] as const
 
 function urlSafety(block: { props: Record<string, unknown> }, ctx: z.RefinementCtx) {

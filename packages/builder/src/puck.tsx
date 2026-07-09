@@ -59,5 +59,32 @@ export const puckConfig: Config = {
         <div data-settings-panel={category}>Settings: {category}</div>
       ),
     },
+    Divider: {
+      fields: {},
+      render: () => <hr />,
+    },
+    Spacer: {
+      fields: { height: { type: "number" } },
+      render: ({ height }) => (
+        <div style={{ height: Number(height) || 16 }} />
+      ),
+    },
+    List: {
+      fields: {
+        items: {
+          type: "array",
+          arrayFields: { text: { type: "text" } },
+        },
+      },
+      render: ({ items }) => (
+        <ul>
+          {(Array.isArray(items) ? items : []).map((item, i) => (
+            <li key={i}>
+              {typeof item === "string" ? item : String((item as { text?: unknown })?.text ?? "")}
+            </li>
+          ))}
+        </ul>
+      ),
+    },
   },
 }

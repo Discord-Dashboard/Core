@@ -44,6 +44,18 @@ describe("url safety", () => {
     })
     expect(r.success).toBe(true)
   })
+  it("accepts the divider, spacer and list components", () => {
+    const r = pageSchema.safeParse({
+      version: 1,
+      root: { title: "t" },
+      content: [
+        { type: "Divider", props: {} },
+        { type: "Spacer", props: { height: 24 } },
+        { type: "List", props: { items: [{ text: "a" }, { text: "b" }] } },
+      ],
+    })
+    expect(r.success).toBe(true)
+  })
 })
 
 describe("catalog enforcement", () => {

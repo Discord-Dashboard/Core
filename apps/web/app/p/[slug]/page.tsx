@@ -51,6 +51,20 @@ function renderBlock(block: Block, i: number) {
       return (
         <img key={i} src={safeUrl(p.src)} alt={str(p.alt)} style={{ maxWidth: "100%" }} />
       )
+    case "Divider":
+      return <hr key={i} />
+    case "Spacer":
+      return <div key={i} style={{ height: Number(p.height) || 16 }} />
+    case "List":
+      return (
+        <ul key={i}>
+          {(Array.isArray(p.items) ? p.items : []).map((it, j) => (
+            <li key={j}>
+              {typeof it === "string" ? it : str((it as { text?: unknown })?.text)}
+            </li>
+          ))}
+        </ul>
+      )
     default:
       return null
   }
