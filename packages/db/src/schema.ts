@@ -3,6 +3,8 @@ import {
   sqliteTable,
   text,
   integer,
+  primaryKey,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core"
 
 // Every domain table carries tenantId. In lite mode there is a single tenant.
@@ -24,23 +26,34 @@ export const bots = sqliteTable("bots", {
   createdAt: integer("created_at").default(now),
 })
 
-export const guildSettings = sqliteTable("guild_settings", {
-  botId: text("bot_id").notNull(),
-  guildId: text("guild_id").notNull(),
-  key: text("key").notNull(),
-  valueJson: text("value_json"),
-  updatedBy: text("updated_by"),
-  updatedAt: integer("updated_at").default(now),
-})
+export const guildSettings = sqliteTable(
+  "guild_settings",
+  {
+    botId: text("bot_id").notNull(),
+    guildId: text("guild_id").notNull(),
+    key: text("key").notNull(),
+    valueJson: text("value_json"),
+    updatedBy: text("updated_by"),
+    updatedAt: integer("updated_at").default(now),
+  },
+  // One row per setting: the natural key is (bot, guild, key). This is the
+  // conflict target for upserts and stops duplicate rows for the same setting.
+  (t) => [primaryKey({ columns: [t.botId, t.guildId, t.key] })]
+)
 
-export const pages = sqliteTable("pages", {
-  id: text("id").primaryKey(),
-  botId: text("bot_id").notNull(),
-  slug: text("slug").notNull(),
-  puckJson: text("puck_json").notNull(),
-  version: integer("version").notNull().default(1),
-  status: text("status").notNull().default("draft"),
-})
+export const pages = sqliteTable(
+  "pages",
+  {
+    id: text("id").primaryKey(),
+    botId: text("bot_id").notNull(),
+    slug: text("slug").notNull(),
+    puckJson: text("puck_json").notNull(),
+    version: integer("version").notNull().default(1),
+    status: text("status").notNull().default("draft"),
+  },
+  // A slug identifies a page within a bot, so it must be unique per bot.
+  (t) => [uniqueIndex("pages_bot_slug").on(t.botId, t.slug)]
+)
 
 export const themes = sqliteTable("themes", {
   id: text("id").primaryKey(),
