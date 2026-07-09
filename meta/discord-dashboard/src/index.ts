@@ -16,6 +16,8 @@ export interface CreateDashboardOptions {
   settings: SettingsDef
   // How settings persist. A custom store, "sqlite" for a durable local file
   // that survives restarts, or "memory" (the default) for ephemeral storage.
+  // This covers settings; builder pages and the audit trail stay in memory in
+  // lite mode.
   storage?: KeyValueStore | "memory" | "sqlite"
   // The SQLite file path when storage is "sqlite". Defaults to data.sqlite.
   sqlitePath?: string

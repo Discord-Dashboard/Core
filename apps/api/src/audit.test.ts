@@ -23,6 +23,14 @@ describe("AuditLog", () => {
     for (let i = 0; i < 5; i++) log.record({ guildId: "g", userId: "u", key: "k", value: i })
     expect(log.list("g").map((e) => e.value)).toEqual([4, 3])
   })
+  it("caps retention per guild so one guild cannot evict another", () => {
+    const log = new AuditLog(2, () => 0)
+    for (let i = 0; i < 5; i++) log.record({ guildId: "busy", userId: "u", key: "k", value: i })
+    log.record({ guildId: "quiet", userId: "u", key: "k", value: 99 })
+    // The quiet guild still has its entry despite the busy guild's churn.
+    expect(log.list("quiet").map((e) => e.value)).toEqual([99])
+    expect(log.list("busy").map((e) => e.value)).toEqual([4, 3])
+  })
 })
 
 const config: ApiConfig = {
