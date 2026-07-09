@@ -34,6 +34,7 @@ export interface Gateway {
   sessions: Map<string, BotSession>
   call<R = unknown>(botId: string, method: string, params?: unknown): Promise<R>
   onEvent(listener: EventListener): void
+  onConnect(listener: (botId: string) => void): void
   close(): void
 }
 
@@ -41,6 +42,7 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
   const wss = new WebSocketServer({ server, path: "/gateway" })
   const sessions = new Map<string, BotSession>()
   const listeners: EventListener[] = []
+  const connectListeners: ((botId: string) => void)[] = []
 
   wss.on("connection", (socket) => {
     const nonce = crypto.randomBytes(16).toString("hex")
@@ -81,6 +83,7 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
             result: { sessionId: crypto.randomUUID(), heartbeatMs: 30000 },
           })
         )
+        for (const listener of connectListeners) listener(params.botId)
         return
       }
 
@@ -125,10 +128,15 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
     listeners.push(listener)
   }
 
+  function onConnect(listener: (botId: string) => void) {
+    connectListeners.push(listener)
+  }
+
   return {
     sessions,
     call: call as Gateway["call"],
     onEvent,
+    onConnect,
     close: closeGateway,
   }
 }

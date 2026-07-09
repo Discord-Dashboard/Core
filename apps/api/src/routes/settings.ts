@@ -1,11 +1,10 @@
 import type { FastifyInstance } from "fastify"
-import type { BotAdapter, Entitlements } from "@discord-dashboard/core"
+import type { BotAdapter, Entitlements, DefSource } from "@discord-dashboard/core"
 import { SettingsService } from "@discord-dashboard/core"
-import type { SettingsDef } from "@discord-dashboard/schema"
 import { SESSION_COOKIE, type SessionStore } from "../auth/session.js"
 
 export interface SettingsDeps {
-  def: SettingsDef
+  def: DefSource
   adapter: BotAdapter
   sessions: SessionStore
   entitlements: Entitlements
@@ -16,6 +15,8 @@ export async function registerSettingsRoutes(
   deps: SettingsDeps
 ) {
   const service = new SettingsService(deps.def, deps.adapter, deps.entitlements)
+  const resolveDef = () =>
+    typeof deps.def === "function" ? deps.def() : deps.def
 
   app.get("/api/schema", async (req) => {
     const { locale } = req.query as { locale?: string }
@@ -30,7 +31,7 @@ export async function registerSettingsRoutes(
     const { guildId } = req.params as { guildId: string }
     const ctx = { guildId, userId: session.userId }
     const values: Record<string, unknown> = {}
-    for (const [categoryId, category] of Object.entries(deps.def.categories)) {
+    for (const [categoryId, category] of Object.entries(resolveDef().categories)) {
       for (const optionId of Object.keys(category.options)) {
         values[`${categoryId}.${optionId}`] = await service.get(
           ctx,

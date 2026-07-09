@@ -3,8 +3,7 @@ import cookie from "@fastify/cookie"
 import cors from "@fastify/cors"
 import helmet from "@fastify/helmet"
 import rateLimit from "@fastify/rate-limit"
-import type { BotAdapter } from "@discord-dashboard/core"
-import type { SettingsDef } from "@discord-dashboard/schema"
+import type { BotAdapter, DefSource } from "@discord-dashboard/core"
 import { createEntitlements } from "@discord-dashboard/billing"
 import { PROTOCOL_VERSION } from "@discord-dashboard/protocol"
 import type { ApiConfig } from "./config.js"
@@ -18,7 +17,7 @@ import { EventHub } from "./events-hub.js"
 import { SESSION_COOKIE } from "./auth/session.js"
 
 export interface ServerDeps {
-  def: SettingsDef
+  def: DefSource
   adapter: BotAdapter
   // Injectable for tests and for custom session backends.
   sessions?: SessionStore
