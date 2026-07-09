@@ -6,8 +6,8 @@ function fakeClient() {
   const guild = {
     channels: {
       cache: new Map([
-        ["c1", { id: "c1", name: "general", type: "0" }],
-        ["c2", { id: "c2", name: "voice", type: "2" }],
+        ["c1", { id: "c1", name: "general", type: 0 }],
+        ["c2", { id: "c2", name: "voice", type: 2 }],
       ]),
     },
     roles: {
@@ -26,9 +26,9 @@ function fakeClient() {
 }
 
 describe("discordSourceFromClient", () => {
-  it("filters channels by type", async () => {
+  it("filters channels by semantic type name", async () => {
     const src = discordSourceFromClient(fakeClient())
-    const channels = await src.channels("g", { types: ["0"] })
+    const channels = await src.channels("g", { types: ["text"] })
     expect(channels).toEqual([{ label: "general", value: "c1" }])
   })
   it("lists roles and excludes the everyone role", async () => {
@@ -40,6 +40,22 @@ describe("discordSourceFromClient", () => {
     const src = discordSourceFromClient(fakeClient())
     const perms = await src.memberPermissions("g", "u1")
     expect(perms).toEqual(["ManageGuild", "KickMembers"])
+  })
+  it("fetches a member that is not in cache before giving up", async () => {
+    const guild = {
+      channels: { cache: new Map() },
+      roles: { cache: new Map() },
+      members: {
+        cache: new Map(),
+        fetch: async (id: string) =>
+          id === "u9"
+            ? { permissions: { toArray: () => ["Administrator"] } }
+            : Promise.reject(new Error("unknown")),
+      },
+    }
+    const src = discordSourceFromClient({ guilds: { cache: new Map([["g", guild]]) } })
+    expect(await src.memberPermissions("g", "u9")).toEqual(["Administrator"])
+    expect(await src.memberPermissions("g", "u404")).toEqual([])
   })
   it("returns empty lists for an unknown guild", async () => {
     const src = discordSourceFromClient(fakeClient())
