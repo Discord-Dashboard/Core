@@ -55,3 +55,15 @@ describe("webhook grant mappers", () => {
     expect(g.feature).toBe("sku")
   })
 })
+
+import { describe as dW, it as iW, expect as eW } from "vitest"
+import { grantFromStripeSubscription as gS } from "./webhooks.js"
+
+dW("stripe grant robustness", () => {
+  iW("does not throw when metadata is missing", () => {
+    const g = gS({ id: "sub_1", status: "active" })
+    eW(g.source).toBe("stripe")
+    eW(g.subjectId).toBe("")
+    eW(g.status).toBe("active")
+  })
+})

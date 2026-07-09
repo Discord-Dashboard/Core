@@ -46,8 +46,15 @@ async function fetchManageableGuilds(accessToken: string) {
   })
   if (!res.ok) throw new Error("guild fetch failed")
   const guilds = (await res.json()) as DiscordGuild[]
+  const hasManage = (perms?: string) => {
+    try {
+      return (BigInt(perms ?? "0") & MANAGE_GUILD) !== 0n
+    } catch {
+      return false
+    }
+  }
   return guilds
-    .filter((g) => g.owner || (BigInt(g.permissions ?? "0") & MANAGE_GUILD) !== 0n)
+    .filter((g) => g.owner || hasManage(g.permissions))
     .map((g) => ({ id: g.id, name: g.name, icon: g.icon }))
 }
 

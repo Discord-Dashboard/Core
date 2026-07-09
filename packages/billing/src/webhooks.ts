@@ -4,12 +4,13 @@ import type { Grant } from "./entitlements.js"
 export function grantFromStripeSubscription(sub: {
   id: string
   status: string
-  metadata: { subjectType: string; subjectId: string; feature: string }
+  metadata?: Partial<{ subjectType: string; subjectId: string; feature: string }>
 }): Grant {
+  const meta = sub.metadata ?? {}
   return {
-    subjectType: sub.metadata.subjectType,
-    subjectId: sub.metadata.subjectId,
-    feature: sub.metadata.feature,
+    subjectType: meta.subjectType ?? "",
+    subjectId: meta.subjectId ?? "",
+    feature: meta.feature ?? "",
     source: "stripe",
     status: sub.status === "active" ? "active" : "canceled",
   }
