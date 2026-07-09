@@ -33,6 +33,9 @@ export function createEntitlements(store: GrantStore): Entitlements {
     async has(subject, feature) {
       const now = Math.floor(Date.now() / 1000)
       const grants = (await store.find(subject, feature))
+        // A user and a guild can share the same snowflake, so the type must
+        // match too. Otherwise a user grant could satisfy a guild check.
+        .filter((g) => g.subjectType === subject.type)
         .filter((g) => g.status === "active")
         .filter((g) => !g.expiresAt || g.expiresAt > now)
         .sort((a, b) => PRECEDENCE[b.source] - PRECEDENCE[a.source])

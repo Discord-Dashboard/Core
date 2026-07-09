@@ -12,7 +12,10 @@ export class MemoryGrantStore implements GrantStore {
 
   async find(subject: EntitlementSubject, feature: string) {
     return this.grants.filter(
-      (g) => g.subjectId === subject.id && g.feature === feature
+      (g) =>
+        g.subjectType === subject.type &&
+        g.subjectId === subject.id &&
+        g.feature === feature
     )
   }
 }

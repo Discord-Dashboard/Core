@@ -22,6 +22,14 @@ describe("entitlements", () => {
     )
     expect(await ent.has({ type: "guild", id: "g" }, "pro")).toBe(true)
   })
+  it("does not let a user grant satisfy a guild check with the same id", async () => {
+    // A user and a guild can share the same snowflake id.
+    const ent = createEntitlements(
+      store([{ subjectType: "user", subjectId: "123", feature: "pro", source: "stripe", status: "active" }])
+    )
+    expect(await ent.has({ type: "user", id: "123" }, "pro")).toBe(true)
+    expect(await ent.has({ type: "guild", id: "123" }, "pro")).toBe(false)
+  })
   it("denies access when the grant is expired", async () => {
     const ent = createEntitlements(
       store([
