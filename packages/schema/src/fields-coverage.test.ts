@@ -30,3 +30,18 @@ describe("field validation coverage", () => {
     expect(f.textarea().zod.safeParse("hello").success).toBe(true)
   })
 })
+
+import { describe as d4, it as i4, expect as e4 } from "vitest"
+import { f as f4 } from "./index.js"
+
+d4("url and duration fields", () => {
+  i4("url accepts http urls and rejects junk", () => {
+    e4(f4.url().zod.safeParse("https://example.com").success).toBe(true)
+    e4(f4.url().zod.safeParse("not a url").success).toBe(false)
+  })
+  i4("duration accepts shorthand and rejects bad units", () => {
+    e4(f4.duration().zod.safeParse("10m").success).toBe(true)
+    e4(f4.duration().zod.safeParse("2h").success).toBe(true)
+    e4(f4.duration().zod.safeParse("10x").success).toBe(false)
+  })
+})

@@ -72,6 +72,12 @@ export const f = {
   embed(opts: BaseFieldOpts & { default?: unknown } = {}): Field {
     return make("embed", z.record(z.string(), z.unknown()).optional(), opts)
   },
+  url(opts: BaseFieldOpts = {}): Field {
+    return make("url", z.string().regex(/^https?:\/\/.+/).optional(), opts)
+  },
+  duration(opts: BaseFieldOpts & { default?: string } = {}): Field {
+    return make("duration", z.string().regex(/^\d+(s|m|h|d)$/).optional(), opts)
+  },
 }
 
 export type Fields = typeof f
