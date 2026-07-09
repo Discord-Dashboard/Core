@@ -31,3 +31,14 @@ export class SessionStore {
 }
 
 export const SESSION_COOKIE = "dd_sid"
+
+// A user may only touch guilds they manage, captured at login. This prevents a
+// logged in user from editing a server they have no rights to.
+export function canManageGuild(
+  session: SessionData | undefined,
+  guildId: string
+): boolean {
+  return Boolean(
+    session?.guilds?.some((g) => (g as { id?: string }).id === guildId)
+  )
+}

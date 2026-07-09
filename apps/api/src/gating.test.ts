@@ -27,7 +27,7 @@ describe("monetization gating over http", () => {
   beforeAll(async () => {
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1" })
+    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
     cookie = `${SESSION_COOKIE}=${sid}`
     app = await buildServer(config, {
       def,
@@ -62,5 +62,36 @@ describe("monetization gating over http", () => {
     const after = await write()
     expect(after.statusCode).toBe(200)
     expect((after.json() as { ok: boolean }).ok).toBe(true)
+  })
+})
+
+import { describe as dG, it as iG, expect as eG } from "vitest"
+import { buildServer as bG } from "./server.js"
+import { SessionStore as SSG, SESSION_COOKIE as SCG } from "./auth/session.js"
+import { InProcessAdapter as IPAG, MemoryStore as MSG } from "@discord-dashboard/core"
+import { defineSettings as dsG } from "@discord-dashboard/schema"
+
+dG("guild access control", () => {
+  iG("forbids managing a guild the user does not manage", async () => {
+    const sessions = new SSG()
+    const sid = sessions.create()
+    sessions.set(sid, { userId: "u1", guilds: [{ id: "allowed", name: "A", icon: null }] })
+    const defG = dsG(() => ({}))
+    const app = await bG(
+      {
+        port: 0,
+        cookieSecret: "test-secret-at-least-32-chars-long-000",
+        allowedOrigins: ["http://localhost:3000"],
+        discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+      },
+      { def: defG, adapter: new IPAG(defG, new MSG()), sessions }
+    )
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/guilds/other/values",
+      headers: { cookie: `${SCG}=${sid}` },
+    })
+    eG(res.statusCode).toBe(403)
+    await app.close()
   })
 })

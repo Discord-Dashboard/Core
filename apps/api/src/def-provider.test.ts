@@ -20,7 +20,7 @@ describe("server with a dynamic def provider", () => {
   beforeAll(async () => {
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1" })
+    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
     cookie = `${SESSION_COOKIE}=${sid}`
     app = await buildServer(config, {
       def: () => current,
