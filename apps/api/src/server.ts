@@ -14,7 +14,11 @@ import { registerBillingRoutes } from "./routes/billing.js"
 import { MemoryGrantStore } from "./billing.js"
 import { StatsRegistry } from "./stats.js"
 import { EventHub } from "./events-hub.js"
-import { SESSION_COOKIE, canManageGuild } from "./auth/session.js"
+import {
+  SESSION_COOKIE,
+  canManageGuild,
+  type SessionData,
+} from "./auth/session.js"
 
 export interface ServerDeps {
   def: DefSource
@@ -23,6 +27,9 @@ export interface ServerDeps {
   sessions?: SessionStore
   stats?: StatsRegistry
   events?: EventHub
+  // Authorizes reading a bot's stats. Defaults to deny, so a bot's data is
+  // never exposed to an arbitrary authenticated user who guesses its id.
+  botAccess?: (session: SessionData, botId: string) => boolean | Promise<boolean>
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
@@ -72,6 +79,8 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     const session = sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
     const { botId } = req.params as { botId: string }
+    const allowed = deps.botAccess ? await deps.botAccess(session, botId) : false
+    if (!allowed) return reply.code(403).send({ error: "no access to this bot" })
     const value = stats.get(botId)
     if (!value) return reply.code(404).send({ error: "no stats" })
     return value

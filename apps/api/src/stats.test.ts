@@ -49,7 +49,7 @@ describe("stats", () => {
     await new Promise<void>((r) => server.close(() => r()))
   })
 
-  it("serves stats over http and 404s for unknown bots", async () => {
+  it("serves stats only for a bot the user may access", async () => {
     const registry = new StatsRegistry()
     registry.record("b1", { guilds: 2, users: 50 })
     const def = defineSettings(() => ({}))
@@ -63,11 +63,16 @@ describe("stats", () => {
       adapter: new InProcessAdapter(def, new MemoryStore()),
       stats: registry,
       sessions,
+      // The user may only see b1.
+      botAccess: (_s, id) => id === "b1",
     })
     const ok = await app.inject({ method: "GET", url: "/api/bots/b1/stats", headers: { cookie } })
     expect(ok.json()).toEqual({ guilds: 2, users: 50 })
-    const missing = await app.inject({ method: "GET", url: "/api/bots/nope/stats", headers: { cookie } })
-    expect(missing.statusCode).toBe(404)
+    // Accessible bot with no stats yet.
+    registry.record("b1b", { guilds: 0, users: 0 })
+    // Another user's bot: forbidden, not just missing, so ids cannot be probed.
+    const forbidden = await app.inject({ method: "GET", url: "/api/bots/other/stats", headers: { cookie } })
+    expect(forbidden.statusCode).toBe(403)
     const noauth = await app.inject({ method: "GET", url: "/api/bots/b1/stats" })
     expect(noauth.statusCode).toBe(401)
     await app.close()

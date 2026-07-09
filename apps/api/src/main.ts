@@ -54,7 +54,15 @@ async function main() {
     def = localDef
   }
 
-  const app = await buildServer(config, { def, adapter, stats, events })
+  const app = await buildServer(config, {
+    def,
+    adapter,
+    stats,
+    events,
+    // This deployment serves a single bot; only its stats are readable, and
+    // only to a logged in user. Multi tenant profiles swap in an owner lookup.
+    botAccess: botId ? (_session, id) => id === botId : undefined,
+  })
   await app.listen({ port: config.port, host: "0.0.0.0" })
 }
 
