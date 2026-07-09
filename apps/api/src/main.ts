@@ -74,6 +74,8 @@ async function main() {
     canEditPages: editorIds.size
       ? (session) => Boolean(session.userId && editorIds.has(session.userId))
       : undefined,
+    // In platform mode we are ready once the bot has connected to the gateway.
+    ready: botId ? () => gateway.sessions.has(botId) : undefined,
   })
   await app.listen({ port: config.port, host: "0.0.0.0" })
 

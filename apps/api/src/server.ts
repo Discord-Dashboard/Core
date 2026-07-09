@@ -40,6 +40,9 @@ export interface ServerDeps {
   canEditPages?: (session: SessionData) => boolean | Promise<boolean>
   // Optional AI provider for the page generation endpoint.
   llm?: LlmClient
+  // Readiness check for load balancers: for example, whether the bot is
+  // connected. Defaults to always ready.
+  ready?: () => boolean | Promise<boolean>
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
@@ -86,6 +89,13 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   })
 
   app.get("/health", async () => ({ ok: true }))
+  // Readiness: distinct from liveness. A load balancer should hold traffic until
+  // this is ready (for example, until the bot has connected).
+  app.get("/ready", async (_req, reply) => {
+    const ready = deps.ready ? await deps.ready() : true
+    if (!ready) return reply.code(503).send({ ready: false })
+    return { ready: true }
+  })
   app.get("/version", async () => ({ protocol: PROTOCOL_VERSION }))
   app.get("/api/bots/:botId/stats", async (req, reply) => {
     const session = sessions.get(req.cookies[SESSION_COOKIE])

@@ -36,6 +36,21 @@ describe("api server (integration)", () => {
     expect(res.json()).toEqual({ ok: true })
   })
 
+  it("is ready by default and honors a readiness check", async () => {
+    // Default: always ready.
+    const def1 = await app.inject({ method: "GET", url: "/ready" })
+    expect(def1.statusCode).toBe(200)
+
+    const notReady = await buildServer(config, {
+      def,
+      adapter: new InProcessAdapter(def, new MemoryStore()),
+      ready: () => false,
+    })
+    const res = await notReady.inject({ method: "GET", url: "/ready" })
+    expect(res.statusCode).toBe(503)
+    await notReady.close()
+  })
+
   it("serves the schema descriptor", async () => {
     const res = await app.inject({ method: "GET", url: "/api/schema" })
     expect(res.statusCode).toBe(200)
