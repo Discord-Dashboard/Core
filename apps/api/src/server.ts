@@ -14,6 +14,8 @@ import { registerSettingsRoutes } from "./routes/settings.js"
 import { registerBillingRoutes } from "./routes/billing.js"
 import { MemoryGrantStore } from "./billing.js"
 import { StatsRegistry } from "./stats.js"
+import { EventHub } from "./events-hub.js"
+import { SESSION_COOKIE } from "./auth/session.js"
 
 export interface ServerDeps {
   def: SettingsDef
@@ -21,6 +23,7 @@ export interface ServerDeps {
   // Injectable for tests and for custom session backends.
   sessions?: SessionStore
   stats?: StatsRegistry
+  events?: EventHub
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
@@ -28,6 +31,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   const sessions = deps.sessions ?? new SessionStore()
   const grants = new MemoryGrantStore()
   const stats = deps.stats ?? new StatsRegistry()
+  const events = deps.events ?? new EventHub()
   const entitlements = createEntitlements(grants)
 
   await app.register(helmet)
@@ -58,6 +62,23 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     const value = stats.get(botId)
     if (!value) return reply.code(404).send({ error: "no stats" })
     return value
+  })
+
+  // Server sent events: live setting changes for a guild.
+  app.get("/api/guilds/:guildId/stream", (req, reply) => {
+    const session = sessions.get(req.cookies[SESSION_COOKIE])
+    if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
+    const { guildId } = req.params as { guildId: string }
+    reply.raw.writeHead(200, {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      connection: "keep-alive",
+    })
+    const off = events.subscribe(
+      (e) => reply.raw.write(`data: ${JSON.stringify(e)}\n\n`),
+      guildId
+    )
+    req.raw.on("close", off)
   })
 
   // Structured errors, and never leak internals to the client.

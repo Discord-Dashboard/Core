@@ -2,6 +2,7 @@ import { loadConfig } from "./config.js"
 import { buildServer } from "./server.js"
 import { startGateway } from "./gateway/gateway.js"
 import { StatsRegistry, wireStats } from "./stats.js"
+import { EventHub, wireEvents } from "./events-hub.js"
 import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
 import { defineSettings } from "@discord-dashboard/schema"
 
@@ -12,7 +13,8 @@ async function main() {
   const def = defineSettings(() => ({}))
   const adapter = new InProcessAdapter(def, new MemoryStore())
   const stats = new StatsRegistry()
-  const app = await buildServer(config, { def, adapter, stats })
+  const events = new EventHub()
+  const app = await buildServer(config, { def, adapter, stats, events })
   await app.listen({ port: config.port, host: "0.0.0.0" })
 
   const botId = process.env.BOT_ID
@@ -21,6 +23,7 @@ async function main() {
     id === botId ? secret ?? null : null
   )
   wireStats(gateway, stats)
+  wireEvents(gateway, events)
 }
 
 main().catch((err) => {
