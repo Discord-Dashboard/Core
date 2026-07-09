@@ -1,8 +1,11 @@
 import { z } from "zod"
 
+// Text shown to users. A plain string, or a map of locale to string for i18n.
+export type Localized = string | Record<string, string>
+
 export interface BaseFieldOpts {
-  label?: string
-  description?: string
+  label?: Localized
+  description?: Localized
   required?: boolean
   entitlement?: string
   ui?: Record<string, unknown>

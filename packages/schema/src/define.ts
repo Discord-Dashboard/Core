@@ -1,9 +1,9 @@
-import type { Field, Fields } from "./fields.js"
+import type { Field, Fields, Localized } from "./fields.js"
 import { f } from "./fields.js"
 
 export interface CategoryConfig {
-  name: string
-  description?: string
+  name: Localized
+  description?: Localized
   icon?: string
   entitlement?: string
   options: Record<string, Field>
