@@ -17,11 +17,13 @@ import { MemoryGrantStore } from "./billing.js"
 export interface ServerDeps {
   def: SettingsDef
   adapter: BotAdapter
+  // Injectable for tests and for custom session backends.
+  sessions?: SessionStore
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   const app = Fastify({ logger: true })
-  const sessions = new SessionStore()
+  const sessions = deps.sessions ?? new SessionStore()
   const grants = new MemoryGrantStore()
   const entitlements = createEntitlements(grants)
 
