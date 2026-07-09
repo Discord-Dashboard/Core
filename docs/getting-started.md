@@ -21,6 +21,9 @@ const dash = createDashboard({
   client,
   discord: { clientId: "...", clientSecret: "..." },
   settings,
+  // Persist settings to a local SQLite file so they survive restarts. Omit for
+  // in memory storage, or pass your own store.
+  storage: "sqlite",
 })
 await dash.listen(3001)
 ```
