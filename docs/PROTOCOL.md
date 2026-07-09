@@ -12,13 +12,16 @@ JSON-RPC 2.0. Either side can be the caller.
 
 ## Methods (dashboard to bot)
 
-- settings.describe
-- guild.channels
-- guild.roles
-- guild.member.permissions
-- setting.get
-- setting.set
-- action.invoke
+- settings.describe `{ locale? }`
+- guild.channels `{ guildId, filter? }`
+- guild.roles `{ guildId, filter? }`
+- guild.member.permissions `{ guildId, userId }`
+- setting.get `{ guildId, key }`
+- setting.set `{ guildId, key, value }`
+- action.invoke `{ guildId, name, payload? }`
+
+The guild id is always supplied by the server from the authorized request, so a
+bot must act on that guild and never trust a guild id found inside a payload.
 
 ## Notifications (bot to dashboard)
 
