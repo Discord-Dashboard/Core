@@ -97,6 +97,9 @@ export function fromV2(settings: V2Category[]) {
       })
       return { ok: true }
     },
+    async invokeAction() {
+      return null
+    },
   }
 
   return { def, adapter }

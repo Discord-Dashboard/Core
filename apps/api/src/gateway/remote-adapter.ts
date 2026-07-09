@@ -53,4 +53,7 @@ export class RemoteAdapter implements BotAdapter {
       { guildId, key, value }
     )
   }
+  invokeAction(name: string, payload?: unknown) {
+    return this.gateway.call<unknown>(this.botId, "action.invoke", { name, payload })
+  }
 }

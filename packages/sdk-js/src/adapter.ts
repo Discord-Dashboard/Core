@@ -9,6 +9,7 @@ type Setter = (
   key: string,
   value: unknown
 ) => Promise<void> | void
+type ActionHandler = (name: string, payload?: unknown) => Promise<unknown> | unknown
 
 export interface AdapterOptions {
   botId: string
@@ -23,6 +24,7 @@ export class Adapter {
   private schema?: SettingsDef
   private getter?: Getter
   private setter?: Setter
+  private action?: ActionHandler
 
   constructor(private readonly opts: AdapterOptions) {}
 
@@ -36,6 +38,10 @@ export class Adapter {
   }
   onSet(fn: Setter) {
     this.setter = fn
+    return this
+  }
+  onAction(fn: ActionHandler) {
+    this.action = fn
     return this
   }
 
@@ -115,6 +121,8 @@ export class Adapter {
         )
         return { ok: true }
       }
+      case "action.invoke":
+        return (await this.action?.(String(params?.name), params?.payload)) ?? null
       default:
         return {}
     }

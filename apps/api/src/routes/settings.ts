@@ -54,6 +54,15 @@ export async function registerSettingsRoutes(
     return { roles: await deps.adapter.getRoles(guildId) }
   })
 
+  // Trigger a bot action (a button in the dashboard, like a test message).
+  app.post("/api/guilds/:guildId/actions/:name", async (req, reply) => {
+    const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
+    if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
+    const { name } = req.params as { name: string }
+    const result = await deps.adapter.invokeAction(name, req.body)
+    return { result }
+  })
+
   app.get("/api/guilds/:guildId/settings/:category/:option", async (req, reply) => {
     const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
