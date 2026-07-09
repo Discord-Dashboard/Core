@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install pytest websockets
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
