@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest"
-import { SessionStore, canManageGuild } from "./session.js"
+import { describe, it, expect, vi } from "vitest"
+import { SessionStore, canManageGuild, SESSION_COOKIE } from "./session.js"
 
 describe("SessionStore", () => {
   it("expires pre auth entries after their short ttl", async () => {
@@ -29,5 +29,18 @@ describe("SessionStore", () => {
     expect(canManageGuild({ guilds: [{ id: "g1" }] }, "g1")).toBe(true)
     expect(canManageGuild({ guilds: [{ id: "g1" }] }, "g2")).toBe(false)
     expect(canManageGuild(undefined, "g1")).toBe(false)
+  })
+
+  it("uses a plain cookie name outside production", () => {
+    expect(SESSION_COOKIE).toBe("dd_sid")
+  })
+
+  it("host locks the cookie name in production", async () => {
+    vi.stubEnv("NODE_ENV", "production")
+    vi.resetModules()
+    const prod = await import("./session.js")
+    expect(prod.SESSION_COOKIE).toBe("__Host-dd_sid")
+    vi.unstubAllEnvs()
+    vi.resetModules()
   })
 })

@@ -112,7 +112,13 @@ export class SessionStore {
   }
 }
 
-export const SESSION_COOKIE = "dd_sid"
+// In production the cookie is host locked with the __Host- prefix, which the
+// browser only honors when it is Secure, path is /, and no Domain is set, so it
+// cannot be planted by a subdomain. The prefix needs HTTPS, so plain http dev
+// keeps the unprefixed name. Resolved once, used everywhere, so set and read
+// always agree.
+export const SESSION_COOKIE =
+  process.env.NODE_ENV === "production" ? "__Host-dd_sid" : "dd_sid"
 
 // A user may only touch guilds they manage, captured at login. This prevents a
 // logged in user from editing a server they have no rights to.
