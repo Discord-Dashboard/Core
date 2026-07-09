@@ -32,7 +32,12 @@ export type EventListener = (event: GatewayEvent) => void
 
 export interface Gateway {
   sessions: Map<string, BotSession>
-  call<R = unknown>(botId: string, method: string, params?: unknown): Promise<R>
+  call<R = unknown>(
+    botId: string,
+    method: string,
+    params?: unknown,
+    timeoutMs?: number
+  ): Promise<R>
   onEvent(listener: EventListener): void
   onConnect(listener: (botId: string) => void): void
   close(): void
@@ -113,14 +118,30 @@ export function startGateway(server: Server, lookup?: SecretLookup): Gateway {
     })
   })
 
-  function call<R>(botId: string, method: string, params?: unknown): Promise<R> {
+  function call<R>(
+    botId: string,
+    method: string,
+    params?: unknown,
+    timeoutMs = 10000
+  ): Promise<R> {
     const session = sessions.get(botId)
     if (!session) return Promise.reject(new Error("bot not connected"))
     const id = crypto.randomUUID()
     return new Promise<R>((resolve, reject) => {
+      // Never let a pending call hang forever if the bot does not answer.
+      const timer = setTimeout(() => {
+        session.pending.delete(id)
+        reject(new Error("rpc timeout"))
+      }, timeoutMs)
       session.pending.set(id, {
-        resolve: resolve as (v: unknown) => void,
-        reject,
+        resolve: (value: unknown) => {
+          clearTimeout(timer)
+          ;(resolve as (v: unknown) => void)(value)
+        },
+        reject: (err) => {
+          clearTimeout(timer)
+          reject(err)
+        },
       })
       session.socket.send(JSON.stringify({ jsonrpc: "2.0", id, method, params }))
     })
