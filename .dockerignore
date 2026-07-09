@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+.git
+dist
+**/dist
+.next
+**/.next
+.turbo
+**/.turbo
+*.sqlite
+.env
+.env.*
