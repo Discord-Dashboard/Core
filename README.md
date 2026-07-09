@@ -28,6 +28,10 @@ manage the bot per guild.
 | `@discord-dashboard/ui` | Component library and themes |
 | `@discord-dashboard/builder` | Page builder (Puck) and AI generation |
 | `@discord-dashboard/billing` | Entitlements: Stripe Connect and Discord SKUs |
+| `@discord-dashboard/db` | Drizzle schema and SQLite storage |
+| `@discord-dashboard/compat-v2` | Adapter for v2 settings, for migration |
+| `@discord-dashboard/marketplace` | Module and theme registry |
+| `@discord-dashboard/modules/*` | Reference feature modules (leveling, tickets, automod, and more) |
 
 ## Status
 
