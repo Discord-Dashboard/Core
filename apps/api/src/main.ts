@@ -76,6 +76,23 @@ async function main() {
       : undefined,
   })
   await app.listen({ port: config.port, host: "0.0.0.0" })
+
+  // Drain cleanly on a deploy signal: stop the gateway and let in flight HTTP
+  // requests finish before the process exits, instead of dropping connections.
+  let shuttingDown = false
+  const shutdown = async () => {
+    if (shuttingDown) return
+    shuttingDown = true
+    try {
+      gateway.close()
+      gwServer.close()
+      await app.close()
+    } finally {
+      process.exit(0)
+    }
+  }
+  process.on("SIGTERM", shutdown)
+  process.on("SIGINT", shutdown)
 }
 
 main().catch((err) => {
