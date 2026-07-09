@@ -85,3 +85,26 @@ d8("validation error detail", () => {
     e8(res.error).not.toBe("invalid value")
   })
 })
+
+import { describe as dA, it as iA, expect as eA } from "vitest"
+import { SettingsService as SSA } from "./settings.js"
+import { InProcessAdapter as IPAA, MemoryStore as MSA } from "./inprocess.js"
+import { AllowAll as AAA } from "./entitlements.js"
+import { defineSettings as dsA, f as fA } from "@discord-dashboard/schema"
+
+dA("dynamic schema provider", () => {
+  iA("uses the current schema returned by the provider", async () => {
+    let current = dsA(() => ({}))
+    const adapter = new IPAA(current, new MSA())
+    const svc = new SSA(() => current, adapter, AAA)
+
+    const before = await svc.set({ guildId: "g", userId: "u" }, "general", "prefix", "!")
+    eA(before.ok).toBe(false)
+
+    current = dsA((s) => ({
+      general: s.category({ name: "General", options: { prefix: fA.text({ max: 3 }) } }),
+    }))
+    const after = await svc.set({ guildId: "g", userId: "u" }, "general", "prefix", "!")
+    eA(after.ok).toBe(true)
+  })
+})
