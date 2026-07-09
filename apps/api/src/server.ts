@@ -111,7 +111,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     sessions,
     entitlements,
   })
-  await registerBillingRoutes(app, grants)
+  await registerBillingRoutes(app, grants, config.webhookSecret)
 
   return app
 }

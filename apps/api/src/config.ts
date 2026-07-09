@@ -8,6 +8,7 @@ export interface ApiConfig {
     redirectUri: string
   }
   rateLimit?: { max: number; timeWindow: string | number }
+  webhookSecret?: string
 }
 
 export function loadConfig(): ApiConfig {
@@ -24,5 +25,6 @@ export function loadConfig(): ApiConfig {
         process.env.DISCORD_REDIRECT_URI ??
         "http://localhost:3001/auth/callback",
     },
+    webhookSecret: process.env.WEBHOOK_SECRET,
   }
 }
