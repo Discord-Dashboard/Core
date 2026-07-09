@@ -114,7 +114,9 @@ class Adapter:
             return {"ok": True}
         if method == "action.invoke":
             if self._action:
-                res = self._action(params.get("name"), params.get("payload"))
+                res = self._action(
+                    params.get("guildId"), params.get("name"), params.get("payload")
+                )
                 if asyncio.iscoroutine(res):
                     res = await res
                 return res

@@ -36,7 +36,10 @@ export class InProcessAdapter implements BotAdapter {
     private readonly def: SettingsDef,
     private readonly store: KeyValueStore = new MemoryStore(),
     private readonly discord?: DiscordSource,
-    private readonly actions: Record<string, (payload?: unknown) => unknown> = {}
+    private readonly actions: Record<
+      string,
+      (guildId: string, payload?: unknown) => unknown
+    > = {}
   ) {}
 
   async describeSchema(locale?: string) {
@@ -58,7 +61,7 @@ export class InProcessAdapter implements BotAdapter {
     await this.store.set(`${guildId}:${key}`, value)
     return { ok: true }
   }
-  async invokeAction(name: string, payload?: unknown) {
-    return (await this.actions[name]?.(payload)) ?? null
+  async invokeAction(guildId: string, name: string, payload?: unknown) {
+    return (await this.actions[name]?.(guildId, payload)) ?? null
   }
 }

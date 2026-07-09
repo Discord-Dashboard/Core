@@ -22,7 +22,7 @@ const bot = new Adapter({
   )
   .onGet((guildId, key) => store.get(`${guildId}:${key}`) ?? null)
   .onSet((guildId, key, value) => store.set(`${guildId}:${key}`, value))
-  .onAction((name, payload) => ({ ran: name }))
+  .onAction((guildId, name, payload) => ({ guild: guildId, ran: name }))
 
 bot.connect()
 bot.push("setting.changed", { guildId: "g", key: "general.prefix", value: "!" })

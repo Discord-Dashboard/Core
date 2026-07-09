@@ -97,7 +97,7 @@ export function fromV2(settings: V2Category[]) {
       })
       return { ok: true }
     },
-    async invokeAction() {
+    async invokeAction(_guildId: string, _name: string, _payload?: unknown) {
       return null
     },
   }

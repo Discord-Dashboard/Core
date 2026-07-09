@@ -24,15 +24,18 @@ describe("action invoke over the gateway", () => {
 
     const bot = new Adapter({ botId, secret, gateway: `ws://127.0.0.1:${port}/gateway` })
       .settings(defineSettings(() => ({})))
-      .onAction((name, payload) => ({ ran: name, echo: payload }))
+      .onAction((guildId, name, payload) => ({ guild: guildId, ran: name, echo: payload }))
     bot.connect()
     await waitFor(() => gateway.sessions.has(botId))
 
     const remote = new RemoteAdapter(gateway, botId)
-    const result = (await remote.invokeAction("sendTest", { channel: "c1" })) as {
+    const result = (await remote.invokeAction("g1", "sendTest", { channel: "c1" })) as {
+      guild: string
       ran: string
       echo: { channel: string }
     }
+    // The guild id comes from the authorized call, not from the payload.
+    expect(result.guild).toBe("g1")
     expect(result.ran).toBe("sendTest")
     expect(result.echo.channel).toBe("c1")
 

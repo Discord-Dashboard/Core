@@ -81,7 +81,9 @@ export async function registerSettingsRoutes(
   app.post("/api/guilds/:guildId/actions/:name", async (req, reply) => {
     const { guildId, name } = req.params as { guildId: string; name: string }
     if (!requireGuild(req, reply, guildId)) return
-    const result = await deps.adapter.invokeAction(name, req.body)
+    // The guild is taken from the authorized URL, never from the body, so a
+    // caller cannot target a guild they do not manage.
+    const result = await deps.adapter.invokeAction(guildId, name, req.body)
     return { result }
   })
 

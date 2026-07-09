@@ -9,11 +9,14 @@ from discord_dashboard import Adapter
 
 def test_action_dispatch_returns_handler_result():
     adapter = Adapter(bot_id="b", secret="s", gateway="ws://x")
-    adapter.on_action(lambda name, payload: {"ran": name, "echo": payload})
+    adapter.on_action(lambda guild_id, name, payload: {"guild": guild_id, "ran": name, "echo": payload})
     result = asyncio.run(
-        adapter._dispatch("action.invoke", {"name": "sendTest", "payload": {"channel": "c1"}})
+        adapter._dispatch(
+            "action.invoke",
+            {"guildId": "g1", "name": "sendTest", "payload": {"channel": "c1"}},
+        )
     )
-    assert result == {"ran": "sendTest", "echo": {"channel": "c1"}}
+    assert result == {"guild": "g1", "ran": "sendTest", "echo": {"channel": "c1"}}
 
 
 def test_action_without_handler_returns_none():

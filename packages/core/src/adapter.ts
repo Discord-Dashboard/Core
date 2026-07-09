@@ -20,5 +20,5 @@ export interface BotAdapter {
     key: string,
     value: unknown
   ): Promise<{ ok: boolean; error?: string }>
-  invokeAction(name: string, payload?: unknown): Promise<unknown>
+  invokeAction(guildId: string, name: string, payload?: unknown): Promise<unknown>
 }
