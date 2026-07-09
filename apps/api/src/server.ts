@@ -27,6 +27,17 @@ export interface ServerDeps {
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
+  // Refuse to boot in production with a weak session secret. v2 shipped weak
+  // defaults, this makes that mistake impossible in a real deployment.
+  if (process.env.NODE_ENV === "production") {
+    if (
+      config.cookieSecret.length < 32 ||
+      config.cookieSecret === "change-me-in-production"
+    ) {
+      throw new Error("set a strong COOKIE_SECRET (at least 32 characters)")
+    }
+  }
+
   const app = Fastify({ logger: true })
   const sessions = deps.sessions ?? new SessionStore()
   const grants = new MemoryGrantStore()
