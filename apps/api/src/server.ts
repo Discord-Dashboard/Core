@@ -27,7 +27,10 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
 
   await app.register(helmet)
   await app.register(cookie, { secret: config.cookieSecret })
-  await app.register(rateLimit, { max: 100, timeWindow: "1 minute" })
+  await app.register(rateLimit, {
+    max: config.rateLimit?.max ?? 100,
+    timeWindow: config.rateLimit?.timeWindow ?? "1 minute",
+  })
   await app.register(cors, { origin: config.allowedOrigins, credentials: true })
 
   // CSRF mitigation for cookie auth: a state changing request coming from a

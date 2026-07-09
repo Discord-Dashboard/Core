@@ -67,3 +67,31 @@ describe("security", () => {
     expect(res.headers["x-ratelimit-limit"]).toBeDefined()
   })
 })
+
+import { describe as d3, it as i3, expect as e3 } from "vitest"
+import { buildServer as build3 } from "./server.js"
+import { InProcessAdapter as IPA3, MemoryStore as MS3 } from "@discord-dashboard/core"
+import { defineSettings as ds3 } from "@discord-dashboard/schema"
+
+d3("rate limiting", () => {
+  i3("returns 429 once the limit is exceeded", async () => {
+    const def3 = ds3(() => ({}))
+    const app3 = await build3(
+      {
+        port: 0,
+        cookieSecret: "test-secret-at-least-32-chars-long-000",
+        allowedOrigins: ["http://localhost:3000"],
+        discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+        rateLimit: { max: 2, timeWindow: "1 minute" },
+      },
+      { def: def3, adapter: new IPA3(def3, new MS3()) }
+    )
+    const codes: number[] = []
+    for (let i = 0; i < 3; i++) {
+      const res = await app3.inject({ method: "GET", url: "/health" })
+      codes.push(res.statusCode)
+    }
+    e3(codes.filter((c) => c === 429).length).toBeGreaterThanOrEqual(1)
+    await app3.close()
+  })
+})

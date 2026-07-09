@@ -7,6 +7,7 @@ export interface ApiConfig {
     clientSecret: string
     redirectUri: string
   }
+  rateLimit?: { max: number; timeWindow: string | number }
 }
 
 export function loadConfig(): ApiConfig {
