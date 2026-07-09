@@ -13,18 +13,21 @@ import { registerAuthRoutes } from "./auth/routes.js"
 import { registerSettingsRoutes } from "./routes/settings.js"
 import { registerBillingRoutes } from "./routes/billing.js"
 import { MemoryGrantStore } from "./billing.js"
+import { StatsRegistry } from "./stats.js"
 
 export interface ServerDeps {
   def: SettingsDef
   adapter: BotAdapter
   // Injectable for tests and for custom session backends.
   sessions?: SessionStore
+  stats?: StatsRegistry
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   const app = Fastify({ logger: true })
   const sessions = deps.sessions ?? new SessionStore()
   const grants = new MemoryGrantStore()
+  const stats = deps.stats ?? new StatsRegistry()
   const entitlements = createEntitlements(grants)
 
   await app.register(helmet)
@@ -50,6 +53,12 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
 
   app.get("/health", async () => ({ ok: true }))
   app.get("/version", async () => ({ protocol: PROTOCOL_VERSION }))
+  app.get("/api/bots/:botId/stats", async (req, reply) => {
+    const { botId } = req.params as { botId: string }
+    const value = stats.get(botId)
+    if (!value) return reply.code(404).send({ error: "no stats" })
+    return value
+  })
 
   // Structured errors, and never leak internals to the client.
   app.setNotFoundHandler((_req, reply) => reply.code(404).send({ error: "not found" }))

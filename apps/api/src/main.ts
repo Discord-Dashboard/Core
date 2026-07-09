@@ -1,6 +1,7 @@
 import { loadConfig } from "./config.js"
 import { buildServer } from "./server.js"
 import { startGateway } from "./gateway/gateway.js"
+import { StatsRegistry, wireStats } from "./stats.js"
 import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
 import { defineSettings } from "@discord-dashboard/schema"
 
@@ -10,12 +11,16 @@ async function main() {
   const config = loadConfig()
   const def = defineSettings(() => ({}))
   const adapter = new InProcessAdapter(def, new MemoryStore())
-  const app = await buildServer(config, { def, adapter })
+  const stats = new StatsRegistry()
+  const app = await buildServer(config, { def, adapter, stats })
   await app.listen({ port: config.port, host: "0.0.0.0" })
 
   const botId = process.env.BOT_ID
   const secret = process.env.DASHBOARD_SECRET
-  startGateway(app.server, async (id) => (id === botId ? secret ?? null : null))
+  const gateway = startGateway(app.server, async (id) =>
+    id === botId ? secret ?? null : null
+  )
+  wireStats(gateway, stats)
 }
 
 main().catch((err) => {
