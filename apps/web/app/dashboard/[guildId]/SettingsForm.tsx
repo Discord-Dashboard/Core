@@ -55,9 +55,10 @@ export function SettingsForm({ guildId }: { guildId: string }) {
 
   if (!categories) return <p style={{ padding: 48 }}>Loading...</p>
 
-  async function save(key: string, next: unknown) {
+  async function save(category: string, option: string, next: unknown) {
+    const key = `${category}.${option}`
     setValues((v) => ({ ...v, [key]: next }))
-    await fetch(`${API}/api/guilds/${guildId}/settings/${key.replace(".", "/")}`, {
+    await fetch(`${API}/api/guilds/${guildId}/settings/${category}/${option}`, {
       method: "POST",
       credentials: "include",
       headers: { "content-type": "application/json" },
@@ -80,10 +81,13 @@ export function SettingsForm({ guildId }: { guildId: string }) {
                   <input
                     type="checkbox"
                     checked={Boolean(value)}
-                    onChange={(e) => save(key, e.target.checked)}
+                    onChange={(e) => save(cat.id, opt.id, e.target.checked)}
                   />
                 ) : opt.type === "select" ? (
-                  <select value={String(value)} onChange={(e) => save(key, e.target.value)}>
+                  <select
+                    value={String(value)}
+                    onChange={(e) => save(cat.id, opt.id, e.target.value)}
+                  >
                     {(opt.enum ?? []).map((o) => (
                       <option key={o.value} value={o.value}>
                         {o.label}
@@ -91,7 +95,10 @@ export function SettingsForm({ guildId }: { guildId: string }) {
                     ))}
                   </select>
                 ) : (
-                  <input value={String(value)} onChange={(e) => save(key, e.target.value)} />
+                  <input
+                    value={String(value)}
+                    onChange={(e) => save(cat.id, opt.id, e.target.value)}
+                  />
                 )}
               </label>
             )
