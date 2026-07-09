@@ -15,16 +15,20 @@ export interface AdapterOptions {
   botId: string
   secret: string
   gateway: string
+  // Delay before reconnecting after a dropped connection. 0 disables reconnect.
+  reconnectMs?: number
 }
 
 // The bot connects out to the gateway, proves identity by signing the server
-// nonce, then answers protocol calls. No inbound port is needed.
+// nonce, then answers protocol calls. No inbound port is needed. It reconnects
+// automatically so it survives a dashboard restart.
 export class Adapter {
   private ws?: WebSocket
   private schema?: SettingsDef
   private getter?: Getter
   private setter?: Setter
   private action?: ActionHandler
+  private closed = false
 
   constructor(private readonly opts: AdapterOptions) {}
 
@@ -46,13 +50,24 @@ export class Adapter {
   }
 
   connect() {
-    const ws = new WebSocket(this.opts.gateway)
-    this.ws = ws
-    ws.on("message", (raw) => this.handle(raw.toString()))
+    this.closed = false
+    this.open()
     return this
   }
 
+  private open() {
+    const ws = new WebSocket(this.opts.gateway)
+    this.ws = ws
+    ws.on("message", (raw) => this.handle(raw.toString()))
+    ws.on("error", () => {})
+    ws.on("close", () => {
+      const delay = this.opts.reconnectMs ?? 1000
+      if (!this.closed && delay > 0) setTimeout(() => this.open(), delay)
+    })
+  }
+
   disconnect() {
+    this.closed = true
     this.ws?.close()
   }
 
