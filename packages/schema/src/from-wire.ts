@@ -46,6 +46,14 @@ export function fieldFromWire(option: WireOption): Field {
       return f.select({ ...opts, options: enumToOptions(option) })
     case "multiSelect":
       return f.multiSelect({ ...opts, options: enumToOptions(option) })
+    case "list": {
+      // Rebuild the item field from its type so the array validates its items,
+      // rather than degrading the whole list to a plain string.
+      const item = fieldFromWire({ id: option.id, type: option.item ?? "text" })
+      return f.list(item, opts)
+    }
+    case "embed":
+      return f.embed(opts)
     default:
       return f.text(opts)
   }

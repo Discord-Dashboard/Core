@@ -25,6 +25,7 @@ function optionToWire(id: string, field: Field, locale?: string): WireOption {
   if (opts.default !== undefined) wire.default = opts.default
   if (typeof opts.min === "number") wire.min = opts.min
   if (typeof opts.max === "number") wire.max = opts.max
+  if (typeof opts.item === "string") wire.item = opts.item
   if (opts.ui && typeof opts.ui === "object") {
     wire.ui = opts.ui as Record<string, unknown>
   }

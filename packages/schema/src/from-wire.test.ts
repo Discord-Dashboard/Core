@@ -32,4 +32,41 @@ describe("fromWire", () => {
     expect(field.zod.safeParse("ok").success).toBe(true)
     expect(field.zod.safeParse("toolong").success).toBe(false)
   })
+
+  it("rebuilds a list field as an array, not a string", () => {
+    const wire = toWire(
+      defineSettings((s) => ({
+        c: s.category({
+          name: "C",
+          options: { words: f.list(f.text(), { label: "Words" }) },
+        }),
+      }))
+    )
+    const field = fromWire(wire).categories["c"]!.options["words"]!
+    expect(field.type).toBe("list")
+    expect(field.zod.safeParse(["a", "b"]).success).toBe(true)
+    expect(field.zod.safeParse("nope").success).toBe(false)
+  })
+
+  it("rebuilds an embed field as an object, not a string", () => {
+    const wire = toWire(
+      defineSettings((s) => ({
+        c: s.category({ name: "C", options: { e: f.embed() } }),
+      }))
+    )
+    const field = fromWire(wire).categories["c"]!.options["e"]!
+    expect(field.type).toBe("embed")
+    expect(field.zod.safeParse({ title: "hi" }).success).toBe(true)
+  })
+
+  it("coerces a string switch default from the wire to a boolean", () => {
+    // A bot in another language may send default as the string "false".
+    const field = fromWire({
+      version: "1.0",
+      categories: [
+        { id: "c", name: "C", options: [{ id: "on", type: "switch", default: "false" }] },
+      ],
+    }).categories["c"]!.options["on"]!
+    expect(field.zod.parse(undefined)).toBe(false)
+  })
 })

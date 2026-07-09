@@ -17,6 +17,8 @@ export interface WireOption {
   max?: number
   entitlement?: string
   ui?: Record<string, unknown>
+  // For a list field: the type of each item, so the schema can be rebuilt.
+  item?: string
 }
 
 export interface WireCategory {

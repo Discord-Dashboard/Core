@@ -21,6 +21,16 @@ function make(type: string, zod: z.ZodTypeAny, opts: BaseFieldOpts = {}): Field 
   return { type, zod, opts: { ...opts } as Record<string, unknown> }
 }
 
+// Defaults can arrive from the wire as untrusted strings, so a plain
+// Boolean("false") would be wrong. Treat the usual falsey strings as false.
+function boolDefault(value: unknown): boolean {
+  if (typeof value === "string") {
+    const v = value.trim().toLowerCase()
+    return v !== "" && v !== "false" && v !== "0" && v !== "no"
+  }
+  return Boolean(value)
+}
+
 // Field factories. These replace the v2 formTypes helpers but carry a Zod type
 // so the same definition validates on the server and renders on the client.
 export const f = {
@@ -40,10 +50,10 @@ export const f = {
     return make("number", opts.required ? zod : zod.optional(), opts)
   },
   switch(opts: BaseFieldOpts & { default?: boolean } = {}): Field {
-    return make("switch", z.boolean().default(Boolean(opts.default)), opts)
+    return make("switch", z.boolean().default(boolDefault(opts.default)), opts)
   },
   checkbox(opts: BaseFieldOpts & { default?: boolean } = {}): Field {
-    return make("checkbox", z.boolean().default(Boolean(opts.default)), opts)
+    return make("checkbox", z.boolean().default(boolDefault(opts.default)), opts)
   },
   select(opts: BaseFieldOpts & { options: Record<string, string>; default?: string }): Field {
     const keys = Object.keys(opts.options)
