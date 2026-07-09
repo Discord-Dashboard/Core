@@ -5,6 +5,11 @@
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./url": "./src/url.ts"
+  },
   "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -31,6 +36,14 @@
       ".": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
+      },
+      "./schema": {
+        "types": "./dist/schema.d.ts",
+        "default": "./dist/schema.js"
+      },
+      "./url": {
+        "types": "./dist/url.d.ts",
+        "default": "./dist/url.js"
       }
     }
   },
