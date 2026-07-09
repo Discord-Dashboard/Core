@@ -19,6 +19,26 @@ export async function registerSettingsRoutes(
 
   app.get("/api/schema", async () => deps.adapter.describeSchema())
 
+  // Bulk read of all current values for a guild, with defaults applied. The
+  // web form uses this to populate itself in one request.
+  app.get("/api/guilds/:guildId/values", async (req, reply) => {
+    const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
+    if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
+    const { guildId } = req.params as { guildId: string }
+    const ctx = { guildId, userId: session.userId }
+    const values: Record<string, unknown> = {}
+    for (const [categoryId, category] of Object.entries(deps.def.categories)) {
+      for (const optionId of Object.keys(category.options)) {
+        values[`${categoryId}.${optionId}`] = await service.get(
+          ctx,
+          categoryId,
+          optionId
+        )
+      }
+    }
+    return { values }
+  })
+
   app.get("/api/guilds/:guildId/settings/:category/:option", async (req, reply) => {
     const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
