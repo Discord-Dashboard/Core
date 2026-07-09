@@ -5,6 +5,7 @@ import {
   type KeyValueStore,
 } from "@discord-dashboard/core"
 import type { SettingsDef } from "@discord-dashboard/schema"
+import { SqliteKeyValueStore } from "@discord-dashboard/db"
 import { discordSourceFromClient } from "./discord-source.js"
 
 export { defineSettings, f } from "@discord-dashboard/schema"
@@ -13,7 +14,11 @@ export interface CreateDashboardOptions {
   client?: unknown
   discord: { clientId: string; clientSecret: string; redirectUri?: string }
   settings: SettingsDef
-  storage?: KeyValueStore
+  // How settings persist. A custom store, "sqlite" for a durable local file
+  // that survives restarts, or "memory" (the default) for ephemeral storage.
+  storage?: KeyValueStore | "memory" | "sqlite"
+  // The SQLite file path when storage is "sqlite". Defaults to data.sqlite.
+  sqlitePath?: string
   port?: number
   // Discord user ids allowed to edit builder pages. Empty means page editing
   // stays closed.
@@ -40,12 +45,16 @@ export function createDashboard(opts: CreateDashboardOptions) {
     },
   }
 
+  const resolveStorage = (): KeyValueStore => {
+    if (opts.storage === "sqlite") {
+      return new SqliteKeyValueStore(opts.sqlitePath)
+    }
+    if (opts.storage && opts.storage !== "memory") return opts.storage
+    return new MemoryStore()
+  }
+
   const source = opts.client ? discordSourceFromClient(opts.client) : undefined
-  const adapter = new InProcessAdapter(
-    opts.settings,
-    opts.storage ?? new MemoryStore(),
-    source
-  )
+  const adapter = new InProcessAdapter(opts.settings, resolveStorage(), source)
 
   const editors = new Set(opts.pageEditors ?? [])
   const canEditPages = editors.size

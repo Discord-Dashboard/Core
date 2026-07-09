@@ -15,6 +15,7 @@
   "dependencies": {
     "@discord-dashboard/api": "workspace:*",
     "@discord-dashboard/core": "workspace:*",
+    "@discord-dashboard/db": "workspace:*",
     "@discord-dashboard/schema": "workspace:*"
   },
   "peerDependencies": {
