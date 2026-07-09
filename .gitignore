@@ -14,3 +14,5 @@ coverage/
 .DS_Store
 package-lock.json
 *.tsbuildinfo
+__pycache__/
+*.pyc
