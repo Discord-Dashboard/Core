@@ -6,12 +6,14 @@ import {
   canManageGuild,
   type SessionStore,
 } from "../auth/session.js"
+import type { AuditLog } from "../audit.js"
 
 export interface SettingsDeps {
   def: DefSource
   adapter: BotAdapter
   sessions: SessionStore
   entitlements: Entitlements
+  audit?: AuditLog
 }
 
 export async function registerSettingsRoutes(
@@ -115,6 +117,20 @@ export async function registerSettingsRoutes(
       value
     )
     if (!result.ok) return reply.code(400).send(result)
+    // Record who changed what, now that the write succeeded.
+    deps.audit?.record({
+      guildId,
+      userId: auth.userId,
+      key: `${category}.${option}`,
+      value,
+    })
     return result
+  })
+
+  // The recent change history for a guild, for admins and compliance.
+  app.get("/api/guilds/:guildId/audit", async (req, reply) => {
+    const { guildId } = req.params as { guildId: string }
+    if (!requireGuild(req, reply, guildId)) return
+    return { entries: deps.audit?.list(guildId) ?? [] }
   })
 }

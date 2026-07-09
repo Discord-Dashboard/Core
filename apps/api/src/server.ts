@@ -17,6 +17,7 @@ import type { LlmClient } from "@discord-dashboard/builder/ai"
 import { MemoryGrantStore } from "./billing.js"
 import { StatsRegistry } from "./stats.js"
 import { EventHub } from "./events-hub.js"
+import { AuditLog } from "./audit.js"
 import {
   SESSION_COOKIE,
   canManageGuild,
@@ -30,6 +31,7 @@ export interface ServerDeps {
   sessions?: SessionStore
   stats?: StatsRegistry
   events?: EventHub
+  audit?: AuditLog
   // Authorizes reading a bot's stats. Defaults to deny, so a bot's data is
   // never exposed to an arbitrary authenticated user who guesses its id.
   botAccess?: (session: SessionData, botId: string) => boolean | Promise<boolean>
@@ -59,6 +61,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   const stats = deps.stats ?? new StatsRegistry()
   const events = deps.events ?? new EventHub()
   const pages = deps.pages ?? new MemoryPageStore()
+  const audit = deps.audit ?? new AuditLog()
   const entitlements = createEntitlements(grants)
 
   await app.register(helmet)
@@ -128,6 +131,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     adapter: deps.adapter,
     sessions,
     entitlements,
+    audit,
   })
   await registerBillingRoutes(app, grants, config.webhookSecret)
   await registerPageRoutes(app, {
