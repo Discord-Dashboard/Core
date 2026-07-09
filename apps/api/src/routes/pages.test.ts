@@ -154,6 +154,30 @@ describe("page routes", () => {
     await app.close()
   })
 
+  it("lets an editor read a draft the public cannot see", async () => {
+    await app.inject({
+      method: "POST",
+      url: "/api/pages/wip",
+      headers: { ...origin, cookie },
+      payload: { content: validPage },
+    })
+    // Public sees nothing (it is a draft).
+    const pub = await app.inject({ method: "GET", url: "/api/pages/wip" })
+    expect(pub.statusCode).toBe(404)
+    // The editor can read it.
+    const draft = await app.inject({
+      method: "GET",
+      url: "/api/pages/wip/draft",
+      headers: { cookie },
+    })
+    expect(draft.statusCode).toBe(200)
+    expect((draft.json() as { status: string }).status).toBe("draft")
+    // Without editor rights it is refused.
+    const anon = await app.inject({ method: "GET", url: "/api/pages/wip/draft" })
+    expect(anon.statusCode).toBe(401)
+    await app.close()
+  })
+
   it("rejects a page with an unsafe url", async () => {
     const res = await app.inject({
       method: "POST",

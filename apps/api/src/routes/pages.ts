@@ -57,6 +57,21 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
     return { slug: page.slug, version: page.version, content: page.content }
   })
 
+  // Editor: read the current page including a draft, so an editor can reload
+  // work in progress that the public endpoint hides.
+  app.get("/api/pages/:slug/draft", async (req, reply) => {
+    if (!(await requireEditor(req, reply))) return
+    const { slug } = req.params as { slug: string }
+    const page = deps.pages.get(slug)
+    if (!page) return reply.code(404).send({ error: "not found" })
+    return {
+      slug: page.slug,
+      version: page.version,
+      status: page.status,
+      content: page.content,
+    }
+  })
+
   // Editor: create or update a page. The content is validated against the page
   // schema, so a stored page can never carry an unknown component or an unsafe
   // url no matter what the client or an AI generator sends.
