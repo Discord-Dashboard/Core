@@ -89,10 +89,22 @@ export async function registerAuthRoutes(
     const { code, state } = req.query as { code?: string; state?: string }
     const sid = req.cookies[SESSION_COOKIE]
     const session = sessions.get(sid)
-    if (!session || !code || session.state !== state) {
+    // Every piece must be present and the state must match what we issued. A
+    // logged in session has no state, so a missing state can never slip through.
+    if (
+      !session ||
+      !code ||
+      !state ||
+      !session.state ||
+      !session.pkceVerifier ||
+      session.state !== state
+    ) {
       return reply.code(400).send({ error: "invalid state" })
     }
-    const token = await exchangeCode(config, code, session.pkceVerifier ?? "")
+    const verifier = session.pkceVerifier
+    // Single use: burn the state and verifier so the callback cannot be replayed.
+    sessions.set(sid!, { ...session, state: undefined, pkceVerifier: undefined })
+    const token = await exchangeCode(config, code, verifier)
     const user = await fetchUser(token.access_token)
     const guilds = await fetchManageableGuilds(token.access_token)
 
@@ -120,7 +132,9 @@ export async function registerAuthRoutes(
     return { guilds: session.guilds ?? [] }
   })
 
-  app.get("/auth/logout", async (req, reply) => {
+  // Logout is a state change, so it is POST and covered by the origin check. A
+  // GET would let a third party page force a logout via a top level navigation.
+  app.post("/auth/logout", async (req, reply) => {
     sessions.destroy(req.cookies[SESSION_COOKIE])
     reply.clearCookie(SESSION_COOKIE, { path: "/" })
     return { ok: true }

@@ -96,4 +96,42 @@ describe("oauth flow", () => {
     })
     expect(cb.statusCode).toBe(400)
   })
+
+  it("rejects a callback with no state at all", async () => {
+    const start = await app.inject({ method: "GET", url: "/auth/discord" })
+    const cookie = cookieValue(start.headers["set-cookie"])
+    // A missing state must not slip past by comparing undefined to undefined.
+    const cb = await app.inject({
+      method: "GET",
+      url: "/auth/callback?code=abc",
+      headers: { cookie },
+    })
+    expect(cb.statusCode).toBe(400)
+  })
+
+  it("cannot replay the same callback twice", async () => {
+    const start = await app.inject({ method: "GET", url: "/auth/discord" })
+    const cookie = cookieValue(start.headers["set-cookie"])
+    const state = new URL(String(start.headers["location"])).searchParams.get("state")!
+    const first = await app.inject({
+      method: "GET",
+      url: `/auth/callback?code=abc&state=${state}`,
+      headers: { cookie },
+    })
+    expect(first.statusCode).toBe(302)
+    // The old cookie's state and verifier were burned on first use.
+    const replay = await app.inject({
+      method: "GET",
+      url: `/auth/callback?code=abc&state=${state}`,
+      headers: { cookie },
+    })
+    expect(replay.statusCode).toBe(400)
+  })
+
+  it("logs out over POST but not GET", async () => {
+    const get = await app.inject({ method: "GET", url: "/auth/logout" })
+    expect(get.statusCode).toBe(404)
+    const post = await app.inject({ method: "POST", url: "/auth/logout" })
+    expect(post.statusCode).toBe(200)
+  })
 })
