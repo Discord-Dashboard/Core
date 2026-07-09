@@ -18,7 +18,9 @@ export const bots = sqliteTable("bots", {
   id: text("id").primaryKey(),
   tenantId: text("tenant_id").notNull(),
   name: text("name").notNull(),
-  sharedSecretHash: text("shared_secret_hash").notNull(),
+  // Encrypted, not hashed: the gateway needs the plaintext secret to verify the
+  // HMAC handshake, so it must be reversible (encrypted at rest).
+  sharedSecretEnc: text("shared_secret_enc").notNull(),
   createdAt: integer("created_at").default(now),
 })
 

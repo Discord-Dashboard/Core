@@ -1,9 +1,16 @@
+import crypto from "node:crypto"
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify"
 import {
   grantFromStripeSubscription,
   grantFromDiscordEntitlement,
 } from "@discord-dashboard/billing"
 import type { MemoryGrantStore } from "../billing.js"
+
+function safeEqual(a: string, b: string): boolean {
+  const ab = Buffer.from(a)
+  const bb = Buffer.from(b)
+  return ab.length === bb.length && crypto.timingSafeEqual(ab, bb)
+}
 
 // Checkout uses Stripe hosted pages so no card data touches this server.
 // Webhooks reduce both billing sources to the same grant shape. Because a
@@ -16,7 +23,10 @@ export async function registerBillingRoutes(
 ) {
   function verify(req: FastifyRequest, reply: FastifyReply): boolean {
     if (!webhookSecret) return true
-    if (req.headers["x-webhook-secret"] === webhookSecret) return true
+    const provided = req.headers["x-webhook-secret"]
+    if (typeof provided === "string" && safeEqual(provided, webhookSecret)) {
+      return true
+    }
     reply.code(401).send({ error: "invalid webhook secret" })
     return false
   }
