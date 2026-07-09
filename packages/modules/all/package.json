@@ -21,5 +21,19 @@
     "@discord-dashboard/module-onboarding": "workspace:*",
     "@discord-dashboard/module-reaction-roles": "workspace:*",
     "@discord-dashboard/module-autoresponder": "workspace:*"
-  }
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ]
 }

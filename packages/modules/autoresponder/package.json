@@ -12,5 +12,21 @@
     "test": "vitest run",
     "lint": "echo \"no lint yet\""
   },
-  "dependencies": { "@discord-dashboard/schema": "workspace:*" }
+  "dependencies": {
+    "@discord-dashboard/schema": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ]
 }
