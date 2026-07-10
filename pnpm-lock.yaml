@@ -90,6 +90,9 @@ importers:
       '@discord-dashboard/schema':
         specifier: workspace:*
         version: link:../../packages/schema
+      '@discord-dashboard/theme-default':
+        specifier: workspace:*
+        version: link:../../packages/themes/default
       '@discord-dashboard/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -281,6 +284,12 @@ importers:
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
+
+  packages/themes/default:
+    dependencies:
+      '@discord-dashboard/ui':
+        specifier: workspace:*
+        version: link:../../ui
 
   packages/ui:
     dependencies:

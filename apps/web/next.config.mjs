@@ -5,6 +5,7 @@ const nextConfig = {
     "@discord-dashboard/ui",
     "@discord-dashboard/schema",
     "@discord-dashboard/builder",
+    "@discord-dashboard/theme-default",
   ],
   webpack: (config) => {
     // Resolve ESM style .js imports to their .ts source in transpiled packages.

@@ -14,6 +14,7 @@
   "dependencies": {
     "@discord-dashboard/builder": "workspace:*",
     "@discord-dashboard/schema": "workspace:*",
+    "@discord-dashboard/theme-default": "workspace:*",
     "@discord-dashboard/ui": "workspace:*",
     "next": "^16.2.10",
     "react": "^19.2.7",
