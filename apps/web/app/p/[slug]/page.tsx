@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { safeUrl } from "@discord-dashboard/builder/url"
+import { IconArrowRight, IconCheck, IconDoc } from "../../components/icons"
 
 const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
 
@@ -25,14 +26,14 @@ function renderBlock(block: Block, i: number) {
   switch (block.type) {
     case "Hero":
       return (
-        <section className="dd-hero" key={i}>
+        <section className="dd-pubhero" key={i}>
           <h1>{str(p.title)}</h1>
           <p>{str(p.subtitle)}</p>
         </section>
       )
     case "Heading":
       return (
-        <h2 key={i} style={{ textTransform: "none", fontSize: "1.35rem", color: "var(--dd-color-text)" }}>
+        <h2 className="dd-pubheading" key={i}>
           {str(p.text)}
         </h2>
       )
@@ -40,8 +41,14 @@ function renderBlock(block: Block, i: number) {
       return <p key={i}>{str(p.text)}</p>
     case "Button":
       return (
-        <a className="dd-btn dd-btn--primary" key={i} href={safeUrl(p.href)} style={{ alignSelf: "start" }}>
+        <a
+          className="dd-btn dd-btn--primary"
+          key={i}
+          href={safeUrl(p.href)}
+          style={{ alignSelf: "start" }}
+        >
           {str(p.label)}
+          <IconArrowRight size={16} />
         </a>
       )
     case "Card":
@@ -53,18 +60,21 @@ function renderBlock(block: Block, i: number) {
       )
     case "Image":
       return (
-        <img key={i} src={safeUrl(p.src)} alt={str(p.alt)} style={{ maxWidth: "100%", borderRadius: "var(--dd-radius)" }} />
+        <img key={i} className="dd-pubimg" src={safeUrl(p.src)} alt={str(p.alt)} />
       )
     case "Divider":
-      return <hr key={i} style={{ border: "none", borderTop: "1px solid var(--dd-color-border)", width: "100%" }} />
+      return <hr key={i} className="dd-divider" />
     case "Spacer":
-      return <div key={i} style={{ height: Number(p.height) || 16 }} />
+      return <div key={i} style={{ height: Number(p.height) || 16 }} aria-hidden />
     case "List":
       return (
-        <ul key={i} style={{ margin: 0, paddingLeft: 22, color: "var(--dd-color-muted)", lineHeight: 2 }}>
+        <ul key={i} className="dd-publist">
           {(Array.isArray(p.items) ? p.items : []).map((it, j) => (
             <li key={j}>
-              {typeof it === "string" ? it : str((it as { text?: unknown })?.text)}
+              <IconCheck size={15} />
+              <span>
+                {typeof it === "string" ? it : str((it as { text?: unknown })?.text)}
+              </span>
             </li>
           ))}
         </ul>
@@ -95,13 +105,23 @@ export default function PublishedPage() {
   if (missing)
     return (
       <main className="dd-container">
-        <p className="dd-muted">Page not found.</p>
+        <div className="dd-empty">
+          <span className="dd-empty__icon" aria-hidden>
+            <IconDoc size={20} />
+          </span>
+          <h2>Page not found</h2>
+          <p>This page was unpublished or the link is wrong.</p>
+          <a className="dd-btn dd-btn--sm" href="/builder">
+            Browse published pages
+          </a>
+        </div>
       </main>
     )
   if (!page)
     return (
-      <main className="dd-container">
-        <p className="dd-muted">Loading...</p>
+      <main className="dd-container dd-stack" aria-busy="true">
+        <div className="dd-skeleton" style={{ minHeight: 200 }} />
+        <div className="dd-skeleton" style={{ minHeight: 90 }} />
       </main>
     )
 

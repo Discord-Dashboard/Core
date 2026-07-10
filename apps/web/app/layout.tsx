@@ -2,11 +2,11 @@ import "@discord-dashboard/ui"
 import "./globals.css"
 import { themeToCss } from "@discord-dashboard/ui"
 import { defaultTheme } from "@discord-dashboard/theme-default"
-import { ThemeSwitcher } from "./ThemeSwitcher"
+import { AppShell } from "./components/AppShell"
 import type { ReactNode } from "react"
 
 export const metadata = {
-  title: "discord-dashboard",
+  title: "Discord Dashboard — the control panel your bot deserves",
   description: "Open source dashboard for Discord bots",
 }
 
@@ -21,19 +21,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <style dangerouslySetInnerHTML={{ __html: baseThemeCss }} />
       </head>
       <body>
-        <nav className="dd-nav">
-          <a className="dd-brand" href="/">
-            <span className="dd-brand__mark" aria-hidden />
-            discord-dashboard
-          </a>
-          <div className="dd-nav__links">
-            <a className="dd-btn" href="/manage">
-              Servers
-            </a>
-            <ThemeSwitcher />
-          </div>
-        </nav>
-        {children}
+        <div className="dd-bg" aria-hidden>
+          <div className="dd-bg__glow dd-bg__glow--1" />
+          <div className="dd-bg__glow dd-bg__glow--2" />
+          <div className="dd-bg__grid" />
+        </div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   )

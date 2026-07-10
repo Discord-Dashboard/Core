@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { IconExternal, IconLayout, IconWand } from "../components/icons"
 
 const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
 
@@ -22,43 +23,61 @@ export default function BuilderPage() {
   }, [])
 
   return (
-    <main className="dd-container dd-stack">
-      <div>
-        <h1 className="dd-page-title">Page builder</h1>
-        <p className="dd-page-sub">
-          Drag and drop your pages, or generate one from a prompt. Generated
-          pages are validated data, never code.
-        </p>
-      </div>
-      <div className="dd-card">
-        <div className="dd-card__head">
-          <span className="dd-dot" aria-hidden />
-          <h2>Published pages</h2>
+    <main className="dd-stack">
+      <div className="dd-page-head">
+        <div>
+          <h1 className="dd-page-title">Page builder</h1>
+          <p className="dd-page-sub">
+            Drag and drop your pages, or generate one from a prompt. Generated
+            pages are validated data, never code.
+          </p>
         </div>
-        {!pages ? (
-          <p className="dd-muted">Loading...</p>
-        ) : pages.length === 0 ? (
-          <p className="dd-muted">No published pages yet.</p>
-        ) : (
-          <ul className="dd-list">
-            {pages.map((p) => (
-              <li key={p.slug}>
-                <a href={`/p/${p.slug}`} style={{ color: "inherit" }}>
-                  <div className="dd-row">
-                    <div className="dd-row__meta">
-                      <span className="dd-row__avatar" aria-hidden>
-                        /
-                      </span>
-                      <strong>{p.slug}</strong>
-                    </div>
-                    <span className="dd-chip">v{p.version}</span>
-                  </div>
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
+        <span className="dd-chip dd-chip--brand">
+          <IconWand size={13} />
+          AI assisted
+        </span>
       </div>
+
+      <section aria-label="Published pages" className="dd-stack">
+        {!pages ? (
+          <div className="dd-grid" aria-busy="true" aria-label="Loading pages">
+            <div className="dd-skeleton" style={{ minHeight: 150 }} />
+            <div className="dd-skeleton" style={{ minHeight: 150 }} />
+            <div className="dd-skeleton" style={{ minHeight: 150 }} />
+          </div>
+        ) : pages.length === 0 ? (
+          <div className="dd-empty">
+            <span className="dd-empty__icon" aria-hidden>
+              <IconLayout size={20} />
+            </span>
+            <h2>No published pages yet</h2>
+            <p>Pages you publish from the builder will show up here.</p>
+          </div>
+        ) : (
+          <div className="dd-grid">
+            {pages.map((p) => (
+              <a className="dd-pagecard" href={`/p/${p.slug}`} key={p.slug}>
+                <span className="dd-pagecard__preview" aria-hidden>
+                  <span className="dd-pagecard__lines">
+                    <span />
+                    <span />
+                    <span />
+                  </span>
+                </span>
+                <span className="dd-pagecard__body">
+                  <span className="dd-pagecard__slug">/{p.slug}</span>
+                  <span
+                    style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+                  >
+                    <span className="dd-chip">v{p.version}</span>
+                    <IconExternal size={14} className="dd-muted" />
+                  </span>
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   )
 }

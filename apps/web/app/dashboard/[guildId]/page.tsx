@@ -7,13 +7,7 @@ export default async function GuildDashboard({
 }) {
   const { guildId } = await params
   return (
-    <main className="dd-container dd-stack">
-      <div>
-        <h1 className="dd-page-title">Server settings</h1>
-        <p className="dd-page-sub">
-          Changes save instantly and sync live to everyone editing this server.
-        </p>
-      </div>
+    <main className="dd-stack">
       <SettingsForm guildId={guildId} />
     </main>
   )
