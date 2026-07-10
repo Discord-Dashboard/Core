@@ -1,3 +1,11 @@
+// A theme is a named set of token overrides, shipped as a module (like a
+// feature module) so it can be installed, swapped, or sold on the marketplace.
+export interface DashboardTheme {
+  id: string
+  name: string
+  tokens: Record<string, string>
+}
+
 // A theme is untrusted data (a user or a marketplace listing may supply it), and
 // its values are rendered into a CSS block. These guards stop a value from
 // breaking out of the declaration to inject styles or markup.

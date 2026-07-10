@@ -2,4 +2,5 @@ packages:
   - "apps/*"
   - "packages/*"
   - "packages/modules/*"
+  - "packages/themes/*"
   - "examples/*"
