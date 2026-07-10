@@ -10,7 +10,8 @@ describe("default theme", () => {
   })
   it("renders to css custom properties", () => {
     const css = themeToCss(defaultTheme.tokens)
-    expect(css).toContain("--dd-color-primary: #5865f2;")
-    expect(css).toContain("--dd-radius: 10px;")
+    expect(css).toContain("--dd-color-primary: #5b6cff;")
+    expect(css).toContain("--dd-radius: 14px;")
+    expect(css).toContain("--dd-gradient-brand:")
   })
 })

@@ -1,18 +1,54 @@
-/* Design tokens. Override these to rebrand without touching components. */
+/* Design tokens. Override these to rebrand without touching components. The
+   default theme module ships the same values; these are the SSR fallback. */
 :root {
-  --dd-color-bg: #0b0d12;
-  --dd-color-surface: #151922;
-  --dd-color-text: #e6e9ef;
-  --dd-color-muted: #9aa4b2;
-  --dd-color-primary: #5865f2;
-  --dd-color-accent: #00b3a4;
-  --dd-radius: 12px;
-  --dd-space: 8px;
+  --dd-color-bg: #0a0c12;
+  --dd-color-bg-subtle: #0d1017;
+  --dd-color-surface: #141924;
+  --dd-color-surface-2: #1b2231;
+  --dd-color-elevated: #212a3b;
+  --dd-color-border: #242c3b;
+  --dd-color-border-strong: #313c50;
+
+  --dd-color-text: #eef1f8;
+  --dd-color-muted: #9aa6bd;
+  --dd-color-faint: #6b7788;
+
+  --dd-color-primary: #5b6cff;
+  --dd-color-primary-strong: #4553e6;
+  --dd-color-on-primary: #ffffff;
+  --dd-color-accent: #22d3ee;
+  --dd-color-success: #2fbf71;
+  --dd-color-danger: #ed4245;
+  --dd-color-warning: #f0a832;
+
+  --dd-radius-sm: 9px;
+  --dd-radius: 14px;
+  --dd-radius-lg: 22px;
+  --dd-radius-pill: 999px;
+  --dd-space: 16px;
+  --dd-font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --dd-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --dd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --dd-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.55);
+  --dd-shadow-lg: 0 30px 70px -24px rgba(0, 0, 0, 0.65);
+  --dd-ring: 0 0 0 3px rgba(91, 108, 255, 0.4);
+  --dd-gradient-brand: linear-gradient(135deg, #5b6cff 0%, #9333ea 100%);
+  --dd-gradient-surface: linear-gradient(180deg, #1a2130 0%, #141924 100%);
 }
 
 :root[data-theme="light"] {
-  --dd-color-bg: #f6f7f9;
+  --dd-color-bg: #f4f6fb;
+  --dd-color-bg-subtle: #eef1f7;
   --dd-color-surface: #ffffff;
-  --dd-color-text: #1b1f27;
-  --dd-color-muted: #5a6472;
+  --dd-color-surface-2: #f5f7fb;
+  --dd-color-elevated: #ffffff;
+  --dd-color-border: #e2e6ee;
+  --dd-color-border-strong: #cfd6e2;
+  --dd-color-text: #131722;
+  --dd-color-muted: #55607a;
+  --dd-color-faint: #8b95a9;
+  --dd-gradient-surface: linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
+  --dd-shadow: 0 10px 30px -14px rgba(20, 30, 60, 0.18);
+  --dd-shadow-lg: 0 30px 70px -28px rgba(20, 30, 60, 0.22);
 }
