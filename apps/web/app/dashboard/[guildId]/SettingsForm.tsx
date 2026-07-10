@@ -17,7 +17,7 @@ interface WireCategory {
 }
 
 // Loads schema and values, saves changes, and subscribes to live updates so the
-// form reflects changes the bot makes while the page is open.
+// form reflects changes the bot (or another admin) makes while the page is open.
 export function SettingsForm({ guildId }: { guildId: string }) {
   const [categories, setCategories] = useState<WireCategory[] | null>(null)
   const [values, setValues] = useState<Record<string, unknown>>({})
@@ -53,7 +53,7 @@ export function SettingsForm({ guildId }: { guildId: string }) {
     return () => es.close()
   }, [guildId])
 
-  if (!categories) return <p style={{ padding: 48 }}>Loading...</p>
+  if (!categories) return <p className="dd-muted">Loading...</p>
 
   async function save(category: string, option: string, next: unknown) {
     const key = `${category}.${option}`
@@ -67,16 +67,19 @@ export function SettingsForm({ guildId }: { guildId: string }) {
   }
 
   return (
-    <div>
+    <div className="dd-stack">
       {categories.map((cat) => (
-        <section key={cat.id} style={{ marginBottom: 24 }}>
-          <h2>{cat.name}</h2>
+        <section className="dd-card" key={cat.id}>
+          <div className="dd-card__head">
+            <span className="dd-dot" aria-hidden />
+            <h2>{cat.name}</h2>
+          </div>
           {cat.options.map((opt) => {
             const key = `${cat.id}.${opt.id}`
             const value = values[key] ?? ""
             return (
-              <label key={opt.id} style={{ display: "block", margin: "8px 0" }}>
-                <span style={{ marginRight: 8 }}>{opt.label ?? opt.id}</span>
+              <div className="dd-field" key={opt.id}>
+                <span className="dd-field__label">{opt.label ?? opt.id}</span>
                 {opt.type === "switch" ? (
                   <input
                     type="checkbox"
@@ -100,7 +103,7 @@ export function SettingsForm({ guildId }: { guildId: string }) {
                     onChange={(e) => save(cat.id, opt.id, e.target.value)}
                   />
                 )}
-              </label>
+              </div>
             )
           })}
         </section>

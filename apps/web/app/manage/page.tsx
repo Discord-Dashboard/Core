@@ -21,21 +21,36 @@ export default function ManagePage() {
       .catch(() => setGuilds([]))
   }, [])
 
-  if (!guilds) return <p style={{ padding: 48 }}>Loading...</p>
-
   return (
-    <main style={{ padding: 48 }}>
-      <h1>Your servers</h1>
-      {guilds.length === 0 ? (
-        <p>
-          No manageable servers. <a href="/auth/discord">Log in</a> or invite the
-          bot to a server you manage.
-        </p>
+    <main className="dd-container dd-stack">
+      <div>
+        <h1 className="dd-page-title">Your servers</h1>
+        <p className="dd-page-sub">Pick a server to configure your bot.</p>
+      </div>
+      {!guilds ? (
+        <p className="dd-muted">Loading...</p>
+      ) : guilds.length === 0 ? (
+        <div className="dd-card">
+          <p>
+            No manageable servers. <a href="/auth/discord">Log in</a> or invite the
+            bot to a server you manage.
+          </p>
+        </div>
       ) : (
-        <ul>
+        <ul className="dd-list">
           {guilds.map((g) => (
             <li key={g.id}>
-              <a href={`/dashboard/${g.id}`}>{g.name}</a>
+              <a href={`/dashboard/${g.id}`} style={{ color: "inherit" }}>
+                <div className="dd-row">
+                  <div className="dd-row__meta">
+                    <span className="dd-row__avatar" aria-hidden>
+                      {g.name.slice(0, 1).toUpperCase()}
+                    </span>
+                    <strong>{g.name}</strong>
+                  </div>
+                  <span className="dd-chip">Manage</span>
+                </div>
+              </a>
             </li>
           ))}
         </ul>

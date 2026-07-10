@@ -22,26 +22,43 @@ export default function BuilderPage() {
   }, [])
 
   return (
-    <main style={{ padding: 48 }}>
-      <h1>Page builder</h1>
-      <p>
-        Drag and drop your landing page, or generate one from a prompt. Generated
-        pages are validated data, never code.
-      </p>
-      <h2>Published pages</h2>
-      {!pages ? (
-        <p>Loading...</p>
-      ) : pages.length === 0 ? (
-        <p>No published pages yet.</p>
-      ) : (
-        <ul>
-          {pages.map((p) => (
-            <li key={p.slug}>
-              <a href={`/p/${p.slug}`}>{p.slug}</a> (v{p.version})
-            </li>
-          ))}
-        </ul>
-      )}
+    <main className="dd-container dd-stack">
+      <div>
+        <h1 className="dd-page-title">Page builder</h1>
+        <p className="dd-page-sub">
+          Drag and drop your pages, or generate one from a prompt. Generated
+          pages are validated data, never code.
+        </p>
+      </div>
+      <div className="dd-card">
+        <div className="dd-card__head">
+          <span className="dd-dot" aria-hidden />
+          <h2>Published pages</h2>
+        </div>
+        {!pages ? (
+          <p className="dd-muted">Loading...</p>
+        ) : pages.length === 0 ? (
+          <p className="dd-muted">No published pages yet.</p>
+        ) : (
+          <ul className="dd-list">
+            {pages.map((p) => (
+              <li key={p.slug}>
+                <a href={`/p/${p.slug}`} style={{ color: "inherit" }}>
+                  <div className="dd-row">
+                    <div className="dd-row__meta">
+                      <span className="dd-row__avatar" aria-hidden>
+                        /
+                      </span>
+                      <strong>{p.slug}</strong>
+                    </div>
+                    <span className="dd-chip">v{p.version}</span>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </main>
   )
 }

@@ -21,7 +21,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <style dangerouslySetInnerHTML={{ __html: baseThemeCss }} />
       </head>
       <body>
-        <ThemeSwitcher />
+        <nav className="dd-nav">
+          <a className="dd-brand" href="/">
+            <span className="dd-brand__mark" aria-hidden />
+            discord-dashboard
+          </a>
+          <div className="dd-nav__links">
+            <a className="dd-btn" href="/manage">
+              Servers
+            </a>
+            <ThemeSwitcher />
+          </div>
+        </nav>
         {children}
       </body>
     </html>

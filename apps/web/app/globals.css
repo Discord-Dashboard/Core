@@ -1,42 +1,370 @@
-/* Base styling built on the design tokens, so a theme swap restyles everything. */
-* {
+/* Modern design system for the dashboard, built entirely on the design tokens
+   so a theme swap restyles everything. */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
+
+html {
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
   background: var(--dd-color-bg);
+  background-image: radial-gradient(
+      1100px 520px at 78% -8%,
+      rgba(91, 108, 255, 0.16),
+      transparent 60%
+    ),
+    radial-gradient(900px 480px at 8% 0%, rgba(147, 51, 234, 0.12), transparent 55%);
+  background-attachment: fixed;
   color: var(--dd-color-text);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  line-height: 1.5;
+  font-family: var(--dd-font);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+
 a {
   color: var(--dd-color-primary);
   text-decoration: none;
 }
 a:hover {
-  text-decoration: underline;
+  color: var(--dd-color-text);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 h1 {
-  font-size: 1.6rem;
+  font-size: clamp(1.8rem, 1.2rem + 2.4vw, 2.6rem);
+  font-weight: 800;
 }
 h2 {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dd-color-faint);
+}
+p {
+  margin: 0;
   color: var(--dd-color-muted);
 }
-main {
-  max-width: 820px;
-  margin: 0 auto;
+
+/* Layout */
+.dd-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px clamp(20px, 5vw, 48px);
+  background: color-mix(in srgb, var(--dd-color-bg) 72%, transparent);
+  backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid var(--dd-color-border);
 }
-section {
-  background: var(--dd-color-surface);
-  border-radius: var(--dd-radius);
-  padding: 16px 20px;
+.dd-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--dd-color-text);
+}
+.dd-brand__mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--dd-gradient-brand);
+  box-shadow: var(--dd-shadow-sm), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+.dd-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dd-container {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 56px) clamp(20px, 5vw, 48px) 80px;
+}
+.dd-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.dd-page-title {
+  margin-bottom: 4px;
+}
+.dd-page-sub {
+  margin-bottom: 8px;
+  max-width: 60ch;
+}
+
+/* Cards */
+.dd-card {
+  background: var(--dd-gradient-surface);
+  border: 1px solid var(--dd-color-border);
+  border-radius: var(--dd-radius-lg);
+  box-shadow: var(--dd-shadow);
+  padding: clamp(18px, 3vw, 26px);
+}
+.dd-card__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.dd-card__head h2 {
+  color: var(--dd-color-muted);
+}
+.dd-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--dd-color-primary);
+  box-shadow: 0 0 0 4px rgba(91, 108, 255, 0.18);
+}
+
+/* Hero */
+.dd-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--dd-radius-lg);
+  border: 1px solid var(--dd-color-border-strong);
+  background: var(--dd-gradient-brand);
+  box-shadow: var(--dd-shadow-lg);
+  padding: clamp(28px, 5vw, 52px);
+  color: #fff;
+}
+.dd-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px 300px at 90% -20%,
+    rgba(255, 255, 255, 0.22),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+.dd-hero h1 {
+  color: #fff;
+}
+.dd-hero p {
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1.1rem;
+  margin-top: 10px;
+  max-width: 46ch;
+}
+.dd-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(6px);
+}
+
+/* Buttons */
+.dd-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--dd-radius-pill);
+  border: 1px solid var(--dd-color-border-strong);
+  background: var(--dd-color-surface-2);
+  color: var(--dd-color-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.06s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.dd-btn:hover {
+  background: var(--dd-color-elevated);
+  color: var(--dd-color-text);
+}
+.dd-btn:active {
+  transform: translateY(1px);
+}
+.dd-btn--primary {
+  border: none;
+  color: var(--dd-color-on-primary);
+  background: var(--dd-gradient-brand);
+  box-shadow: 0 8px 22px -10px rgba(91, 108, 255, 0.9);
+}
+.dd-btn--primary:hover {
+  color: #fff;
+  box-shadow: 0 12px 28px -10px rgba(91, 108, 255, 1);
+}
+
+/* Forms */
+.dd-field {
+  display: grid;
+  grid-template-columns: minmax(160px, 240px) 1fr;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 0;
+  border-top: 1px solid var(--dd-color-border);
+}
+.dd-field:first-of-type {
+  border-top: none;
+}
+.dd-field__label {
+  color: var(--dd-color-text);
+  font-weight: 500;
 }
 input,
-select {
-  background: var(--dd-color-bg);
+select,
+textarea {
+  width: 100%;
+  max-width: 380px;
+  background: var(--dd-color-bg-subtle);
   color: var(--dd-color-text);
-  border: 1px solid var(--dd-color-muted);
-  border-radius: 8px;
-  padding: 6px 8px;
+  border: 1px solid var(--dd-color-border-strong);
+  border-radius: var(--dd-radius-sm);
+  padding: 9px 12px;
+  font: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--dd-color-primary);
+  box-shadow: var(--dd-ring);
+}
+select {
+  cursor: pointer;
+}
+
+/* Toggle switch */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 44px;
+  height: 26px;
+  max-width: 44px;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--dd-color-elevated);
+  border: 1px solid var(--dd-color-border-strong);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: var(--dd-shadow-sm);
+  transition: transform 0.18s ease;
+}
+input[type="checkbox"]:checked {
+  background: var(--dd-gradient-brand);
+  border-color: transparent;
+}
+input[type="checkbox"]:checked::after {
+  transform: translateX(18px);
+}
+input[type="checkbox"]:focus-visible {
+  box-shadow: var(--dd-ring);
+}
+
+/* Lists / rows */
+.dd-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dd-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--dd-radius);
+  border: 1px solid var(--dd-color-border);
+  background: var(--dd-color-surface);
+  transition: border-color 0.15s ease, transform 0.06s ease, background 0.15s ease;
+}
+.dd-row:hover {
+  border-color: var(--dd-color-border-strong);
+  background: var(--dd-color-surface-2);
+}
+.dd-row__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #fff;
+  background: var(--dd-gradient-brand);
+  flex: none;
+}
+.dd-row__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.dd-muted {
+  color: var(--dd-color-muted);
+}
+.dd-chip {
+  font-size: 0.78rem;
+  color: var(--dd-color-muted);
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--dd-color-border);
+  background: var(--dd-color-bg-subtle);
+}
+
+/* Theme switcher */
+.dd-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--dd-color-muted);
+}
+.dd-theme select {
+  width: auto;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+@media (max-width: 640px) {
+  .dd-field {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 6px;
+  }
 }
