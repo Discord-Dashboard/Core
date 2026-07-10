@@ -1,40 +1,62 @@
 /* Design tokens. Override these to rebrand without touching components. The
    default theme module ships the same values; these are the SSR fallback. */
 :root {
-  --dd-color-bg: #0a0c12;
-  --dd-color-bg-subtle: #0d1017;
-  --dd-color-surface: #141924;
-  --dd-color-surface-2: #1b2231;
-  --dd-color-elevated: #212a3b;
-  --dd-color-border: #242c3b;
-  --dd-color-border-strong: #313c50;
+  /* Surfaces, from deepest background to the most raised card. */
+  --dd-color-bg: #07080d;
+  --dd-color-bg-subtle: #0b0d14;
+  --dd-color-surface: #10131c;
+  --dd-color-surface-2: #161a26;
+  --dd-color-elevated: #1c2130;
+  --dd-color-border: #1f2432;
+  --dd-color-border-strong: #2c3447;
 
-  --dd-color-text: #eef1f8;
-  --dd-color-muted: #9aa6bd;
-  --dd-color-faint: #6b7788;
+  /* Text hierarchy. */
+  --dd-color-text: #f2f4fa;
+  --dd-color-muted: #9aa4bc;
+  --dd-color-faint: #667089;
 
+  /* Brand and semantic colors. */
   --dd-color-primary: #5b6cff;
   --dd-color-primary-strong: #4553e6;
+  --dd-color-primary-soft: rgba(91, 108, 255, 0.13);
+  --dd-color-primary-border: rgba(105, 120, 255, 0.36);
   --dd-color-on-primary: #ffffff;
   --dd-color-accent: #22d3ee;
+  --dd-color-accent-soft: rgba(34, 211, 238, 0.12);
   --dd-color-success: #2fbf71;
+  --dd-color-success-soft: rgba(47, 191, 113, 0.14);
   --dd-color-danger: #ed4245;
+  --dd-color-danger-soft: rgba(237, 66, 69, 0.14);
   --dd-color-warning: #f0a832;
 
+  /* Radii, spacing and type. */
+  --dd-radius-xs: 6px;
   --dd-radius-sm: 9px;
   --dd-radius: 14px;
-  --dd-radius-lg: 22px;
+  --dd-radius-lg: 20px;
+  --dd-radius-xl: 28px;
   --dd-radius-pill: 999px;
+  --dd-space-xs: 6px;
+  --dd-space-sm: 10px;
   --dd-space: 16px;
+  --dd-space-lg: 24px;
+  --dd-space-xl: 40px;
+  --dd-space-2xl: 72px;
   --dd-font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   --dd-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --dd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --dd-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.55);
-  --dd-shadow-lg: 0 30px 70px -24px rgba(0, 0, 0, 0.65);
-  --dd-ring: 0 0 0 3px rgba(91, 108, 255, 0.4);
-  --dd-gradient-brand: linear-gradient(135deg, #5b6cff 0%, #9333ea 100%);
-  --dd-gradient-surface: linear-gradient(180deg, #1a2130 0%, #141924 100%);
+  /* Depth and focus. */
+  --dd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --dd-shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.6);
+  --dd-shadow-lg: 0 32px 80px -28px rgba(0, 0, 0, 0.7);
+  --dd-shadow-glow: 0 0 44px -8px rgba(91, 108, 255, 0.45);
+  --dd-ring: 0 0 0 3px rgba(91, 108, 255, 0.38);
+
+  /* Gradients. */
+  --dd-gradient-brand: linear-gradient(135deg, #5b6cff 0%, #8b5cf6 55%, #a855f7 100%);
+  --dd-gradient-surface: linear-gradient(180deg, #171c29 0%, #10131c 100%);
+  --dd-gradient-text: linear-gradient(115deg, #ffffff 20%, #b7bfff 65%, #c99aff 100%);
+  --dd-gradient-line: linear-gradient(90deg, transparent, #5b6cff, transparent);
 }
 
 :root[data-theme="light"] {
@@ -49,6 +71,8 @@
   --dd-color-muted: #55607a;
   --dd-color-faint: #8b95a9;
   --dd-gradient-surface: linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
+  --dd-gradient-text: linear-gradient(115deg, #131722 20%, #3d47b8 65%, #7a3dd6 100%);
   --dd-shadow: 0 10px 30px -14px rgba(20, 30, 60, 0.18);
   --dd-shadow-lg: 0 30px 70px -28px rgba(20, 30, 60, 0.22);
+  --dd-shadow-glow: 0 0 44px -10px rgba(91, 108, 255, 0.3);
 }
