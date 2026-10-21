@@ -1,11 +1,19 @@
 {
   "name": "@discord-dashboard/api",
-  "version": "3.0.0-alpha.0",
+  "version": "3.1.0-alpha.0",
   "description": "HTTP API, OAuth and bot gateway for discord-dashboard.",
   "type": "module",
-  "private": true,
   "main": "./src/index.ts",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Discord-Dashboard/Core.git",
+    "directory": "apps/api"
+  },
+  "homepage": "https://github.com/Discord-Dashboard/Core/tree/v3/apps/api#readme",
+  "bugs": {
+    "url": "https://github.com/Discord-Dashboard/Core/issues"
+  },
   "scripts": {
     "dev": "tsx watch src/main.ts",
     "build": "tsc -p tsconfig.json",
@@ -31,5 +39,20 @@
   "devDependencies": {
     "@types/ws": "^8.18.1",
     "tsx": "^4.23.0"
+  },
+  "types": "./src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
   }
 }

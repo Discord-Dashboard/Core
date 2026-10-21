@@ -39,7 +39,7 @@ export async function registerBillingRoutes(
     return { plan, subjectId, url: "https://checkout.stripe.com/pay/session" }
   })
 
-  app.post("/webhooks/stripe", async (req, reply) => {
+  app.post("/api/webhooks/stripe", async (req, reply) => {
     if (!verify(req, reply)) return
     const event = (req.body ?? {}) as {
       type?: string
@@ -51,7 +51,7 @@ export async function registerBillingRoutes(
     return reply.send({ received: true })
   })
 
-  app.post("/webhooks/discord", async (req, reply) => {
+  app.post("/api/webhooks/discord", async (req, reply) => {
     if (!verify(req, reply)) return
     store.add(grantFromDiscordEntitlement(req.body as any))
     return reply.send({ received: true })

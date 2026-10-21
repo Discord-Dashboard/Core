@@ -60,7 +60,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </nav>
           <div className="dd-mktnav__actions">
             <ThemeSwitcher />
-            <a className="dd-btn dd-btn--primary dd-btn--sm" href="/auth/discord">
+            <a className="dd-btn dd-btn--primary dd-btn--sm" href="/api/auth/discord">
               <IconSparkles size={15} />
               Get started
             </a>

@@ -63,7 +63,7 @@ export async function registerAuthRoutes(
   config: ApiConfig,
   sessions: SessionStore
 ) {
-  app.get("/auth/discord", async (req, reply) => {
+  app.get("/api/auth/discord", async (req, reply) => {
     const sid = req.cookies[SESSION_COOKIE] ?? sessions.create()
     const { verifier, challenge } = createPkce()
     const state = createState()
@@ -85,7 +85,7 @@ export async function registerAuthRoutes(
     )
   })
 
-  app.get("/auth/callback", async (req, reply) => {
+  app.get("/api/auth/callback", async (req, reply) => {
     const { code, state } = req.query as { code?: string; state?: string }
     const sid = req.cookies[SESSION_COOKIE]
     const session = sessions.get(sid)
@@ -134,13 +134,13 @@ export async function registerAuthRoutes(
 
   // Logout is a state change, so it is POST and covered by the origin check. A
   // GET would let a third party page force a logout via a top level navigation.
-  app.post("/auth/logout", async (req, reply) => {
+  app.post("/api/auth/logout", async (req, reply) => {
     sessions.destroy(req.cookies[SESSION_COOKIE])
     reply.clearCookie(SESSION_COOKIE, { path: "/" })
     return { ok: true }
   })
 
-  app.get("/auth/me", async (req, reply) => {
+  app.get("/api/auth/me", async (req, reply) => {
     const session = sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
     return { id: session.userId, username: session.username, avatar: session.avatar }

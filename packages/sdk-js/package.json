@@ -1,11 +1,20 @@
 {
   "name": "@discord-dashboard/sdk-js",
-  "version": "3.0.0-alpha.0",
+  "version": "3.1.0-alpha.0",
   "description": "Bot adapter SDK for Node. Connects a bot to the dashboard gateway.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Discord-Dashboard/Core.git",
+    "directory": "packages/sdk-js"
+  },
+  "homepage": "https://github.com/Discord-Dashboard/Core/tree/v3/packages/sdk-js#readme",
+  "bugs": {
+    "url": "https://github.com/Discord-Dashboard/Core/issues"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",

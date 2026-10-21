@@ -83,7 +83,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"])
   app.addHook("onRequest", async (req, reply) => {
     if (!MUTATING.has(req.method)) return
-    if (req.url.startsWith("/webhooks/")) return
+    if (req.url.startsWith("/api/webhooks/")) return
     const origin = req.headers.origin
     if (origin && !config.allowedOrigins.includes(origin)) {
       return reply.code(403).send({ error: "bad origin" })
@@ -102,7 +102,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   })
 
   // A minimal but always accurate OpenAPI 3.1 inventory of the endpoints.
-  app.get("/openapi.json", async () => {
+  app.get("/api/openapi.json", async () => {
     const paths: Record<string, Record<string, unknown>> = {}
     for (const { method, url } of routes) {
       // Fastify uses :param, OpenAPI uses {param}.
@@ -127,7 +127,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     if (!ready) return reply.code(503).send({ ready: false })
     return { ready: true }
   })
-  app.get("/version", async () => ({ protocol: PROTOCOL_VERSION }))
+  app.get("/api/version", async () => ({ protocol: PROTOCOL_VERSION }))
   // Prometheus style gauges for platform observability. Kept coarse so it leaks
   // no per user data.
   app.get("/metrics", async (_req, reply) => {

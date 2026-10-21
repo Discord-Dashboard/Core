@@ -11,7 +11,8 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "vitest run",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "smoke:pack": "node scripts/pack-smoke.mjs"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",

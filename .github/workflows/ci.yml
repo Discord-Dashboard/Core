@@ -25,3 +25,4 @@ jobs:
       - run: pnpm test
       - run: (cd packages/sdk-py && python -m pytest -q)
       - run: pnpm build
+      - run: pnpm smoke:pack

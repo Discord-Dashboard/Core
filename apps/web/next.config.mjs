@@ -1,6 +1,13 @@
+const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Everything the API serves lives under /api, so this origin can hand that
+  // whole prefix to it. The login buttons rely on this for /api/auth/discord.
+  async rewrites() {
+    return [{ source: "/api/:path*", destination: `${API}/api/:path*` }]
+  },
   transpilePackages: [
     "@discord-dashboard/ui",
     "@discord-dashboard/schema",

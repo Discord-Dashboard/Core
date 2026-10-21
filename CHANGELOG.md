@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased (3.0.0-alpha)
+## Unreleased (3.1.0-alpha)
+
+Versioned 3.1.0 because npm already holds older 3.0.x prereleases from earlier
+attempts, which would otherwise sort above this alpha.
 
 A ground up rewrite. Highlights:
 
@@ -16,3 +19,7 @@ A ground up rewrite. Highlights:
 - Reference modules: leveling, automod, tickets, giveaways, onboarding,
   reaction roles, autoresponder.
 - v2 compatibility layer and a project scaffolder.
+- Every API route lives under `/api`: auth is `/api/auth/*` (OAuth redirect
+  `/api/auth/callback`), webhooks are `/api/webhooks/*`, plus
+  `/api/openapi.json` and `/api/version`. Only the `/health`, `/ready` and
+  `/metrics` probes stay at the root.

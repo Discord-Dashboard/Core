@@ -50,7 +50,7 @@ describe("security", () => {
   it("exempts webhooks from the origin check", async () => {
     const res = await app.inject({
       method: "POST",
-      url: "/webhooks/discord",
+      url: "/api/webhooks/discord",
       headers: { origin: "https://discord.com" },
       payload: { guild_id: "g", sku_id: "pro" },
     })
@@ -116,7 +116,7 @@ d9("body size limit", () => {
     const huge = { value: "x".repeat(300 * 1024) }
     const res = await app9.inject({
       method: "POST",
-      url: "/webhooks/discord",
+      url: "/api/webhooks/discord",
       headers: { "content-type": "application/json" },
       payload: JSON.stringify(huge),
     })

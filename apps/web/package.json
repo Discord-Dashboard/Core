@@ -1,6 +1,6 @@
 {
   "name": "@discord-dashboard/web",
-  "version": "3.0.0-alpha.0",
+  "version": "3.1.0-alpha.0",
   "description": "Dashboard, builder and landing (Next.js).",
   "private": true,
   "type": "module",
