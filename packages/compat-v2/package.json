@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@asctane-dashboard/core": "workspace:*",
+    "@asctane-dashboard/platform-discord": "workspace:*",
     "@asctane-dashboard/schema": "workspace:*"
   },
   "publishConfig": {

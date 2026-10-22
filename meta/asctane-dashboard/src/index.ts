@@ -1,4 +1,5 @@
 import {
+  type BotAdapter,
   buildServer,
   InProcessAdapter,
   MemoryStore,
@@ -33,6 +34,9 @@ export interface CreateDashboardOptions {
   pageEditors?: string[]
   // Optional AI provider that powers page generation.
   ai?: LlmClient
+  // Your own adapter instead of the in process store, such as the one fromV2
+  // from @asctane-dashboard/compat-v2 returns. storage is ignored then.
+  adapter?: BotAdapter
   // The web dashboard served on the same port as the API. Defaults to the
   // prebuilt app from @asctane-dashboard/web. Pass the root of your own static
   // build to serve that instead, or false to serve only the API.
@@ -42,6 +46,9 @@ export interface CreateDashboardOptions {
 export interface Dashboard {
   // Starts the server and resolves with the running Fastify instance.
   listen(port?: number): Promise<FastifyInstance>
+  // A space's value for a "category.option" key, or the field's default when
+  // it was never set.
+  get<T = unknown>(spaceId: string, key: string): Promise<T>
 }
 
 // One call sets up the whole lite dashboard: the in process adapter, the
@@ -81,7 +88,7 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
   }
 
   const source = opts.client ? discordSourceFromClient(opts.client) : undefined
-  const adapter = new InProcessAdapter(opts.settings, resolveStorage(), source)
+  const adapter = opts.adapter ?? new InProcessAdapter(opts.settings, resolveStorage(), source)
 
   const editors = new Set(opts.pageEditors ?? [])
   const canEditPages = editors.size
@@ -103,6 +110,13 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
       })
       await app.listen({ port: listenPort, host: "0.0.0.0" })
       return app
+    },
+    async get<T>(spaceId: string, key: string) {
+      const value = await adapter.getSetting(spaceId, key)
+      if (value !== null && value !== undefined) return value as T
+      const dot = key.indexOf(".")
+      const field = opts.settings.categories[key.slice(0, dot)]?.options[key.slice(dot + 1)]
+      return (field?.opts.default ?? value) as T
     },
   }
 }

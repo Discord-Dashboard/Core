@@ -19,6 +19,10 @@ A ground up rewrite, published under a new name. Highlights:
   `createDashboard` serves it on the API's own port, so a bot gets the full
   dashboard from npm without cloning the repo. Pass `web: false` to serve only
   the API, or `web: { root }` to serve your own static build.
+- `dash.get(spaceId, key)` reads a setting in lite mode, with its default when
+  it was never set, and `createDashboard` takes your own `adapter`.
+- `fromV2` maps every v2 form type, select lists and descriptions included,
+  and takes a `source` for live channel and role pickers.
 - Drag and drop page builder with an AI generation pipeline (validated JSON).
 - Entitlements over Stripe Connect and Discord SKUs.
 - Live settings updates over server sent events.
