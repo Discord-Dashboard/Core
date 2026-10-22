@@ -8,9 +8,9 @@ export const onboarding = {
       name: "Onboarding",
       icon: "wave",
       options: {
-        welcomeChannel: f.channel({ types: ["text"], label: "Welcome channel" }),
+        welcomeChannel: f.ref("channel", { filter: { types: ["text"] }, label: "Welcome channel" }),
         welcomeMessage: f.textarea({ label: "Welcome message" }),
-        autoRole: f.role({ label: "Auto role on join" }),
+        autoRole: f.ref("role", { label: "Auto role on join" }),
         welcomeImage: f.switch({ label: "Welcome image", default: true }),
       },
     }),

@@ -270,6 +270,12 @@ importers:
       '@asctane-dashboard/core':
         specifier: workspace:*
         version: link:../../core
+      '@asctane-dashboard/schema':
+        specifier: workspace:*
+        version: link:../../schema
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/protocol: {}
 

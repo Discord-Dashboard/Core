@@ -11,7 +11,7 @@ export const autoresponder = {
         enabled: f.switch({ label: "Enable autoresponder", default: false }),
         triggers: f.list(f.text(), { label: "Trigger phrases", max: 50 }),
         reply: f.textarea({ label: "Reply message" }),
-        ignoreChannels: f.channelMulti({ types: ["text"], label: "Ignored channels" }),
+        ignoreChannels: f.ref("channel", { multiple: true, filter: { types: ["text"] }, label: "Ignored channels" }),
       },
     }),
   })),

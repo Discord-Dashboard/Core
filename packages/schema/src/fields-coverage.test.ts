@@ -21,6 +21,18 @@ describe("field validation coverage", () => {
     expect(l.zod.safeParse(["ok", "hi"]).success).toBe(true)
     expect(l.zod.safeParse(["toolong"]).success).toBe(false)
   })
+  it("ref picks one id, or several when multiple", () => {
+    expect(f.ref("channel").zod.safeParse("1").success).toBe(true)
+    expect(f.ref("channel", { multiple: true }).zod.safeParse("1").success).toBe(false)
+    expect(f.ref("role").opts).toMatchObject({ kind: "role" })
+  })
+  it("channel and role stay as aliases of ref", () => {
+    expect(f.channel({ types: ["text"] }).opts).toMatchObject({
+      kind: "channel",
+      filter: { types: ["text"] },
+    })
+    expect(f.roleMulti().opts).toMatchObject({ kind: "role", multiple: true })
+  })
   it("roleMulti and channelMulti expect arrays", () => {
     expect(f.roleMulti().zod.safeParse(["1", "2"]).success).toBe(true)
     expect(f.channelMulti().zod.safeParse("nope").success).toBe(false)

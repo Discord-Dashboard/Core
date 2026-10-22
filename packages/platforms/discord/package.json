@@ -22,7 +22,9 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@asctane-dashboard/core": "workspace:*"
+    "@asctane-dashboard/core": "workspace:*",
+    "@asctane-dashboard/schema": "workspace:*",
+    "zod": "^4.4.3"
   },
   "publishConfig": {
     "access": "public",

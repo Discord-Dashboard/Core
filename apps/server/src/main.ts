@@ -47,7 +47,7 @@ async function main() {
     gateway.onConnect(async (id) => {
       if (id !== botId) return
       try {
-        cached = await buildDefFromAdapter(remote)
+        cached = await buildDefFromAdapter(remote, undefined, config.platforms)
       } catch {
         // The bot may not be ready yet; keep the previous schema.
       }
