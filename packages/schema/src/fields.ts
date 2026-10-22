@@ -60,8 +60,11 @@ export const f = {
     if (typeof opts.max === "number") zod = zod.max(opts.max)
     return make("text", opts.required ? zod : zod.optional(), opts)
   },
-  textarea(opts: BaseFieldOpts & { min?: number; max?: number } = {}): Field {
-    return make("textarea", z.string().optional(), opts)
+  textarea(opts: BaseFieldOpts & { min?: number; max?: number; default?: string } = {}): Field {
+    let zod = z.string()
+    if (typeof opts.min === "number") zod = zod.min(opts.min)
+    if (typeof opts.max === "number") zod = zod.max(opts.max)
+    return make("textarea", opts.required ? zod : zod.optional(), opts)
   },
   number(opts: BaseFieldOpts & { min?: number; max?: number; default?: number } = {}): Field {
     let zod = z.number()
@@ -81,8 +84,10 @@ export const f = {
       keys.length > 0 ? z.enum([keys[0]!, ...keys.slice(1)]) : z.string()
     return make("select", zod, opts)
   },
-  multiSelect(opts: BaseFieldOpts & { options: Record<string, string> }): Field {
-    return make("multiSelect", z.array(z.string()), opts)
+  multiSelect(opts: BaseFieldOpts & { options: Record<string, string>; default?: string[] }): Field {
+    const keys = Object.keys(opts.options)
+    const item = keys.length > 0 ? z.enum([keys[0]!, ...keys.slice(1)]) : z.string()
+    return make("multiSelect", z.array(item), opts)
   },
   // A pick of something that lives in the space, such as a channel or a role,
   // listed live by the platform. The value is its id (or ids when multiple).
@@ -116,8 +121,10 @@ export const f = {
   color(opts: BaseFieldOpts & { default?: string } = {}): Field {
     return make("color", z.string().optional(), opts)
   },
-  list(item: Field, opts: BaseFieldOpts & { max?: number } = {}): Field {
-    return make("list", z.array(item.zod), { ...opts, item: item.type } as BaseFieldOpts)
+  list(item: Field, opts: BaseFieldOpts & { max?: number; default?: unknown[] } = {}): Field {
+    let zod = z.array(item.zod)
+    if (typeof opts.max === "number") zod = zod.max(opts.max)
+    return make("list", zod, { ...opts, item: item.type } as BaseFieldOpts)
   },
   url(opts: BaseFieldOpts = {}): Field {
     return make("url", z.string().regex(/^https?:\/\/.+/).optional(), opts)

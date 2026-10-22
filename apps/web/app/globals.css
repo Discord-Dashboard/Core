@@ -740,6 +740,36 @@ input[type="checkbox"]:focus-visible {
   gap: 10px;
   min-width: 0;
 }
+.dd-field__desc {
+  font-size: 0.82rem;
+  font-weight: 450;
+  color: var(--dd-color-muted);
+}
+.dd-field__error {
+  font-size: 0.8rem;
+  font-weight: 560;
+  color: var(--dd-color-danger);
+}
+.dd-field__control textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+.dd-field__control select[multiple] {
+  padding-right: 13px;
+  min-width: min(100%, 220px);
+  min-height: 96px;
+}
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--dd-color-danger);
+}
+input.dd-color {
+  width: 56px;
+  max-width: 56px;
+  height: 36px;
+  padding: 3px;
+  cursor: pointer;
+}
 .dd-saved {
   display: inline-flex;
   align-items: center;

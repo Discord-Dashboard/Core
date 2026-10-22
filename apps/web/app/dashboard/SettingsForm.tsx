@@ -25,6 +25,8 @@ export function SettingsForm({ platform, spaceId }: { platform: string; spaceId:
   const [space, setSpace] = useState<Space | null>(null)
   const [activeCat, setActiveCat] = useState<string | null>(null)
   const [savedKey, setSavedKey] = useState<string | null>(null)
+  // Why the last save of a field was refused, by key.
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -73,15 +75,21 @@ export function SettingsForm({ platform, spaceId }: { platform: string; spaceId:
   async function save(category: string, option: string, next: unknown) {
     const key = `${category}.${option}`
     setValues((v) => ({ ...v, [key]: next }))
-    if (savedTimer.current) clearTimeout(savedTimer.current)
-    setSavedKey(key)
-    savedTimer.current = setTimeout(() => setSavedKey(null), 1600)
-    await fetch(`${API}/api/spaces/${platform}/${spaceId}/settings/${category}/${option}`, {
+    const res = await fetch(`${API}/api/spaces/${platform}/${spaceId}/settings/${category}/${option}`, {
       method: "POST",
       credentials: "include",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ value: next }),
-    })
+    }).catch(() => null)
+    if (!res?.ok) {
+      const body = (await res?.json().catch(() => null)) as { error?: string } | null
+      setErrors((e) => ({ ...e, [key]: body?.error ?? "Could not save" }))
+      return
+    }
+    setErrors(({ [key]: _, ...rest }) => rest)
+    if (savedTimer.current) clearTimeout(savedTimer.current)
+    setSavedKey(key)
+    savedTimer.current = setTimeout(() => setSavedKey(null), 1600)
   }
 
   function jumpTo(catId: string) {
@@ -175,9 +183,17 @@ export function SettingsForm({ platform, spaceId }: { platform: string; spaceId:
                     <div className="dd-field" key={opt.id}>
                       <label className="dd-field__label" htmlFor={`dd-opt-${key}`}>
                         {opt.label ?? opt.id}
+                        {opt.description && (
+                          <span className="dd-field__desc">{opt.description}</span>
+                        )}
                         <span className="dd-field__hint">
                           {cat.id}.{opt.id}
                         </span>
+                        {errors[key] && (
+                          <span className="dd-field__error" role="alert">
+                            Not saved: {errors[key]}
+                          </span>
+                        )}
                       </label>
                       <span className="dd-field__control">
                         {savedKey === key && (
