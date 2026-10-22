@@ -129,7 +129,7 @@ export async function registerSettingsRoutes(
     deps.events?.publish({
       botId: DASHBOARD_SOURCE,
       method: ProtocolEvent.SettingChanged,
-      params: { guildId, key, value },
+      params: { spaceId: guildId, key, value },
     })
     return result
   })

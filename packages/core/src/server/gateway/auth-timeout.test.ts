@@ -53,7 +53,7 @@ describe("gateway auth deadline", () => {
             jsonrpc: "2.0",
             id: "hello",
             method: "hello",
-            params: { protocolVersion: "1.0.0", botId, nonceSig: sig, capabilities: [] },
+            params: { protocolVersion: "2.0.0", botId, nonceSig: sig, capabilities: [] },
           })
         )
       }
@@ -89,7 +89,7 @@ describe("gateway auth deadline", () => {
             jsonrpc: "2.0",
             id: "hello",
             method: "hello",
-            params: { protocolVersion: "1.0.0", botId, nonceSig: sig, capabilities: [] },
+            params: { protocolVersion: "2.0.0", botId, nonceSig: sig, capabilities: [] },
           })
         )
         return
@@ -102,7 +102,7 @@ describe("gateway auth deadline", () => {
     })
     await waitFor(() => gateway.sessions.has(botId))
 
-    await expect(gateway.call(botId, "setting.get", { guildId: "g", key: "k" }, 5000)).rejects.toThrow(
+    await expect(gateway.call(botId, "setting.get", { spaceId: "g", key: "k" }, 5000)).rejects.toThrow(
       /no guild/
     )
 

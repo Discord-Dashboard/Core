@@ -15,7 +15,7 @@ function connect(port: number, botId: string, secret: string): WebSocket {
           jsonrpc: "2.0",
           id: "hello",
           method: "hello",
-          params: { protocolVersion: "1.0.0", botId, nonceSig: sig, capabilities: [] },
+          params: { protocolVersion: "2.0.0", botId, nonceSig: sig, capabilities: [] },
         })
       )
     }

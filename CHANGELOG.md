@@ -51,3 +51,9 @@ A ground up rewrite, published under a new name. Highlights:
   billing. `@asctane-dashboard/api` and `@asctane-dashboard/billing` are gone:
   import `buildServer`, `ApiConfig`, `createEntitlements` and the rest from
   core. The standalone server is the private `apps/server` app.
+- Bot protocol 2.0.0: `guild.channels` and `guild.roles` are one
+  `space.resources { spaceId, kind, filter? }` call, `guild.member.permissions`
+  is `space.member.permissions`, `guild.updated` is `space.updated`, and every
+  `guildId` param (including in `setting.changed`) is `spaceId`. The
+  `GuildNotFound` error code is `SpaceNotFound`. Breaking: the gateway refuses
+  1.x bots, so update the SDK along with the dashboard.

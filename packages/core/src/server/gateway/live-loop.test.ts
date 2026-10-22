@@ -32,7 +32,7 @@ describe("live update loop", () => {
       .onGet((g, k) => store.get(`${g}:${k}`) ?? null)
     bot.onSet((g, k, v) => {
       store.set(`${g}:${k}`, v)
-      bot.push("setting.changed", { guildId: g, key: k, value: v })
+      bot.push("setting.changed", { spaceId: g, key: k, value: v })
     })
     bot.connect()
     await waitFor(() => gateway.sessions.has(botId))

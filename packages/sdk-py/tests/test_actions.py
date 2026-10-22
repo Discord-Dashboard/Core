@@ -13,7 +13,7 @@ def test_action_dispatch_returns_handler_result():
     result = asyncio.run(
         adapter._dispatch(
             "action.invoke",
-            {"guildId": "g1", "name": "sendTest", "payload": {"channel": "c1"}},
+            {"spaceId": "g1", "name": "sendTest", "payload": {"channel": "c1"}},
         )
     )
     assert result == {"guild": "g1", "ran": "sendTest", "echo": {"channel": "c1"}}
@@ -29,5 +29,5 @@ def test_setting_set_dispatch():
     store = {}
     adapter = Adapter(bot_id="b", secret="s", gateway="ws://x")
     adapter.on_set(lambda g, k, v: store.__setitem__((g, k), v))
-    asyncio.run(adapter._dispatch("setting.set", {"guildId": "g", "key": "prefix", "value": "!"}))
+    asyncio.run(adapter._dispatch("setting.set", {"spaceId": "g", "key": "prefix", "value": "!"}))
     assert store[("g", "prefix")] == "!"

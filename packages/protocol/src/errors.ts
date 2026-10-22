@@ -8,7 +8,7 @@ export const ProtocolErrorCode = {
   VersionMismatch: 4400,
   Unauthorized: 4401,
   Forbidden: 4403,
-  GuildNotFound: 4404,
+  SpaceNotFound: 4404,
   RateLimited: 4429,
 } as const
 

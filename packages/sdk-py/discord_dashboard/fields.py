@@ -2,7 +2,7 @@
 
 from .protocol import WIRE_VERSION
 
-PROTOCOL_VERSION = "1.0.0"
+PROTOCOL_VERSION = "2.0.0"
 
 
 class _Fields:

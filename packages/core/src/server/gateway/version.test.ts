@@ -37,7 +37,10 @@ async function tryHandshake(version: string): Promise<boolean> {
 
 describe("protocol version negotiation", () => {
   it("accepts a matching major version", async () => {
-    expect(await tryHandshake("1.0.0")).toBe(true)
+    expect(await tryHandshake("2.0.0")).toBe(true)
+  })
+  it("rejects a bot still on the guild protocol (1.x)", async () => {
+    expect(await tryHandshake("1.0.0")).toBe(false)
   })
   it("rejects an incompatible major version", async () => {
     expect(await tryHandshake("99.0.0")).toBe(false)
