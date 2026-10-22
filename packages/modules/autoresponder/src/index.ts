@@ -3,6 +3,7 @@ import { defineSettings } from "@asctane-dashboard/schema"
 export const autoresponder = {
   id: "autoresponder",
   name: "Autoresponder",
+  requires: ["channel"],
   settings: defineSettings((s, f) => ({
     autoresponder: s.category({
       name: "Autoresponder",

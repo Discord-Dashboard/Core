@@ -47,6 +47,18 @@ const dash = createDashboard({ discord: { clientId, clientSecret }, settings })
 Category ids must be unique across the modules you compose; a collision throws
 so a setting is never silently dropped.
 
+Each module declares the resource kinds it picks (`requires`, such as
+`["channel", "role"]`) and, when only one platform can run it, `platforms`.
+Tickets and reaction roles are Discord only. Pass the platform to leave out the
+modules it cannot run, or filter a list with `modulesFor`:
+
+```js
+import { composeModules, modulesFor, modules } from "@asctane-dashboard/modules"
+
+const settings = composeModules(modules, { platform: { id: "slack", resources: ["channel", "role"] } })
+const usable = modulesFor(modules, myPlatform) // a core Platform works here
+```
+
 ## Any language (protocol mode)
 
 Run `@asctane-dashboard/core` as a service and connect your bot with an SDK.

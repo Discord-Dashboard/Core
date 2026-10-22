@@ -5,6 +5,7 @@ import { defineSettings } from "@asctane-dashboard/schema"
 export const leveling = {
   id: "leveling",
   name: "Leveling",
+  requires: ["channel", "role"],
   settings: defineSettings((s, f) => ({
     leveling: s.category({
       name: "Leveling",

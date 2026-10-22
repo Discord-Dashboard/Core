@@ -3,6 +3,9 @@ import { defineSettings } from "@asctane-dashboard/schema"
 export const reactionRoles = {
   id: "reaction-roles",
   name: "Reaction roles",
+  requires: ["channel", "role"],
+  // Assigns roles from message reactions, which only Discord has.
+  platforms: ["discord"],
   settings: defineSettings((s, f) => ({
     "reaction-roles": s.category({
       name: "Reaction roles",

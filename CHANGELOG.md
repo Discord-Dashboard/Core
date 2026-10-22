@@ -81,3 +81,7 @@ A ground up rewrite, published under a new name. Highlights:
   `actor`). Both SDKs have `f.ref`, and the Python `f.channel(types=...)`
   filter now reaches the wire. `RemoteAdapter` takes `{ platform }` and sends
   it with every space call.
+- Modules declare `requires` (the resource kinds they pick) and, when only
+  Discord can run them, `platforms: ["discord"]` (tickets and reaction roles).
+  `modulesFor(modules, platform)` and `composeModules(mods, { platform })`
+  leave out the modules a platform cannot run.

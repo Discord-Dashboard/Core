@@ -3,6 +3,7 @@ import { defineSettings } from "@asctane-dashboard/schema"
 export const automod = {
   id: "automod",
   name: "Auto moderation",
+  requires: ["channel"],
   settings: defineSettings((s, f) => ({
     automod: s.category({
       name: "Auto moderation",
