@@ -16,7 +16,8 @@ export class MemoryGrantStore implements GrantStore {
         g.subjectType === grant.subjectType &&
         g.subjectId === grant.subjectId &&
         g.feature === grant.feature &&
-        g.source === grant.source
+        g.source === grant.source &&
+        g.platform === grant.platform
     )
     if (i >= 0) this.grants[i] = grant
     else this.grants.push(grant)

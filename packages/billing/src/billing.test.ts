@@ -9,7 +9,7 @@ import {
 } from "./entitlements.js"
 import {
   grantFromStripeSubscription,
-  grantFromDiscordEntitlement,
+  grantFromPlatform,
 } from "./webhooks.js"
 
 function store(grants: Grant[]): GrantStore {
@@ -64,10 +64,20 @@ describe("webhook grant mappers", () => {
     expect(g.source).toBe("stripe")
     expect(g.status).toBe("active")
   })
-  it("maps a deleted discord entitlement to canceled", () => {
-    const g = grantFromDiscordEntitlement({ guild_id: "g", sku_id: "sku", deleted: true })
-    expect(g.status).toBe("canceled")
-    expect(g.feature).toBe("sku")
+  it("maps a platform report, keeping which platform it came from", () => {
+    const g = grantFromPlatform("discord", {
+      subject: { type: SubjectType.Space, id: "g" },
+      feature: "sku",
+      active: false,
+    })
+    expect(g).toEqual({
+      subjectType: "space",
+      subjectId: "g",
+      feature: "sku",
+      source: "platform",
+      platform: "discord",
+      status: "canceled",
+    })
   })
 })
 

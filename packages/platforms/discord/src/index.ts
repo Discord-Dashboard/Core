@@ -6,9 +6,11 @@ import {
   fetchUser,
 } from "./oauth.js"
 import { discordSourceFromClient } from "./source.js"
+import { discordBilling } from "./billing.js"
 
 export { discordSourceFromClient } from "./source.js"
 export { buildAuthorizeUrl } from "./oauth.js"
+export { discordBilling } from "./billing.js"
 
 export interface DiscordOptions {
   clientId: string
@@ -21,8 +23,8 @@ export interface DiscordOptions {
 
 const DEFAULT_SCOPES = ["identify", "guilds"]
 
-// Discord for core: OAuth login, the servers a user may manage, and live
-// channels and roles from a discord.js client in lite mode.
+// Discord for core: OAuth login, the servers a user may manage, live channels
+// and roles from a discord.js client in lite mode, and SKU purchases.
 export function discord(options: DiscordOptions): Platform {
   return definePlatform({
     id: "discord",
@@ -57,6 +59,7 @@ export function discord(options: DiscordOptions): Platform {
       },
     },
     source: discordSourceFromClient,
+    billing: discordBilling,
     warnings: () => {
       const out: string[] = []
       if (!options.clientId) out.push("DISCORD_CLIENT_ID is not set")

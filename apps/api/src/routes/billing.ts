@@ -1,8 +1,9 @@
 import crypto from "node:crypto"
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify"
+import { createPlatformRegistry, type Platform } from "@asctane-dashboard/core"
 import {
   grantFromStripeSubscription,
-  grantFromDiscordEntitlement,
+  grantFromPlatform,
 } from "@asctane-dashboard/billing"
 import type { MemoryGrantStore } from "../billing.js"
 
@@ -13,14 +14,17 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 // Checkout uses Stripe hosted pages so no card data touches this server.
-// Webhooks reduce both billing sources to the same grant shape. Because a
+// Webhooks reduce every billing source to the same grant shape. Because a
 // webhook grants entitlements, it must be authenticated: when a secret is
 // configured, callers must present it.
 export async function registerBillingRoutes(
   app: FastifyInstance,
   store: MemoryGrantStore,
-  webhookSecret?: string
+  webhookSecret?: string,
+  platforms: Platform[] = []
 ) {
+  const registry = createPlatformRegistry(platforms)
+
   function verify(req: FastifyRequest, reply: FastifyReply): boolean {
     if (!webhookSecret) return true
     const provided = req.headers["x-webhook-secret"]
@@ -51,9 +55,15 @@ export async function registerBillingRoutes(
     return reply.send({ received: true })
   })
 
-  app.post("/api/webhooks/discord", async (req, reply) => {
+  // Purchases made on a platform, such as Discord SKUs at
+  // /api/webhooks/discord. The platform's billing hook reads the body.
+  app.post("/api/webhooks/:platform", async (req, reply) => {
+    const platform = registry.get((req.params as { platform: string }).platform)
+    if (!platform?.billing) return reply.code(404).send({ error: "not found" })
     if (!verify(req, reply)) return
-    store.add(grantFromDiscordEntitlement(req.body as any))
+    for (const grant of platform.billing.grantsFromWebhook(req.body)) {
+      store.add(grantFromPlatform(platform.id, grant))
+    }
     return reply.send({ received: true })
   })
 }

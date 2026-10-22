@@ -42,4 +42,14 @@ describe("webhook authentication", () => {
     })
     expect(res.statusCode).toBe(200)
   })
+
+  it("has no webhook for a platform that is not configured", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/webhooks/slack",
+      headers: { "x-webhook-secret": "hook-secret" },
+      payload: {},
+    })
+    expect(res.statusCode).toBe(404)
+  })
 })
