@@ -5,7 +5,9 @@ import type {
 
 export enum GrantSource {
   Manual = "manual",
-  Discord = "discord",
+  // A purchase made on a chat platform, such as a Discord SKU. Grant.platform
+  // says which one.
+  Platform = "platform",
   Stripe = "stripe",
   Plan = "plan",
 }
@@ -20,16 +22,18 @@ export interface Grant {
   subjectId: string
   feature: string
   source: GrantSource
+  // The platform id for a GrantSource.Platform grant, such as "discord".
+  platform?: string
   status: GrantStatus
   expiresAt?: number
 }
 
-// Precedence: a manual grant beats a Discord entitlement beats a Stripe
+// Precedence: a manual grant beats a platform purchase beats a Stripe
 // subscription beats a plan default. Sources are written by webhooks so the
 // read path is a single query.
 const PRECEDENCE: Record<GrantSource, number> = {
   [GrantSource.Manual]: 3,
-  [GrantSource.Discord]: 2,
+  [GrantSource.Platform]: 2,
   [GrantSource.Stripe]: 1,
   [GrantSource.Plan]: 0,
 }

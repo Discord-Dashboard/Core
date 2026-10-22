@@ -41,3 +41,9 @@ A ground up rewrite, published under a new name. Highlights:
   `ApiConfig.discord` is replaced by `platforms: [discord({ clientId,
   clientSecret, redirectUri })]`, and `loadConfig()` takes the platforms to
   use. The lite `createDashboard({ discord })` option is unchanged.
+- Discord SKU purchases moved to `@asctane-dashboard/platform-discord` behind the
+  platform `billing` hook, so `@asctane-dashboard/billing` has no Discord code.
+  `/api/webhooks/:platform` serves any platform with a billing hook
+  (`/api/webhooks/discord` is unchanged). Breaking: `grantFromDiscordEntitlement`
+  is replaced by `grantFromPlatform`, and `GrantSource.Discord` by
+  `GrantSource.Platform` plus `Grant.platform`.

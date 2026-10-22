@@ -190,7 +190,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     audit,
     events,
   })
-  await registerBillingRoutes(app, grants, config.webhookSecret)
+  await registerBillingRoutes(app, grants, config.webhookSecret, config.platforms)
   await registerPageRoutes(app, {
     pages,
     sessions,

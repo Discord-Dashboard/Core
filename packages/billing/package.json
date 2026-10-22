@@ -1,7 +1,7 @@
 {
   "name": "@asctane-dashboard/billing",
   "version": "3.1.0-alpha.0",
-  "description": "Entitlements over Stripe Connect and Discord SKUs.",
+  "description": "Entitlements over Stripe Connect and platform purchases such as Discord SKUs.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

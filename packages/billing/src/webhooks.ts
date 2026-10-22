@@ -1,10 +1,10 @@
-import { SubjectType } from "@asctane-dashboard/core"
+import { SubjectType, type PlatformGrant } from "@asctane-dashboard/core"
 import { GrantSource, GrantStatus, type Grant } from "./entitlements.js"
 
 // The literal status the Stripe API sends for an active subscription.
 const STRIPE_ACTIVE = "active"
 
-// Both billing sources reduce to the same Grant shape before they are stored.
+// Every billing source reduces to the same Grant shape before it is stored.
 // Subscriptions created before 3.1 carry subjectType "guild"; they now mean a
 // space.
 const LEGACY_GUILD = "guild"
@@ -28,17 +28,15 @@ export function grantFromStripeSubscription(sub: {
   }
 }
 
-export function grantFromDiscordEntitlement(ent: {
-  guild_id?: string
-  user_id?: string
-  sku_id: string
-  deleted?: boolean
-}): Grant {
+// A platform's billing hook reports what a purchase grants; this turns each
+// report into a stored grant.
+export function grantFromPlatform(platform: string, grant: PlatformGrant): Grant {
   return {
-    subjectType: ent.guild_id ? SubjectType.Space : SubjectType.User,
-    subjectId: ent.guild_id ?? ent.user_id ?? "",
-    feature: ent.sku_id,
-    source: GrantSource.Discord,
-    status: ent.deleted ? GrantStatus.Canceled : GrantStatus.Active,
+    subjectType: grant.subject.type,
+    subjectId: grant.subject.id,
+    feature: grant.feature,
+    source: GrantSource.Platform,
+    platform,
+    status: grant.active ? GrantStatus.Active : GrantStatus.Canceled,
   }
 }
