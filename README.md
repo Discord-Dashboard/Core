@@ -20,7 +20,7 @@ manage the bot per guild.
 | Package | Role |
 | --- | --- |
 | `asctane-dashboard` | Batteries included lite mode for discord.js self host |
-| `@asctane-dashboard/core` | Engine: API, bot gateway, schema render |
+| `@asctane-dashboard/core` | Engine: HTTP API, OAuth, bot gateway, settings, entitlements and billing |
 | `@asctane-dashboard/platform-discord` | Discord login, server list, discord.js pickers and SKU purchases |
 | `@asctane-dashboard/schema` | Declarative settings schema (Zod) |
 | `@asctane-dashboard/protocol` | Bot adapter protocol, source of truth |
@@ -28,7 +28,6 @@ manage the bot per guild.
 | `@asctane-dashboard/sdk-py` | Bot adapter SDK for Python |
 | `@asctane-dashboard/ui` | Component library and themes |
 | `@asctane-dashboard/builder` | Page builder (Puck) and AI generation |
-| `@asctane-dashboard/billing` | Entitlements: Stripe Connect and platform purchases |
 | `@asctane-dashboard/db` | Drizzle schema and SQLite storage |
 | `@asctane-dashboard/compat-v2` | Adapter for v2 settings, for migration |
 | `@asctane-dashboard/marketplace` | Module and theme registry |

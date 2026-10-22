@@ -22,7 +22,6 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@asctane-dashboard/api": "workspace:*",
     "@asctane-dashboard/core": "workspace:*",
     "@asctane-dashboard/db": "workspace:*",
     "@asctane-dashboard/platform-discord": "workspace:*",

@@ -47,3 +47,7 @@ A ground up rewrite, published under a new name. Highlights:
   (`/api/webhooks/discord` is unchanged). Breaking: `grantFromDiscordEntitlement`
   is replaced by `grantFromPlatform`, and `GrantSource.Discord` by
   `GrantSource.Platform` plus `Grant.platform`.
+- `@asctane-dashboard/core` now holds the HTTP API, OAuth, the bot gateway and
+  billing. `@asctane-dashboard/api` and `@asctane-dashboard/billing` are gone:
+  import `buildServer`, `ApiConfig`, `createEntitlements` and the rest from
+  core. The standalone server is the private `apps/server` app.
