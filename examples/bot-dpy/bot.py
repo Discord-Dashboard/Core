@@ -20,8 +20,8 @@ adapter = Adapter(
     gateway="ws://localhost:3001/gateway",
 )
 adapter.settings(schema)
-adapter.on_get(lambda guild_id, key: store.get((guild_id, key)))
-adapter.on_set(lambda guild_id, key, value: store.__setitem__((guild_id, key), value))
+adapter.on_get(lambda space_id, key: store.get((space_id, key)))
+adapter.on_set(lambda space_id, key, value: store.__setitem__((space_id, key), value))
 
 if __name__ == "__main__":
     adapter.run()

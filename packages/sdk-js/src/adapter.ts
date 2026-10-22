@@ -12,21 +12,26 @@ import { toWire, type SettingsDef } from "@asctane-dashboard/schema"
 interface Actor {
   userId?: string
 }
+// Every handler gets the space id first. The platform id, such as "discord",
+// comes last, for a bot that serves more than one platform.
 type Getter = (
-  guildId: string,
+  spaceId: string,
   key: string,
-  actor?: Actor
+  actor?: Actor,
+  platform?: string
 ) => Promise<unknown> | unknown
 type Setter = (
-  guildId: string,
+  spaceId: string,
   key: string,
   value: unknown,
-  actor?: Actor
+  actor?: Actor,
+  platform?: string
 ) => Promise<void> | void
 type ActionHandler = (
-  guildId: string,
+  spaceId: string,
   name: string,
-  payload?: unknown
+  payload?: unknown,
+  platform?: string
 ) => Promise<unknown> | unknown
 
 export interface AdapterOptions {
@@ -136,6 +141,7 @@ export class Adapter {
   }
 
   private async dispatch(method: string, params?: Record<string, unknown>) {
+    const platform = params?.platform as string | undefined
     switch (method) {
       case RpcMethod.SettingsDescribe:
         return this.schema
@@ -145,7 +151,8 @@ export class Adapter {
         const value = await this.getter?.(
           String(params?.spaceId),
           String(params?.key),
-          params?.actor as Actor | undefined
+          params?.actor as Actor | undefined,
+          platform
         )
         return { value }
       }
@@ -154,7 +161,8 @@ export class Adapter {
           String(params?.spaceId),
           String(params?.key),
           params?.value,
-          params?.actor as Actor | undefined
+          params?.actor as Actor | undefined,
+          platform
         )
         return { ok: true }
       }
@@ -163,7 +171,8 @@ export class Adapter {
           (await this.action?.(
             String(params?.spaceId),
             String(params?.name),
-            params?.payload
+            params?.payload,
+            platform
           )) ?? null
         )
       default:

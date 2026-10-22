@@ -3,6 +3,7 @@
 import asyncio
 import hashlib
 import hmac
+import inspect
 import json
 
 import websockets
@@ -100,26 +101,44 @@ class Adapter:
             )
 
     async def _dispatch(self, method, params):
+        space_id = params.get("spaceId")
+        # Passed only to handlers that take them, so two argument lambdas work.
+        extra = {"platform": params.get("platform"), "actor": params.get("actor")}
         if method == RpcMethod.SETTINGS_DESCRIBE:
             return to_wire(self._schema) if self._schema else {"version": WIRE_VERSION, "categories": []}
         if method == RpcMethod.SETTING_GET:
-            value = self._getter(params.get("spaceId"), params.get("key")) if self._getter else None
-            if asyncio.iscoroutine(value):
-                value = await value
+            value = None
+            if self._getter:
+                value = await _call(self._getter, (space_id, params.get("key")), extra)
             return {"value": value}
         if method == RpcMethod.SETTING_SET:
             if self._setter:
-                res = self._setter(params.get("spaceId"), params.get("key"), params.get("value"))
-                if asyncio.iscoroutine(res):
-                    await res
+                await _call(
+                    self._setter, (space_id, params.get("key"), params.get("value")), extra
+                )
             return {"ok": True}
         if method == RpcMethod.ACTION_INVOKE:
             if self._action:
-                res = self._action(
-                    params.get("spaceId"), params.get("name"), params.get("payload")
+                return await _call(
+                    self._action,
+                    (space_id, params.get("name"), params.get("payload")),
+                    {"platform": params.get("platform")},
                 )
-                if asyncio.iscoroutine(res):
-                    res = await res
-                return res
             return None
         return {}
+
+
+async def _call(fn, args, extra):
+    """Calls a handler with the keyword args it declares (or all, for **kwargs),
+    and awaits it when it is a coroutine."""
+    try:
+        params = inspect.signature(fn).parameters.values()
+    except (TypeError, ValueError):
+        params = []
+    takes_all = any(p.kind is inspect.Parameter.VAR_KEYWORD for p in params)
+    names = {p.name for p in params}
+    kwargs = {k: v for k, v in extra.items() if takes_all or k in names}
+    result = fn(*args, **kwargs)
+    if asyncio.iscoroutine(result):
+        result = await result
+    return result

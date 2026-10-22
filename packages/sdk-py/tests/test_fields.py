@@ -7,7 +7,29 @@ from discord_dashboard import f, define_settings, to_wire
 def test_field_factories():
     assert f.text(label="Prefix", max=3)["type"] == "text"
     assert f.switch(default=True)["type"] == "switch"
-    assert f.channel(types=["text"])["type"] == "channel"
+    assert f.channel(types=["text"]) == {
+        "type": "ref",
+        "kind": "channel",
+        "filter": {"types": ["text"]},
+    }
+    assert f.role(multiple=True) == {"type": "ref", "kind": "role", "multiple": True}
+
+
+def test_ref_fields_keep_kind_and_filter_on_the_wire():
+    schema = define_settings({
+        "general": {
+            "name": "General",
+            "options": {"log": f.ref("channel", multiple=True, filter={"types": ["text"]})},
+        }
+    })
+    opt = to_wire(schema)["categories"][0]["options"][0]
+    assert opt == {
+        "id": "log",
+        "type": "ref",
+        "kind": "channel",
+        "multiple": True,
+        "filter": {"types": ["text"]},
+    }
 
 
 def test_select_serializes_enum():

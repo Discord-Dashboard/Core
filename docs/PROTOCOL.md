@@ -25,6 +25,8 @@ A space is the platform's unit a dashboard manages, such as a Discord guild.
 
 The space id is always supplied by the server from the authorized request, so a
 bot must act on that space and never trust a space id found inside a payload.
+Every space call may also carry `platform`, such as `"discord"`, when the
+dashboard knows which platform the bot serves.
 The optional `actor` carries the acting user (`{ userId }`) so a bot can record
 who changed a setting.
 

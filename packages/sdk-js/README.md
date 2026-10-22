@@ -20,12 +20,14 @@ const bot = new Adapter({
       }),
     }))
   )
-  .onGet((guildId, key) => store.get(`${guildId}:${key}`) ?? null)
-  .onSet((guildId, key, value) => store.set(`${guildId}:${key}`, value))
-  .onAction((guildId, name, payload) => ({ guild: guildId, ran: name }))
+  .onGet((spaceId, key) => store.get(`${spaceId}:${key}`) ?? null)
+  .onSet((spaceId, key, value) => store.set(`${spaceId}:${key}`, value))
+  .onAction((spaceId, name, payload) => ({ space: spaceId, ran: name }))
 
 bot.connect()
 bot.push("setting.changed", { spaceId: "g", key: "general.prefix", value: "!" })
 ```
 
-No inbound port is needed on the bot. The Python SDK mirrors this API.
+Handlers get the space id first and the platform id (such as `"discord"`)
+last, so one bot can serve several platforms. No inbound port is needed on the
+bot. The Python SDK mirrors this API.

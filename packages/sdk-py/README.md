@@ -17,7 +17,13 @@ schema = define_settings({
 
 adapter = Adapter(bot_id="my-bot", secret="...", gateway="ws://localhost:3001/gateway")
 adapter.settings(schema)
-adapter.on_get(lambda guild_id, key: store.get(guild_id, key))
-adapter.on_set(lambda guild_id, key, value: store.set(guild_id, key, value))
+adapter.on_get(lambda space_id, key: store.get(space_id, key))
+adapter.on_set(lambda space_id, key, value: store.set(space_id, key, value))
 adapter.run()
 ```
+
+Handlers get the space id first. A handler that also declares `platform` or
+`actor` (or `**kwargs`) receives the platform id, such as `"discord"`, and the
+acting user as keyword arguments. `f.ref("channel", multiple=True,
+filter={"types": ["text"]})` is the picker field; `f.channel` and `f.role` are
+aliases of it.

@@ -54,11 +54,11 @@ describe("platform end to end", () => {
           }),
         }))
       )
-      .onGet((guildId, key) => store.get(`${guildId}:${key}`) ?? null)
-      .onSet(async (guildId, key, value, actor) => {
+      .onGet((spaceId, key) => store.get(`${spaceId}:${key}`) ?? null)
+      .onSet(async (spaceId, key, value, actor) => {
         setter = actor?.userId
-        store.set(`${guildId}:${key}`, value)
-        await bot.push("setting.changed", { spaceId: guildId, key, value })
+        store.set(`${spaceId}:${key}`, value)
+        await bot.push("setting.changed", { spaceId, key, value })
       })
     bot.connect()
     await waitFor(() => gateway.sessions.has(botId))
@@ -139,8 +139,8 @@ describe("platform end to end", () => {
           }),
         }))
       )
-      .onGet((guildId, key) => store.get(`${guildId}:${key}`) ?? null)
-      .onSet((guildId, key, value) => store.set(`${guildId}:${key}`, value))
+      .onGet((spaceId, key) => store.get(`${spaceId}:${key}`) ?? null)
+      .onSet((spaceId, key, value) => store.set(`${spaceId}:${key}`, value))
     bot.connect()
     await waitFor(() => gateway.sessions.has(botId))
 

@@ -1,6 +1,6 @@
 export { buildServer, type ServerDeps } from "./server.js"
 export { startGateway, type Gateway, type SecretLookup } from "./gateway/gateway.js"
-export { RemoteAdapter } from "./gateway/remote-adapter.js"
+export { RemoteAdapter, type RemoteAdapterOptions } from "./gateway/remote-adapter.js"
 export { loadConfig, validateConfig, type ApiConfig } from "./config.js"
 export { SessionStore, type SessionData } from "./auth/session.js"
 export { StatsRegistry, wireStats } from "./stats.js"
