@@ -6,6 +6,10 @@ Configure your bot from the web without writing OAuth or API glue. Define your
 settings as a declarative schema, get a modern dashboard, and let server admins
 manage the bot per guild.
 
+> Looking for v2? It lives on the [`v2` branch](https://github.com/Discord-Dashboard/Core/tree/v2)
+> and is still published on npm as `discord-dashboard`. Fixes for v2 go to that
+> branch.
+
 ## Why v3
 
 - Fully open source (MIT). No license server, no obfuscation.
