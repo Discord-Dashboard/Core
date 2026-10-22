@@ -1,0 +1,24 @@
+{
+  "name": "@asctane-dashboard/server",
+  "version": "3.1.0-alpha.0",
+  "private": true,
+  "description": "Standalone asctane-dashboard server: core with the Discord platform, configured from the environment.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "echo \"no lint yet\"",
+    "test": "echo \"no tests yet\"",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@asctane-dashboard/core": "workspace:*",
+    "@asctane-dashboard/platform-discord": "workspace:*",
+    "@asctane-dashboard/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.0"
+  }
+}

@@ -5,16 +5,21 @@ a client or a deployment of them:
 
 1. Schema. Settings and pages are declared as data (`@asctane-dashboard/schema`).
 2. Bot adapter protocol. How a bot and the dashboard talk (`@asctane-dashboard/protocol`).
-3. Entitlements. One question, many billing sources (`@asctane-dashboard/billing`).
+3. Entitlements. One question, many billing sources (in `@asctane-dashboard/core`).
 
 ## Two profiles, one codebase
 
 - Lite: the bot and dashboard run in one process. The adapter is in process,
   storage is SQLite, no external services. This is the `asctane-dashboard`
   meta package and is the fastest way to self host.
-- Platform: the dashboard is a standalone service. Bots connect over the
-  gateway from any language. Storage is Postgres, sessions and pub sub use
-  Redis. This is the same core, different wiring.
+- Platform: the dashboard is a standalone service (`apps/server`). Bots
+  connect over the gateway from any language. Storage is Postgres, sessions
+  and pub sub use Redis. This is the same core, different wiring.
+
+`@asctane-dashboard/core` holds the HTTP API, OAuth, the bot gateway, settings
+and entitlements. Each chat platform is its own package
+(`@asctane-dashboard/platform-discord`), which the host passes to core; core
+never imports a platform.
 
 ## Bot adapter protocol
 

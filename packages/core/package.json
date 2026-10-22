@@ -1,7 +1,7 @@
 {
   "name": "@asctane-dashboard/core",
   "version": "3.1.0-alpha.0",
-  "description": "Engine for asctane-dashboard: adapters, settings, entitlements.",
+  "description": "Engine for asctane-dashboard: the HTTP API, OAuth, the bot gateway, settings and entitlements.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -22,9 +22,19 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
+    "@asctane-dashboard/builder": "workspace:*",
     "@asctane-dashboard/db": "workspace:*",
     "@asctane-dashboard/protocol": "workspace:*",
-    "@asctane-dashboard/schema": "workspace:*"
+    "@asctane-dashboard/schema": "workspace:*",
+    "@fastify/cookie": "^11.1.0",
+    "@fastify/cors": "^11.3.0",
+    "@fastify/helmet": "^13.1.0",
+    "@fastify/rate-limit": "^11.1.0",
+    "fastify": "^5.10.0",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1"
   },
   "publishConfig": {
     "access": "public",

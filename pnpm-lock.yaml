@@ -36,51 +36,18 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
 
-  apps/api:
+  apps/server:
     dependencies:
-      '@asctane-dashboard/billing':
-        specifier: workspace:*
-        version: link:../../packages/billing
-      '@asctane-dashboard/builder':
-        specifier: workspace:*
-        version: link:../../packages/builder
       '@asctane-dashboard/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@asctane-dashboard/db':
-        specifier: workspace:*
-        version: link:../../packages/db
       '@asctane-dashboard/platform-discord':
         specifier: workspace:*
         version: link:../../packages/platforms/discord
-      '@asctane-dashboard/protocol':
-        specifier: workspace:*
-        version: link:../../packages/protocol
       '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../packages/schema
-      '@fastify/cookie':
-        specifier: ^11.1.0
-        version: 11.1.0
-      '@fastify/cors':
-        specifier: ^11.3.0
-        version: 11.3.0
-      '@fastify/helmet':
-        specifier: ^13.1.0
-        version: 13.1.0
-      '@fastify/rate-limit':
-        specifier: ^11.1.0
-        version: 11.1.0
-      fastify:
-        specifier: ^5.10.0
-        version: 5.10.0
-      ws:
-        specifier: ^8.21.0
-        version: 8.21.0
     devDependencies:
-      '@types/ws':
-        specifier: ^8.18.1
-        version: 8.18.1
       tsx:
         specifier: ^4.23.0
         version: 4.23.0
@@ -128,9 +95,6 @@ importers:
 
   meta/asctane-dashboard:
     dependencies:
-      '@asctane-dashboard/api':
-        specifier: workspace:*
-        version: link:../../apps/api
       '@asctane-dashboard/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -149,15 +113,6 @@ importers:
       fastify:
         specifier: ^5.10.0
         version: 5.10.0
-
-  packages/billing:
-    dependencies:
-      '@asctane-dashboard/core':
-        specifier: workspace:*
-        version: link:../core
-      stripe:
-        specifier: ^22.3.0
-        version: 22.3.0(@types/node@26.1.1)
 
   packages/builder:
     dependencies:
@@ -186,6 +141,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@asctane-dashboard/builder':
+        specifier: workspace:*
+        version: link:../builder
       '@asctane-dashboard/db':
         specifier: workspace:*
         version: link:../db
@@ -195,6 +153,28 @@ importers:
       '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../schema
+      '@fastify/cookie':
+        specifier: ^11.1.0
+        version: 11.1.0
+      '@fastify/cors':
+        specifier: ^11.3.0
+        version: 11.3.0
+      '@fastify/helmet':
+        specifier: ^13.1.0
+        version: 13.1.0
+      '@fastify/rate-limit':
+        specifier: ^11.1.0
+        version: 11.1.0
+      fastify:
+        specifier: ^5.10.0
+        version: 5.10.0
+      ws:
+        specifier: ^8.21.0
+        version: 8.21.0
+    devDependencies:
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
 
   packages/create: {}
 
@@ -1912,15 +1892,6 @@ packages:
     resolution: {integrity: sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==}
     engines: {node: '>=0.10.0'}
 
-  stripe@22.3.0:
-    resolution: {integrity: sha512-ypO6xjVrMWs9SmIMeHr8naCx3dAQ0clxMdUTxn7Ejd7hmY9meBGfE+N4pVHkf9sUNebAHp6uJo6mV3GxDIc2cA==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@types/node': '>=18'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-
   styled-jsx@5.1.6:
     resolution: {integrity: sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA==}
     engines: {node: '>= 12.0.0'}
@@ -3449,10 +3420,6 @@ snapshots:
       safe-buffer: 5.2.1
 
   strip-json-comments@2.0.1: {}
-
-  stripe@22.3.0(@types/node@26.1.1):
-    optionalDependencies:
-      '@types/node': 26.1.1
 
   styled-jsx@5.1.6(react@19.2.7):
     dependencies:
