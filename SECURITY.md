@@ -2,9 +2,11 @@
 
 ## Reporting a vulnerability
 
-Please do not open a public issue for security problems. Email the maintainer
-with the details and steps to reproduce. You will get an acknowledgement and a
-fix timeline.
+Please don't open a public issue for a security problem. Report it privately
+on the [Security tab](https://github.com/Discord-Dashboard/Core/security/advisories/new)
+with **Report a vulnerability**. The organization's
+[security policy](https://github.com/Discord-Dashboard/.github/blob/main/SECURITY.md)
+covers response times and supported versions.
 
 ## Design notes
 

@@ -1,5 +1,9 @@
 # Contributing
 
+The organization's
+[contributing guide](https://github.com/Discord-Dashboard/.github/blob/main/CONTRIBUTING.md)
+covers finding work, pull requests and conduct. This file covers Core itself.
+
 This is a pnpm and Turborepo monorepo.
 
 ```
