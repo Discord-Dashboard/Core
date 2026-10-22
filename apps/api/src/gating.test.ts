@@ -153,7 +153,7 @@ dS("stripe subscription unlocks a gated setting", () => {
           object: {
             id: "sub_1",
             status: "active",
-            metadata: { subjectType: "guild", subjectId: "g", feature: "pro" },
+            metadata: { subjectType: "space", subjectId: "g", feature: "pro" },
           },
         },
       },

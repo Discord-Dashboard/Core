@@ -57,7 +57,7 @@ export async function registerSettingsRoutes(
     const { guildId } = req.params as { guildId: string }
     const auth = requireGuild(req, reply, guildId)
     if (!auth) return
-    const ctx = { guildId, userId: auth.userId }
+    const ctx = { spaceId: guildId, userId: auth.userId }
     const values: Record<string, unknown> = {}
     for (const [categoryId, category] of Object.entries(resolveDef().categories)) {
       for (const optionId of Object.keys(category.options)) {
@@ -102,7 +102,7 @@ export async function registerSettingsRoutes(
     }
     const auth = requireGuild(req, reply, guildId)
     if (!auth) return
-    const value = await service.get({ guildId, userId: auth.userId }, category, option)
+    const value = await service.get({ spaceId: guildId, userId: auth.userId }, category, option)
     return { value }
   })
 
@@ -116,7 +116,7 @@ export async function registerSettingsRoutes(
     if (!auth) return
     const { value } = (req.body ?? {}) as { value?: unknown }
     const result = await service.set(
-      { guildId, userId: auth.userId },
+      { spaceId: guildId, userId: auth.userId },
       category,
       option,
       value
@@ -124,7 +124,7 @@ export async function registerSettingsRoutes(
     if (!result.ok) return reply.code(400).send(result)
     const key = `${category}.${option}`
     // Record who changed what, now that the write succeeded.
-    deps.audit?.record({ guildId, userId: auth.userId, key, value })
+    deps.audit?.record({ spaceId: guildId, userId: auth.userId, key, value })
     // Fan the change out to any admins watching this guild's live stream.
     deps.events?.publish({
       botId: DASHBOARD_SOURCE,
@@ -158,7 +158,7 @@ export async function registerSettingsRoutes(
     const entitlements: Record<string, boolean> = {}
     for (const feature of features) {
       entitlements[feature] = await deps.entitlements.has(
-        { type: SubjectType.Guild, id: guildId },
+        { type: SubjectType.Space, id: guildId },
         feature
       )
     }

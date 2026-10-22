@@ -3,7 +3,7 @@ import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
-import { InProcessAdapter, MemoryStore, type DiscordSource } from "@discord-dashboard/core"
+import { InProcessAdapter, MemoryStore, type SpaceSource } from "@discord-dashboard/core"
 import { defineSettings } from "@discord-dashboard/schema"
 
 const config: ApiConfig = {
@@ -14,11 +14,9 @@ const config: ApiConfig = {
 }
 const def = defineSettings(() => ({}))
 
-const source: DiscordSource = {
-  async channels() {
-    return [{ label: "general", value: "c1" }]
-  },
-  async roles() {
+const source: SpaceSource = {
+  async resources(_spaceId, kind) {
+    if (kind === "channel") return [{ label: "general", value: "c1" }]
     return [{ label: "mod", value: "r1" }]
   },
   async memberPermissions() {

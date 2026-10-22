@@ -1,6 +1,7 @@
 export enum SubjectType {
   User = "user",
-  Guild = "guild",
+  // A Discord server, Slack workspace, Telegram group or Twitch channel.
+  Space = "space",
   Bot = "bot",
 }
 

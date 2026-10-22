@@ -1,4 +1,4 @@
-import type { DiscordSource } from "@discord-dashboard/core"
+import type { SpaceSource } from "@discord-dashboard/core"
 
 // Semantic channel type names (as used in schema field defs) mapped to the
 // numeric discord.js ChannelType values a channel actually carries. Without
@@ -17,39 +17,61 @@ const CHANNEL_TYPE_IDS: Record<string, number[]> = {
   media: [16],
 }
 
-// Maps a discord.js client to the DiscordSource interface using light duck
-// typing, so this package does not hard depend on discord.js internals.
-export function discordSourceFromClient(client: any): DiscordSource {
+// The parts of the protocol's picker filters this source applies (its
+// ChannelFilter and RoleFilter).
+interface ChannelFilter {
+  types?: string[]
+  hideNsfw?: boolean
+  onlyNsfw?: boolean
+}
+interface RoleFilter {
+  includeBots?: boolean
+}
+
+// Maps a discord.js client to the SpaceSource interface using light duck
+// typing, so this package does not hard depend on discord.js internals. On
+// Discord a space is a guild.
+export function discordSourceFromClient(client: any): SpaceSource {
+  const guildOf = (spaceId: string) => client.guilds?.cache?.get(spaceId)
+
+  async function channels(spaceId: string, filter?: ChannelFilter) {
+    const guild = guildOf(spaceId)
+    if (!guild) return []
+    const allowed =
+      filter?.types && filter.types.length > 0
+        ? new Set(filter.types.flatMap((t) => CHANNEL_TYPE_IDS[t] ?? []))
+        : null
+    const out: { label: string; value: string }[] = []
+    guild.channels.cache.forEach((c: any) => {
+      if (allowed && !allowed.has(c.type)) return
+      if (filter?.hideNsfw && c.nsfw) return
+      if (filter?.onlyNsfw && !c.nsfw) return
+      out.push({ label: c.name, value: c.id })
+    })
+    return out
+  }
+
+  async function roles(spaceId: string, filter?: RoleFilter) {
+    const guild = guildOf(spaceId)
+    if (!guild) return []
+    const out: { label: string; value: string }[] = []
+    guild.roles.cache.forEach((r: any) => {
+      // The @everyone role shares the guild's id.
+      if (r.id === spaceId) return
+      if (r.managed && !filter?.includeBots) return
+      out.push({ label: r.name, value: r.id })
+    })
+    return out
+  }
+
   return {
-    async channels(guildId, filter) {
-      const guild = client.guilds?.cache?.get(guildId)
-      if (!guild) return []
-      const allowed =
-        filter?.types && filter.types.length > 0
-          ? new Set(filter.types.flatMap((t) => CHANNEL_TYPE_IDS[t] ?? []))
-          : null
-      const out: { label: string; value: string }[] = []
-      guild.channels.cache.forEach((c: any) => {
-        if (allowed && !allowed.has(c.type)) return
-        if (filter?.hideNsfw && c.nsfw) return
-        if (filter?.onlyNsfw && !c.nsfw) return
-        out.push({ label: c.name, value: c.id })
-      })
-      return out
+    async resources(spaceId, kind, filter) {
+      if (kind === "channel") return channels(spaceId, filter as ChannelFilter)
+      if (kind === "role") return roles(spaceId, filter as RoleFilter)
+      return []
     },
-    async roles(guildId, filter) {
-      const guild = client.guilds?.cache?.get(guildId)
-      if (!guild) return []
-      const out: { label: string; value: string }[] = []
-      guild.roles.cache.forEach((r: any) => {
-        if (r.id === guildId) return
-        if (r.managed && !filter?.includeBots) return
-        out.push({ label: r.name, value: r.id })
-      })
-      return out
-    },
-    async memberPermissions(guildId, userId) {
-      const guild = client.guilds?.cache?.get(guildId)
+    async memberPermissions(spaceId, userId) {
+      const guild = guildOf(spaceId)
       if (!guild) return []
       // The member may not be cached; fetch before concluding they have no
       // permissions, otherwise a real admin can look like they have none.

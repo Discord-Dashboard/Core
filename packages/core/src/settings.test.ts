@@ -16,12 +16,12 @@ function make(ent: Entitlements) {
 
 describe("SettingsService", () => {
   it("rejects an unknown setting", async () => {
-    const r = await make(AllowAll).set({ guildId: "g", userId: "u" }, "nope", "x", 1)
+    const r = await make(AllowAll).set({ spaceId: "g", userId: "u" }, "nope", "x", 1)
     expect(r.ok).toBe(false)
   })
   it("rejects an invalid value", async () => {
     const r = await make(AllowAll).set(
-      { guildId: "g", userId: "u" },
+      { spaceId: "g", userId: "u" },
       "general",
       "prefix",
       "toolong"
@@ -30,14 +30,14 @@ describe("SettingsService", () => {
   })
   it("persists a valid value and reads it back", async () => {
     const svc = make(AllowAll)
-    const set = await svc.set({ guildId: "g", userId: "u" }, "general", "prefix", "!")
+    const set = await svc.set({ spaceId: "g", userId: "u" }, "general", "prefix", "!")
     expect(set.ok).toBe(true)
-    const got = await svc.get({ guildId: "g", userId: "u" }, "general", "prefix")
+    const got = await svc.get({ spaceId: "g", userId: "u" }, "general", "prefix")
     expect(got).toBe("!")
   })
   it("blocks a gated category without entitlement", async () => {
     const deny: Entitlements = { async has() { return false } }
-    const r = await make(deny).set({ guildId: "g", userId: "u" }, "pro", "color", "red")
+    const r = await make(deny).set({ spaceId: "g", userId: "u" }, "pro", "color", "red")
     expect(r.ok).toBe(false)
     expect(r.error).toContain("entitlement")
   })
@@ -58,12 +58,12 @@ d5("SettingsService defaults", () => {
   }))
   i5("returns the declared default when unset", async () => {
     const svc = new SS5(def5, new IPA5(def5, new MS5()), AA5)
-    expect(await svc.get({ guildId: "g", userId: "u" }, "general", "prefix")).toBe("!")
+    expect(await svc.get({ spaceId: "g", userId: "u" }, "general", "prefix")).toBe("!")
   })
   i5("returns the stored value once set", async () => {
     const svc = new SS5(def5, new IPA5(def5, new MS5()), AA5)
-    await svc.set({ guildId: "g", userId: "u" }, "general", "prefix", "?")
-    expect(await svc.get({ guildId: "g", userId: "u" }, "general", "prefix")).toBe("?")
+    await svc.set({ spaceId: "g", userId: "u" }, "general", "prefix", "?")
+    expect(await svc.get({ spaceId: "g", userId: "u" }, "general", "prefix")).toBe("?")
   })
 })
 
@@ -79,7 +79,7 @@ d8("validation error detail", () => {
   }))
   i8("returns a descriptive message, not a generic one", async () => {
     const svc = new SS8(def8, new IPA8(def8, new MS8()), AA8)
-    const res = await svc.set({ guildId: "g", userId: "u" }, "general", "prefix", "toolong")
+    const res = await svc.set({ spaceId: "g", userId: "u" }, "general", "prefix", "toolong")
     e8(res.ok).toBe(false)
     e8(res.error).toBeTruthy()
     e8(res.error).not.toBe("invalid value")
@@ -98,13 +98,13 @@ dA("dynamic schema provider", () => {
     const adapter = new IPAA(current, new MSA())
     const svc = new SSA(() => current, adapter, AAA)
 
-    const before = await svc.set({ guildId: "g", userId: "u" }, "general", "prefix", "!")
+    const before = await svc.set({ spaceId: "g", userId: "u" }, "general", "prefix", "!")
     eA(before.ok).toBe(false)
 
     current = dsA((s) => ({
       general: s.category({ name: "General", options: { prefix: fA.text({ max: 3 }) } }),
     }))
-    const after = await svc.set({ guildId: "g", userId: "u" }, "general", "prefix", "!")
+    const after = await svc.set({ spaceId: "g", userId: "u" }, "general", "prefix", "!")
     eA(after.ok).toBe(true)
   })
 })

@@ -48,9 +48,9 @@ describe("platform mode remote validation", () => {
     const def = await buildDefFromAdapter(remote)
     const service = new SettingsService(def, remote, AllowAll)
 
-    const ok = await service.set({ guildId: "g", userId: "u" }, "general", "prefix", "!")
+    const ok = await service.set({ spaceId: "g", userId: "u" }, "general", "prefix", "!")
     expect(ok.ok).toBe(true)
-    const bad = await service.set({ guildId: "g", userId: "u" }, "general", "prefix", "toolong")
+    const bad = await service.set({ spaceId: "g", userId: "u" }, "general", "prefix", "toolong")
     expect(bad.ok).toBe(false)
 
     expect(store.get("g:general.prefix")).toBe("!")

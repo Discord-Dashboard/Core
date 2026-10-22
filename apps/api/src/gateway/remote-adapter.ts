@@ -9,7 +9,8 @@ import {
 import type { Gateway } from "./gateway.js"
 
 // A BotAdapter backed by a bot connected over the gateway. The bot may be
-// written in any language as long as it speaks the protocol.
+// written in any language as long as it speaks the protocol. The protocol
+// still calls a space guildId on the wire.
 export class RemoteAdapter implements BotAdapter {
   constructor(
     private readonly gateway: Gateway,
@@ -21,44 +22,44 @@ export class RemoteAdapter implements BotAdapter {
       locale,
     })
   }
-  getChannels(guildId: string, filter?: ChannelFilter) {
+  getChannels(spaceId: string, filter?: ChannelFilter) {
     return this.gateway.call<OptionListItem[]>(this.botId, RpcMethod.GuildChannels, {
-      guildId,
+      guildId: spaceId,
       filter,
     })
   }
-  getRoles(guildId: string, filter?: RoleFilter) {
+  getRoles(spaceId: string, filter?: RoleFilter) {
     return this.gateway.call<OptionListItem[]>(this.botId, RpcMethod.GuildRoles, {
-      guildId,
+      guildId: spaceId,
       filter,
     })
   }
-  async getMemberPermissions(guildId: string, userId: string) {
+  async getMemberPermissions(spaceId: string, userId: string) {
     const res = await this.gateway.call<{ permissions: string[] }>(
       this.botId,
       RpcMethod.GuildMemberPermissions,
-      { guildId, userId }
+      { guildId: spaceId, userId }
     )
     return res.permissions
   }
-  async getSetting(guildId: string, key: string, actor?: SettingActor) {
+  async getSetting(spaceId: string, key: string, actor?: SettingActor) {
     const res = await this.gateway.call<{ value: unknown }>(
       this.botId,
       RpcMethod.SettingGet,
-      { guildId, key, actor }
+      { guildId: spaceId, key, actor }
     )
     return res.value
   }
-  setSetting(guildId: string, key: string, value: unknown, actor?: SettingActor) {
+  setSetting(spaceId: string, key: string, value: unknown, actor?: SettingActor) {
     return this.gateway.call<{ ok: boolean; error?: string }>(
       this.botId,
       RpcMethod.SettingSet,
-      { guildId, key, value, actor }
+      { guildId: spaceId, key, value, actor }
     )
   }
-  invokeAction(guildId: string, name: string, payload?: unknown) {
+  invokeAction(spaceId: string, name: string, payload?: unknown) {
     return this.gateway.call<unknown>(this.botId, RpcMethod.ActionInvoke, {
-      guildId,
+      guildId: spaceId,
       name,
       payload,
     })

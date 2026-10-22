@@ -3,7 +3,7 @@ import type { BotAdapter } from "./adapter.js"
 import { SubjectType, type Entitlements } from "./entitlements.js"
 
 export interface SettingsContext {
-  guildId: string
+  spaceId: string
   userId: string
 }
 
@@ -31,7 +31,7 @@ export class SettingsService {
 
   async get(ctx: SettingsContext, categoryId: string, optionId: string) {
     const value = await this.adapter.getSetting(
-      ctx.guildId,
+      ctx.spaceId,
       `${categoryId}.${optionId}`,
       { userId: ctx.userId }
     )
@@ -56,7 +56,7 @@ export class SettingsService {
     const gate = field.opts.entitlement ?? category.entitlement
     if (typeof gate === "string") {
       const allowed = await this.entitlements.has(
-        { type: SubjectType.Guild, id: ctx.guildId },
+        { type: SubjectType.Space, id: ctx.spaceId },
         gate
       )
       if (!allowed) return { ok: false, error: "entitlement required" }
@@ -69,7 +69,7 @@ export class SettingsService {
     }
 
     return this.adapter.setSetting(
-      ctx.guildId,
+      ctx.spaceId,
       `${categoryId}.${optionId}`,
       parsed.data,
       { userId: ctx.userId }
