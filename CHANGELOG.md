@@ -75,3 +75,9 @@ A ground up rewrite, published under a new name. Highlights:
   with typed Discord channel and role options; the main `asctane-dashboard`
   package exports that `f`. `fromWire` and `buildDefFromAdapter` take a
   platform's extra field types.
+- SDKs: handlers in `@asctane-dashboard/sdk-js` and the Python SDK take a
+  space id instead of a guild id, and get the platform id too (last in JS; as
+  a `platform` keyword in Python when the handler declares it, along with
+  `actor`). Both SDKs have `f.ref`, and the Python `f.channel(types=...)`
+  filter now reaches the wire. `RemoteAdapter` takes `{ platform }` and sends
+  it with every space call.

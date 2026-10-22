@@ -40,7 +40,8 @@ async function main() {
   let adapter
   let def: DefSource
   if (botId) {
-    const remote = new RemoteAdapter(gateway, botId)
+    // This server serves one platform, so the bot is told which one.
+    const remote = new RemoteAdapter(gateway, botId, { platform: config.platforms[0]?.id })
     adapter = remote
     let cached: SettingsDef = defineSettings(() => ({}))
     def = () => cached

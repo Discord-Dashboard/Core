@@ -21,11 +21,21 @@ class _Fields:
     def select(self, options, **opts):
         return {"type": "select", "options": options, **opts}
 
-    def channel(self, **opts):
-        return {"type": "channel", **opts}
+    def ref(self, kind, multiple=False, filter=None, **opts):
+        """A pick of something in the space, such as a channel or a role."""
+        field = {"type": "ref", "kind": kind, **opts}
+        if multiple:
+            field["multiple"] = True
+        if filter:
+            field["filter"] = filter
+        return field
 
-    def role(self, **opts):
-        return {"type": "role", **opts}
+    # Aliases of ref for the alpha, with Discord's filter options.
+    def channel(self, types=None, multiple=False, **opts):
+        return self.ref("channel", multiple, {"types": types} if types else None, **opts)
+
+    def role(self, multiple=False, **opts):
+        return self.ref("role", multiple, **opts)
 
 
 f = _Fields()
@@ -41,7 +51,18 @@ def to_wire(settings):
         options = []
         for oid, field in category["options"].items():
             wire = {"id": oid, "type": field["type"]}
-            for key in ("label", "description", "required", "entitlement", "default", "min", "max"):
+            for key in (
+                "label",
+                "description",
+                "required",
+                "entitlement",
+                "default",
+                "min",
+                "max",
+                "kind",
+                "multiple",
+                "filter",
+            ):
                 if key in field:
                     wire[key] = field[key]
             if "options" in field:

@@ -10,11 +10,23 @@ import type { Gateway } from "./gateway.js"
 
 // A BotAdapter backed by a bot connected over the gateway. The bot may be
 // written in any language as long as it speaks the protocol.
+export interface RemoteAdapterOptions {
+  // The platform this bot serves, such as "discord". Sent with every space
+  // call so a bot that serves several platforms can tell them apart.
+  platform?: string
+}
+
 export class RemoteAdapter implements BotAdapter {
   constructor(
     private readonly gateway: Gateway,
-    private readonly botId: string
+    private readonly botId: string,
+    private readonly options: RemoteAdapterOptions = {}
   ) {}
+
+  private space(spaceId: string) {
+    const { platform } = this.options
+    return platform ? { spaceId, platform } : { spaceId }
+  }
 
   describeSchema(locale?: string) {
     return this.gateway.call<SchemaDescriptor>(this.botId, RpcMethod.SettingsDescribe, {
@@ -23,14 +35,14 @@ export class RemoteAdapter implements BotAdapter {
   }
   getChannels(spaceId: string, filter?: ChannelFilter) {
     return this.gateway.call<OptionListItem[]>(this.botId, RpcMethod.SpaceResources, {
-      spaceId,
+      ...this.space(spaceId),
       kind: "channel",
       filter,
     })
   }
   getRoles(spaceId: string, filter?: RoleFilter) {
     return this.gateway.call<OptionListItem[]>(this.botId, RpcMethod.SpaceResources, {
-      spaceId,
+      ...this.space(spaceId),
       kind: "role",
       filter,
     })
@@ -39,7 +51,7 @@ export class RemoteAdapter implements BotAdapter {
     const res = await this.gateway.call<{ permissions: string[] }>(
       this.botId,
       RpcMethod.SpaceMemberPermissions,
-      { spaceId, userId }
+      { ...this.space(spaceId), userId }
     )
     return res.permissions
   }
@@ -47,7 +59,7 @@ export class RemoteAdapter implements BotAdapter {
     const res = await this.gateway.call<{ value: unknown }>(
       this.botId,
       RpcMethod.SettingGet,
-      { spaceId, key, actor }
+      { ...this.space(spaceId), key, actor }
     )
     return res.value
   }
@@ -55,12 +67,12 @@ export class RemoteAdapter implements BotAdapter {
     return this.gateway.call<{ ok: boolean; error?: string }>(
       this.botId,
       RpcMethod.SettingSet,
-      { spaceId, key, value, actor }
+      { ...this.space(spaceId), key, value, actor }
     )
   }
   invokeAction(spaceId: string, name: string, payload?: unknown) {
     return this.gateway.call<unknown>(this.botId, RpcMethod.ActionInvoke, {
-      spaceId,
+      ...this.space(spaceId),
       name,
       payload,
     })

@@ -8,7 +8,7 @@ const settings = defineSettings((s) => ({
     name: "General",
     options: {
       prefix: f.text({ label: "Prefix", max: 3, default: "!" }),
-      logChannel: f.channel({ types: ["text"], label: "Log channel" }),
+      logChannel: f.ref("channel", { filter: { types: ["text"] }, label: "Log channel" }),
     },
   }),
 }))
@@ -19,9 +19,9 @@ new Adapter({
   gateway: process.env.GATEWAY ?? "ws://localhost:3001/gateway",
 })
   .settings(settings)
-  .onGet((guildId, key) => store.get(`${guildId}:${key}`) ?? null)
-  .onSet((guildId, key, value) => {
-    store.set(`${guildId}:${key}`, value)
+  .onGet((spaceId, key) => store.get(`${spaceId}:${key}`) ?? null)
+  .onSet((spaceId, key, value) => {
+    store.set(`${spaceId}:${key}`, value)
   })
   .connect()
 
