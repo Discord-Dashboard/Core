@@ -19,5 +19,14 @@ describe("scaffolder", () => {
 
     const pkg = JSON.parse(fs.readFileSync(path.join(dir, "package.json"), "utf8"))
     expect(pkg.name).toBe("test-bot")
+    // the .env the user fills in from .env.example has to actually load
+    expect(pkg.scripts.start).toContain("--env-file=.env")
+  })
+
+  it("names the project after its folder when no name is given", () => {
+    const dir = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "dd-")), "My Test Bot")
+    scaffold(dir)
+    const pkg = JSON.parse(fs.readFileSync(path.join(dir, "package.json"), "utf8"))
+    expect(pkg.name).toBe("my-test-bot")
   })
 })

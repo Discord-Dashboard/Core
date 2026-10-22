@@ -1,6 +1,6 @@
 {
   "name": "create-discord-dashboard",
-  "version": "3.0.0-alpha.0",
+  "version": "3.1.0-alpha.0",
   "description": "Scaffold a new discord-dashboard project.",
   "type": "module",
   "main": "./src/index.ts",
@@ -9,6 +9,15 @@
     "create-discord-dashboard": "./bin.js"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Discord-Dashboard/Core.git",
+    "directory": "packages/create"
+  },
+  "homepage": "https://github.com/Discord-Dashboard/Core/tree/v3/packages/create#readme",
+  "bugs": {
+    "url": "https://github.com/Discord-Dashboard/Core/issues"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",

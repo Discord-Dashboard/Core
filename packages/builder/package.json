@@ -1,6 +1,6 @@
 {
   "name": "@discord-dashboard/builder",
-  "version": "3.0.0-alpha.0",
+  "version": "3.1.0-alpha.0",
   "description": "Drag and drop page builder and AI page generation.",
   "type": "module",
   "main": "./src/index.ts",
@@ -12,6 +12,15 @@
     "./ai": "./src/ai.ts"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Discord-Dashboard/Core.git",
+    "directory": "packages/builder"
+  },
+  "homepage": "https://github.com/Discord-Dashboard/Core/tree/v3/packages/builder#readme",
+  "bugs": {
+    "url": "https://github.com/Discord-Dashboard/Core/issues"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",

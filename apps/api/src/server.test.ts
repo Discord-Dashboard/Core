@@ -60,7 +60,7 @@ describe("api server (integration)", () => {
   })
 
   it("serves an openapi inventory derived from the routes", async () => {
-    const res = await app.inject({ method: "GET", url: "/openapi.json" })
+    const res = await app.inject({ method: "GET", url: "/api/openapi.json" })
     expect(res.statusCode).toBe(200)
     const doc = res.json() as {
       openapi: string
@@ -90,7 +90,7 @@ describe("api server (integration)", () => {
   it("accepts a discord entitlement webhook", async () => {
     const res = await app.inject({
       method: "POST",
-      url: "/webhooks/discord",
+      url: "/api/webhooks/discord",
       payload: { guild_id: "g", sku_id: "pro" },
     })
     expect(res.statusCode).toBe(200)
@@ -124,7 +124,7 @@ d2("api robustness", () => {
     e2(res.json()).toEqual({ error: "not found" })
   })
   i2("exposes the protocol version", async () => {
-    const res = await app2.inject({ method: "GET", url: "/version" })
+    const res = await app2.inject({ method: "GET", url: "/api/version" })
     e2(res.statusCode).toBe(200)
     e2((res.json() as { protocol: string }).protocol).toMatch(/^\d+\.\d+\.\d+$/)
   })

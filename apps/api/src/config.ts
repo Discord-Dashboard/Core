@@ -23,7 +23,7 @@ export function loadConfig(): ApiConfig {
       clientSecret: process.env.DISCORD_CLIENT_SECRET ?? "",
       redirectUri:
         process.env.DISCORD_REDIRECT_URI ??
-        "http://localhost:3001/auth/callback",
+        "http://localhost:3001/api/auth/callback",
     },
     webhookSecret: process.env.WEBHOOK_SECRET,
   }

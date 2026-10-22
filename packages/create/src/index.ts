@@ -33,7 +33,13 @@ await dash.listen(3001)
 // Unlike the v2 scaffolder, secrets are read from the environment and never
 // written into generated source.
 export function scaffold(targetDir: string, opts: ScaffoldOptions = {}) {
-  const name = opts.name ?? "my-bot-dashboard"
+  // Default to the folder name, made safe for package.json.
+  const fromDir = path
+    .basename(path.resolve(targetDir))
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^[._-]+|-+$/g, "")
+  const name = opts.name ?? (fromDir || "my-bot-dashboard")
   fs.mkdirSync(targetDir, { recursive: true })
   const files: Record<string, string> = {
     "package.json":
@@ -42,9 +48,12 @@ export function scaffold(targetDir: string, opts: ScaffoldOptions = {}) {
           name,
           private: true,
           type: "module",
-          scripts: { start: "node index.js" },
+          // Node loads .env itself (20.6+), so the secrets never need a
+          // dotenv dependency or a copy in the shell.
+          scripts: { start: "node --env-file=.env index.js" },
+          engines: { node: ">=20.6" },
           dependencies: {
-            "discord-dashboard": "^3.0.0-alpha.0",
+            "discord-dashboard": "^3.1.0-alpha.0",
             "discord.js": "^14.26.4",
           },
         },

@@ -51,7 +51,7 @@ export default function ManagePage() {
           </span>
           <h2>No manageable servers</h2>
           <p>
-            <a href="/auth/discord">Log in with Discord</a> or invite the bot to
+            <a href="/api/auth/discord">Log in with Discord</a> or invite the bot to
             a server you manage to see it here.
           </p>
         </div>

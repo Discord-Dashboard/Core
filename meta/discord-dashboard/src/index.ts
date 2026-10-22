@@ -6,6 +6,7 @@ import {
 } from "@discord-dashboard/core"
 import type { SettingsDef } from "@discord-dashboard/schema"
 import { SqliteKeyValueStore } from "@discord-dashboard/db"
+import type { FastifyInstance } from "fastify"
 import { discordSourceFromClient } from "./discord-source.js"
 
 export { defineSettings, f } from "@discord-dashboard/schema"
@@ -29,9 +30,14 @@ export interface CreateDashboardOptions {
   ai?: LlmClient
 }
 
+export interface Dashboard {
+  // Starts the server and resolves with the running Fastify instance.
+  listen(port?: number): Promise<FastifyInstance>
+}
+
 // One call sets up the whole lite dashboard: the in process adapter, the
 // server, OAuth and the settings API. No license, no external services.
-export function createDashboard(opts: CreateDashboardOptions) {
+export function createDashboard(opts: CreateDashboardOptions): Dashboard {
   const port = opts.port ?? 3001
   const config: ApiConfig = {
     port,
@@ -43,7 +49,7 @@ export function createDashboard(opts: CreateDashboardOptions) {
       clientId: opts.discord.clientId,
       clientSecret: opts.discord.clientSecret,
       redirectUri:
-        opts.discord.redirectUri ?? `http://localhost:${port}/auth/callback`,
+        opts.discord.redirectUri ?? `http://localhost:${port}/api/auth/callback`,
     },
   }
 
@@ -71,7 +77,7 @@ export function createDashboard(opts: CreateDashboardOptions) {
       // an explicit redirect uri, a stale uri would break login with a
       // redirect_uri mismatch, so derive it from the real port here.
       if (!opts.discord.redirectUri && listenPort !== port) {
-        config.discord.redirectUri = `http://localhost:${listenPort}/auth/callback`
+        config.discord.redirectUri = `http://localhost:${listenPort}/api/auth/callback`
       }
       const app = await buildServer(config, {
         def: opts.settings,

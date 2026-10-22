@@ -4,6 +4,7 @@ dist/
 out/
 build/
 coverage/
+.packs/
 .turbo/
 *.log
 .env

@@ -54,7 +54,7 @@ describe("monetization gating over http", () => {
 
     const grant = await app.inject({
       method: "POST",
-      url: "/webhooks/discord",
+      url: "/api/webhooks/discord",
       payload: { guild_id: "g", sku_id: "pro" },
     })
     expect(grant.statusCode).toBe(200)
@@ -67,7 +67,7 @@ describe("monetization gating over http", () => {
     // linger behind a stale active grant.
     const revoke = await app.inject({
       method: "POST",
-      url: "/webhooks/discord",
+      url: "/api/webhooks/discord",
       payload: { guild_id: "g", sku_id: "pro", deleted: true },
     })
     expect(revoke.statusCode).toBe(200)
@@ -105,7 +105,7 @@ dE("entitlements endpoint reports gated features", () => {
     eE((await read()).pro).toBe(false)
     await app.inject({
       method: "POST",
-      url: "/webhooks/discord",
+      url: "/api/webhooks/discord",
       payload: { guild_id: "g", sku_id: "pro" },
     })
     eE((await read()).pro).toBe(true)
@@ -146,7 +146,7 @@ dS("stripe subscription unlocks a gated setting", () => {
 
     const hook = await app.inject({
       method: "POST",
-      url: "/webhooks/stripe",
+      url: "/api/webhooks/stripe",
       payload: {
         type: "customer.subscription.created",
         data: {

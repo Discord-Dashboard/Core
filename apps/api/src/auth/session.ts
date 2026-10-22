@@ -29,7 +29,7 @@ const MINUTE = 60_000
 
 // Server side sessions. The Discord token never leaves the server. In the
 // platform profile this is backed by Redis or the database. Entries expire and
-// the map is capped so an unauthenticated flood of /auth/discord cannot grow
+// the map is capped so an unauthenticated flood of /api/auth/discord cannot grow
 // memory without bound.
 export class SessionStore {
   private readonly map = new Map<string, Entry>()

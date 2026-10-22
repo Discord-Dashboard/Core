@@ -19,8 +19,33 @@ jobs:
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
       - run: pnpm install --frozen-lockfile
+      # The tag decides the version and the npm dist tag. v3.1.0 publishes to
+      # latest, v3.1.0-alpha.0 to alpha, so a prerelease never replaces the
+      # version people get from a plain `npm install`.
+      - name: Resolve version and dist tag
+        id: version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          prerelease="${version#*-}"
+          if [ "$prerelease" = "$version" ]; then tag=latest; else tag="${prerelease%%.*}"; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Publishing $version under the $tag dist tag"
+      - name: Check package versions match the tag
+        run: |
+          mismatched=$(pnpm -r ls --depth -1 --json | node -e '
+            const want = process.argv[1]
+            const pkgs = JSON.parse(require("fs").readFileSync(0, "utf8"))
+            for (const p of pkgs) if (!p.private && p.version !== want) console.log(`${p.name}@${p.version}`)
+          ' "${{ steps.version.outputs.version }}")
+          if [ -n "$mismatched" ]; then
+            echo "These packages are not at ${{ steps.version.outputs.version }}:"
+            echo "$mismatched"
+            exit 1
+          fi
       - run: pnpm build
       - run: pnpm test
-      - run: pnpm -r publish --access public --no-git-checks --provenance
+      - run: pnpm smoke:pack
+      - run: pnpm -r publish --access public --no-git-checks --provenance --tag ${{ steps.version.outputs.tag }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

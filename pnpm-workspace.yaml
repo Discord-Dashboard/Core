@@ -3,4 +3,5 @@ packages:
   - "packages/*"
   - "packages/modules/*"
   - "packages/themes/*"
+  - "meta/*"
   - "examples/*"

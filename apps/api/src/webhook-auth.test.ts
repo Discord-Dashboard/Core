@@ -26,7 +26,7 @@ describe("webhook authentication", () => {
   it("rejects a webhook without the secret", async () => {
     const res = await app.inject({
       method: "POST",
-      url: "/webhooks/discord",
+      url: "/api/webhooks/discord",
       payload: { guild_id: "g", sku_id: "pro" },
     })
     expect(res.statusCode).toBe(401)
@@ -35,7 +35,7 @@ describe("webhook authentication", () => {
   it("accepts a webhook with the correct secret", async () => {
     const res = await app.inject({
       method: "POST",
-      url: "/webhooks/discord",
+      url: "/api/webhooks/discord",
       headers: { "x-webhook-secret": "hook-secret" },
       payload: { guild_id: "g", sku_id: "pro" },
     })
