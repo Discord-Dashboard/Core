@@ -1552,3 +1552,23 @@ input[type="checkbox"]:focus-visible {
     scroll-behavior: auto;
   }
 }
+
+/* Discord embed editor (platform-discord/web) */
+.dd-embed {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: min(100%, 320px);
+  padding-left: 12px;
+  border-left: 4px solid;
+  border-radius: 4px;
+}
+.dd-embed textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+.dd-embed input[type="color"] {
+  width: 48px;
+  height: 32px;
+  padding: 2px;
+}

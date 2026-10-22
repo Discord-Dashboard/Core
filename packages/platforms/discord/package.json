@@ -1,10 +1,14 @@
 {
   "name": "@asctane-dashboard/platform-discord",
   "version": "3.1.0-alpha.0",
-  "description": "Discord support for asctane-dashboard: OAuth login, the server list and discord.js pickers.",
+  "description": "Discord support for asctane-dashboard: OAuth login, the server list, discord.js pickers and the Discord field widgets.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./web": "./src/web.tsx"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -26,6 +30,18 @@
     "@asctane-dashboard/schema": "workspace:*",
     "zod": "^4.4.3"
   },
+  "peerDependencies": {
+    "react": "^19.2.7"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "react": "^19.2.7"
+  },
   "publishConfig": {
     "access": "public",
     "main": "./dist/index.js",
@@ -34,6 +50,10 @@
       ".": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
+      },
+      "./web": {
+        "types": "./dist/web.d.ts",
+        "default": "./dist/web.js"
       }
     }
   },

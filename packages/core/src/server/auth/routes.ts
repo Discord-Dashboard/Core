@@ -11,6 +11,11 @@ export async function registerAuthRoutes(
 ) {
   const platforms = createPlatformRegistry(config.platforms)
 
+  // The platforms a user can log in with, for the login page's buttons.
+  app.get("/api/platforms", async () => ({
+    platforms: platforms.list().map((p) => ({ id: p.id, name: p.name })),
+  }))
+
   // Starts a login with one platform: /api/auth/discord for Discord.
   app.get("/api/auth/:platform", async (req, reply) => {
     const platform = platforms.get((req.params as { platform: string }).platform)

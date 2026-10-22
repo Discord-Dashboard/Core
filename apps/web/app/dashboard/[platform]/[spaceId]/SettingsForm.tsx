@@ -1,39 +1,28 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import {
-  IconCheck,
-  IconChevronDown,
-  IconSliders,
-} from "../../components/icons"
+import { IconCheck, IconSliders } from "../../../components/icons"
+import { Field, type WireOption } from "../../../components/fields"
 
 const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
-// The web app only logs in with Discord for now; platform-aware pages follow.
-const PLATFORM = "discord"
 
-interface WireOption {
-  id: string
-  type: string
-  label?: string
-  enum?: { value: string; label: string }[]
-}
 interface WireCategory {
   id: string
   name: string
   options: WireOption[]
 }
-interface Guild {
+interface Space {
   id: string
   name: string
-  icon: string | null
+  icon?: string | null
 }
 
 // Loads schema and values, saves changes, and subscribes to live updates so the
 // form reflects changes the bot (or another admin) makes while the page is open.
-export function SettingsForm({ guildId }: { guildId: string }) {
+export function SettingsForm({ platform, spaceId }: { platform: string; spaceId: string }) {
   const [categories, setCategories] = useState<WireCategory[] | null>(null)
   const [values, setValues] = useState<Record<string, unknown>>({})
-  const [guild, setGuild] = useState<Guild | null>(null)
+  const [space, setSpace] = useState<Space | null>(null)
   const [activeCat, setActiveCat] = useState<string | null>(null)
   const [savedKey, setSavedKey] = useState<string | null>(null)
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -42,7 +31,7 @@ export function SettingsForm({ guildId }: { guildId: string }) {
     const opts = { credentials: "include" as const }
     Promise.all([
       fetch(`${API}/api/schema`, opts).then((r) => r.json()),
-      fetch(`${API}/api/spaces/${PLATFORM}/${guildId}/values`, opts)
+      fetch(`${API}/api/spaces/${platform}/${spaceId}/values`, opts)
         .then((r) => (r.ok ? r.json() : { values: {} }))
         .catch(() => ({ values: {} })),
     ])
@@ -52,15 +41,19 @@ export function SettingsForm({ guildId }: { guildId: string }) {
       })
       .catch(() => setCategories([]))
 
-    // Reuses the space list endpoint to show the server's identity.
+    // Reuses the space list endpoint to show the space's name.
     fetch(`${API}/api/spaces`, opts)
       .then((r) => (r.ok ? r.json() : { spaces: [] }))
-      .then((data: { spaces?: Guild[] }) =>
-        setGuild(data.spaces?.find((g) => g.id === guildId) ?? null)
+      .then((data: { platform?: string; spaces?: Space[] }) =>
+        setSpace(
+          data.platform === platform
+            ? data.spaces?.find((s) => s.id === spaceId) ?? null
+            : null
+        )
       )
-      .catch(() => setGuild(null))
+      .catch(() => setSpace(null))
 
-    const es = new EventSource(`${API}/api/spaces/${PLATFORM}/${guildId}/stream`, {
+    const es = new EventSource(`${API}/api/spaces/${platform}/${spaceId}/stream`, {
       withCredentials: true,
     })
     es.onmessage = (e) => {
@@ -75,7 +68,7 @@ export function SettingsForm({ guildId }: { guildId: string }) {
       }
     }
     return () => es.close()
-  }, [guildId])
+  }, [platform, spaceId])
 
   async function save(category: string, option: string, next: unknown) {
     const key = `${category}.${option}`
@@ -83,7 +76,7 @@ export function SettingsForm({ guildId }: { guildId: string }) {
     if (savedTimer.current) clearTimeout(savedTimer.current)
     setSavedKey(key)
     savedTimer.current = setTimeout(() => setSavedKey(null), 1600)
-    await fetch(`${API}/api/spaces/${PLATFORM}/${guildId}/settings/${category}/${option}`, {
+    await fetch(`${API}/api/spaces/${platform}/${spaceId}/settings/${category}/${option}`, {
       method: "POST",
       credentials: "include",
       headers: { "content-type": "application/json" },
@@ -98,8 +91,8 @@ export function SettingsForm({ guildId }: { guildId: string }) {
       ?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
-  const guildName = guild?.name ?? `Server ${guildId.slice(0, 6)}…`
-  const initial = (guild?.name ?? "S").slice(0, 1).toUpperCase()
+  const spaceName = space?.name ?? `Server ${spaceId.slice(0, 6)}…`
+  const initial = (space?.name ?? "S").slice(0, 1).toUpperCase()
 
   return (
     <>
@@ -110,9 +103,9 @@ export function SettingsForm({ guildId }: { guildId: string }) {
           </span>
           <div className="dd-guildhead__meta">
             <h1 className="dd-page-title" style={{ marginBottom: 0 }}>
-              {guildName}
+              {spaceName}
             </h1>
-            <span className="dd-guildhead__id">ID {guildId}</span>
+            <span className="dd-guildhead__id">ID {spaceId}</span>
           </div>
         </div>
         <span className="dd-chip dd-chip--live" title="Connected to the live event stream">
@@ -178,7 +171,6 @@ export function SettingsForm({ guildId }: { guildId: string }) {
                 </div>
                 {cat.options.map((opt) => {
                   const key = `${cat.id}.${opt.id}`
-                  const value = values[key] ?? ""
                   return (
                     <div className="dd-field" key={opt.id}>
                       <label className="dd-field__label" htmlFor={`dd-opt-${key}`}>
@@ -194,35 +186,13 @@ export function SettingsForm({ guildId }: { guildId: string }) {
                             Saved
                           </span>
                         )}
-                        {opt.type === "switch" ? (
-                          <input
-                            id={`dd-opt-${key}`}
-                            type="checkbox"
-                            checked={Boolean(value)}
-                            onChange={(e) => save(cat.id, opt.id, e.target.checked)}
-                          />
-                        ) : opt.type === "select" ? (
-                          <span className="dd-select">
-                            <select
-                              id={`dd-opt-${key}`}
-                              value={String(value)}
-                              onChange={(e) => save(cat.id, opt.id, e.target.value)}
-                            >
-                              {(opt.enum ?? []).map((o) => (
-                                <option key={o.value} value={o.value}>
-                                  {o.label}
-                                </option>
-                              ))}
-                            </select>
-                            <IconChevronDown size={14} />
-                          </span>
-                        ) : (
-                          <input
-                            id={`dd-opt-${key}`}
-                            value={String(value)}
-                            onChange={(e) => save(cat.id, opt.id, e.target.value)}
-                          />
-                        )}
+                        <Field
+                          id={`dd-opt-${key}`}
+                          option={opt}
+                          value={values[key]}
+                          onChange={(next) => save(cat.id, opt.id, next)}
+                          space={{ platform, id: spaceId }}
+                        />
                       </span>
                     </div>
                   )

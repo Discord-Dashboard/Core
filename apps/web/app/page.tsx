@@ -72,8 +72,8 @@ export default function Home() {
           panel.
         </p>
         <div className="dd-hero__ctas">
-          <a className="dd-btn dd-btn--primary dd-btn--lg" href="/api/auth/discord">
-            Login with Discord
+          <a className="dd-btn dd-btn--primary dd-btn--lg" href="/login">
+            Log in
             <IconArrowRight size={17} />
           </a>
           <a className="dd-btn dd-btn--lg" href="/builder">
@@ -202,7 +202,7 @@ export default function Home() {
             Log in with Discord, point it at your bot, and give your community
             the control panel it has been asking for.
           </p>
-          <a className="dd-btn dd-btn--lg" href="/api/auth/discord">
+          <a className="dd-btn dd-btn--lg" href="/login">
             Get started free
             <IconArrowRight size={17} />
           </a>

@@ -4,7 +4,7 @@ const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
 const nextConfig = {
   reactStrictMode: true,
   // Everything the API serves lives under /api, so this origin can hand that
-  // whole prefix to it. The login buttons rely on this for /api/auth/discord.
+  // whole prefix to it. The login buttons rely on this for /api/auth/:platform.
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${API}/api/:path*` }]
   },
@@ -13,6 +13,7 @@ const nextConfig = {
     "@asctane-dashboard/schema",
     "@asctane-dashboard/builder",
     "@asctane-dashboard/theme-default",
+    "@asctane-dashboard/platform-discord",
   ],
   webpack: (config) => {
     // Resolve ESM style .js imports to their .ts source in transpiled packages.

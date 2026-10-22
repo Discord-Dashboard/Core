@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
-import type { BotAdapter, Entitlements, DefSource } from "../../base.js"
-import { SettingsService, SubjectType } from "../../base.js"
+import type { BotAdapter, Entitlements, DefSource, Platform } from "../../base.js"
+import { SettingsService, SubjectType, createPlatformRegistry } from "../../base.js"
 import {
   SESSION_COOKIE,
   canManageSpace,
@@ -19,6 +19,8 @@ export interface SettingsDeps {
   // Live change fan out so other admins viewing the same space update at once,
   // even in lite mode where no bot echoes the change back.
   events?: EventHub
+  // The configured platforms, so a picker only asks for kinds the platform has.
+  platforms?: Platform[]
 }
 
 interface SpaceParams {
@@ -35,6 +37,7 @@ export async function registerSettingsRoutes(
   deps: SettingsDeps
 ) {
   const service = new SettingsService(deps.def, deps.adapter, deps.entitlements)
+  const platforms = createPlatformRegistry(deps.platforms ?? [])
   const resolveDef = () =>
     typeof deps.def === "function" ? deps.def() : deps.def
 
@@ -91,6 +94,36 @@ export async function registerSettingsRoutes(
     const auth = requireSpace(req, reply)
     if (!auth) return
     return { roles: await deps.adapter.getRoles(auth.spaceId) }
+  })
+
+  // Options for any f.ref picker: /resources/channel, /resources/role. The
+  // optional filter query is the field's JSON filter.
+  app.get(`${SPACE}/resources/:kind`, async (req, reply) => {
+    const { platform, kind } = req.params as SpaceParams & { kind: string }
+    const auth = requireSpace(req, reply)
+    if (!auth) return
+    const list =
+      kind === "channel"
+        ? deps.adapter.getChannels
+        : kind === "role"
+          ? deps.adapter.getRoles
+          : undefined
+    if (!list || !platforms.supports(platform, kind)) {
+      return reply.code(404).send({ error: "unknown resource kind" })
+    }
+    let filter: Record<string, unknown> | undefined
+    const raw = (req.query as { filter?: string }).filter
+    if (raw) {
+      try {
+        filter = JSON.parse(raw)
+      } catch {
+        return reply.code(400).send({ error: "invalid filter" })
+      }
+      if (!filter || typeof filter !== "object" || Array.isArray(filter)) {
+        return reply.code(400).send({ error: "invalid filter" })
+      }
+    }
+    return { items: await list.call(deps.adapter, auth.spaceId, filter) }
   })
 
   // Trigger a bot action (a button in the dashboard, like a test message).

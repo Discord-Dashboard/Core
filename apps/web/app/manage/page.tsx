@@ -5,20 +5,24 @@ import { IconArrowRight, IconServers } from "../components/icons"
 
 const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
 
-interface Guild {
+interface Space {
   id: string
   name: string
-  icon: string | null
+  icon?: string | null
 }
 
 // Lists the servers the logged in user can manage and links to each dashboard.
 export default function ManagePage() {
-  const [guilds, setGuilds] = useState<Guild[] | null>(null)
+  const [guilds, setGuilds] = useState<Space[] | null>(null)
+  const [platform, setPlatform] = useState("")
 
   useEffect(() => {
     fetch(`${API}/api/spaces`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : { spaces: [] }))
-      .then((data) => setGuilds(data.spaces ?? []))
+      .then((data: { platform?: string; spaces?: Space[] }) => {
+        setPlatform(data.platform ?? "")
+        setGuilds(data.spaces ?? [])
+      })
       .catch(() => setGuilds([]))
   }, [])
 
@@ -51,14 +55,14 @@ export default function ManagePage() {
           </span>
           <h2>No manageable servers</h2>
           <p>
-            <a href="/api/auth/discord">Log in with Discord</a> or invite the bot to
+            <a href="/login">Log in</a> or invite the bot to
             a server you manage to see it here.
           </p>
         </div>
       ) : (
         <div className="dd-grid">
           {guilds.map((g) => (
-            <a className="dd-servercard" href={`/dashboard/${g.id}`} key={g.id}>
+            <a className="dd-servercard" href={`/dashboard/${platform}/${g.id}`} key={g.id}>
               <span className="dd-servercard__avatar" aria-hidden>
                 {g.name.slice(0, 1).toUpperCase()}
               </span>

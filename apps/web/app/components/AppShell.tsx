@@ -16,7 +16,7 @@ import {
 } from "./icons"
 
 // Primary navigation. The dashboard route is matched by prefix so the active
-// state survives deep links like /dashboard/123.
+// state survives deep links like /dashboard/discord/123.
 const nav = [
   { href: "/", label: "Overview", icon: IconHome, exact: true },
   { href: "/manage", label: "Servers", icon: IconServers },
@@ -32,6 +32,7 @@ function pageTitle(pathname: string): string {
   if (pathname.startsWith("/manage")) return "Servers"
   if (pathname.startsWith("/dashboard")) return "Server settings"
   if (pathname.startsWith("/builder")) return "Page builder"
+  if (pathname.startsWith("/login")) return "Log in"
   return "Overview"
 }
 
@@ -60,7 +61,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </nav>
           <div className="dd-mktnav__actions">
             <ThemeSwitcher />
-            <a className="dd-btn dd-btn--primary dd-btn--sm" href="/api/auth/discord">
+            <a className="dd-btn dd-btn--primary dd-btn--sm" href="/login">
               <IconSparkles size={15} />
               Get started
             </a>
