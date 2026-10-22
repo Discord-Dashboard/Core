@@ -18,7 +18,7 @@ def test_reconnects_until_closed():
         raise ConnectionError("drop")
 
     adapter._loop = fake_loop
-    asyncio.run(adapter._run_forever())
+    asyncio.run(adapter.start())
     assert calls["n"] == 3
 
 
@@ -31,5 +31,5 @@ def test_stops_when_reconnect_disabled():
         raise ConnectionError("drop")
 
     adapter._loop = fake_loop
-    asyncio.run(adapter._run_forever())
+    asyncio.run(adapter.start())
     assert calls["n"] == 1

@@ -17,7 +17,7 @@ schema = define_settings(
 adapter = Adapter(
     bot_id="example-bot",
     secret="dev-secret",
-    gateway="ws://localhost:3001/gateway",
+    gateway="ws://localhost:3002/gateway",
 )
 adapter.settings(schema)
 adapter.on_get(lambda space_id, key: store.get((space_id, key)))

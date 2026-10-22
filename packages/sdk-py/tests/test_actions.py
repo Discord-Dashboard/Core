@@ -50,3 +50,40 @@ def test_handlers_that_ask_for_platform_and_actor_get_them():
     )
     assert result == {"value": "!"}
     assert seen == {"space": "g", "key": "prefix", "platform": "discord", "actor": {"userId": "u1"}}
+
+
+def test_resources_dispatch_lists_picker_items():
+    adapter = Adapter(bot_id="b", secret="s", gateway="ws://x")
+    adapter.on_resources(lambda space_id, kind: [{"label": f"{space_id}-{kind}", "value": "1"}])
+    result = asyncio.run(
+        adapter._dispatch("space.resources", {"spaceId": "g", "kind": "channel", "filter": {"types": ["text"]}})
+    )
+    assert result == [{"label": "g-channel", "value": "1"}]
+
+
+def test_resources_handler_can_ask_for_the_filter():
+    seen = {}
+    adapter = Adapter(bot_id="b", secret="s", gateway="ws://x")
+
+    def resources(space_id, kind, filter=None):
+        seen["filter"] = filter
+        return []
+
+    adapter.on_resources(resources)
+    asyncio.run(adapter._dispatch("space.resources", {"spaceId": "g", "kind": "channel", "filter": {"types": ["text"]}}))
+    assert seen["filter"] == {"types": ["text"]}
+
+
+def test_lookups_without_handlers_answer_empty_lists():
+    adapter = Adapter(bot_id="b", secret="s", gateway="ws://x")
+    assert asyncio.run(adapter._dispatch("space.resources", {"spaceId": "g", "kind": "role"})) == []
+    assert asyncio.run(
+        adapter._dispatch("space.member.permissions", {"spaceId": "g", "userId": "u"})
+    ) == {"permissions": []}
+
+
+def test_permissions_dispatch():
+    adapter = Adapter(bot_id="b", secret="s", gateway="ws://x")
+    adapter.on_permissions(lambda space_id, user_id: ["MANAGE_GUILD"] if user_id == "u1" else [])
+    result = asyncio.run(adapter._dispatch("space.member.permissions", {"spaceId": "g", "userId": "u1"}))
+    assert result == {"permissions": ["MANAGE_GUILD"]}

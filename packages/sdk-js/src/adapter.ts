@@ -6,6 +6,7 @@ import {
   WIRE_VERSION,
   HandshakeType,
   RpcMethod,
+  type OptionListItem,
 } from "@asctane-dashboard/protocol"
 import { toWire, type SettingsDef } from "@asctane-dashboard/schema"
 
@@ -33,6 +34,19 @@ type ActionHandler = (
   payload?: unknown,
   platform?: string
 ) => Promise<unknown> | unknown
+// Lists what a picker offers, such as a space's channels or roles.
+type ResourcesHandler = (
+  spaceId: string,
+  kind: string,
+  filter?: Record<string, unknown>,
+  platform?: string
+) => Promise<OptionListItem[]> | OptionListItem[]
+// A member's permissions in a space, such as ["MANAGE_GUILD"].
+type PermissionsHandler = (
+  spaceId: string,
+  userId: string,
+  platform?: string
+) => Promise<string[]> | string[]
 
 export interface AdapterOptions {
   botId: string
@@ -51,6 +65,8 @@ export class Adapter {
   private getter?: Getter
   private setter?: Setter
   private action?: ActionHandler
+  private resources?: ResourcesHandler
+  private permissions?: PermissionsHandler
   private closed = false
 
   constructor(private readonly opts: AdapterOptions) {}
@@ -69,6 +85,14 @@ export class Adapter {
   }
   onAction(fn: ActionHandler) {
     this.action = fn
+    return this
+  }
+  onResources(fn: ResourcesHandler) {
+    this.resources = fn
+    return this
+  }
+  onPermissions(fn: PermissionsHandler) {
+    this.permissions = fn
     return this
   }
 
@@ -166,6 +190,26 @@ export class Adapter {
         )
         return { ok: true }
       }
+      // Without a handler, an empty list: a picker shows nothing rather than
+      // failing on a malformed answer.
+      case RpcMethod.SpaceResources:
+        return (
+          (await this.resources?.(
+            String(params?.spaceId),
+            String(params?.kind),
+            params?.filter as Record<string, unknown> | undefined,
+            platform
+          )) ?? []
+        )
+      case RpcMethod.SpaceMemberPermissions:
+        return {
+          permissions:
+            (await this.permissions?.(
+              String(params?.spaceId),
+              String(params?.userId),
+              platform
+            )) ?? [],
+        }
       case RpcMethod.ActionInvoke:
         return (
           (await this.action?.(
