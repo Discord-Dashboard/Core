@@ -11,13 +11,14 @@ import {
   buildDefFromAdapter,
   type DefSource,
 } from "@discord-dashboard/core"
+import { discordFromEnv } from "@discord-dashboard/platform-discord"
 import { defineSettings, type SettingsDef } from "@discord-dashboard/schema"
 
 // Standalone bootstrap. Lite mode runs an in process demo adapter. Platform
 // mode (BOT_ID set) proxies to a bot connected over the gateway and refreshes
 // that bot's schema whenever it connects.
 async function main() {
-  const config = loadConfig()
+  const config = loadConfig([discordFromEnv()])
   for (const warning of validateConfig(config)) console.warn(warning)
   const stats = new StatsRegistry()
   const events = new EventHub()

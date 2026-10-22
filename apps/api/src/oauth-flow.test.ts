@@ -4,12 +4,13 @@ import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
 import { defineSettings } from "@discord-dashboard/schema"
+import { discord } from "@discord-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,
   cookieSecret: "test-secret-at-least-32-chars-long-000",
   allowedOrigins: ["http://localhost:3000"],
-  discord: { clientId: "cid", clientSecret: "sec", redirectUri: "http://localhost:3001/api/auth/callback" },
+  platforms: [discord({ clientId: "cid", clientSecret: "sec", redirectUri: "http://localhost:3001/api/auth/callback" })],
 }
 const def = defineSettings(() => ({}))
 
@@ -126,6 +127,12 @@ describe("oauth flow", () => {
       headers: { cookie },
     })
     expect(replay.statusCode).toBe(400)
+  })
+
+  it("refuses to start a login with a platform that is not configured", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/auth/slack" })
+    expect(res.statusCode).toBe(404)
+    expect(res.headers["set-cookie"]).toBeUndefined()
   })
 
   it("logs out over POST but not GET", async () => {

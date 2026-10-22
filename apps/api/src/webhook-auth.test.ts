@@ -4,13 +4,14 @@ import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
 import { defineSettings } from "@discord-dashboard/schema"
+import { discord } from "@discord-dashboard/platform-discord"
 
 const def = defineSettings(() => ({}))
 const config: ApiConfig = {
   port: 0,
   cookieSecret: "test-secret-at-least-32-chars-long-000",
   allowedOrigins: ["http://localhost:3000"],
-  discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+  platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" })],
   webhookSecret: "hook-secret",
 }
 

@@ -5,12 +5,13 @@ import type { ApiConfig } from "./config.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
 import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
 import { defineSettings, f } from "@discord-dashboard/schema"
+import { discord } from "@discord-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,
   cookieSecret: "test-secret-at-least-32-chars-long-000",
   allowedOrigins: ["http://localhost:3000"],
-  discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+  platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" })],
 }
 const def = defineSettings((s) => ({
   general: s.category({

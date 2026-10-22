@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { discordSourceFromClient } from "./discord-source.js"
+import { discordSourceFromClient } from "./source.js"
 
 // A minimal fake discord.js client shaped like the parts the mapper reads.
 function fakeClient() {
@@ -65,7 +65,7 @@ describe("discordSourceFromClient", () => {
 })
 
 import { describe as d6, it as i6, expect as e6 } from "vitest"
-import { discordSourceFromClient as dsc6 } from "./discord-source.js"
+import { discordSourceFromClient as dsc6 } from "./source.js"
 
 function clientWithNsfw() {
   const guild = {
@@ -95,7 +95,7 @@ d6("channel nsfw filtering", () => {
 })
 
 import { describe as d7, it as i7, expect as e7 } from "vitest"
-import { discordSourceFromClient as dsc7 } from "./discord-source.js"
+import { discordSourceFromClient as dsc7 } from "./source.js"
 
 function clientWithManagedRole() {
   const guild = {

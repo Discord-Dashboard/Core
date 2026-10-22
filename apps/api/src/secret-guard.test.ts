@@ -3,12 +3,13 @@ import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
 import { defineSettings } from "@discord-dashboard/schema"
+import { discord } from "@discord-dashboard/platform-discord"
 
 const def = defineSettings(() => ({}))
 const base = {
   port: 0,
   allowedOrigins: ["http://localhost:3000"],
-  discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+  platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" })],
 }
 
 describe("cookie secret guard", () => {

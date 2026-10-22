@@ -25,6 +25,7 @@
     "@discord-dashboard/api": "workspace:*",
     "@discord-dashboard/core": "workspace:*",
     "@discord-dashboard/db": "workspace:*",
+    "@discord-dashboard/platform-discord": "workspace:*",
     "@discord-dashboard/schema": "workspace:*",
     "fastify": "^5.10.0"
   },

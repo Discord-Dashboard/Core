@@ -4,12 +4,13 @@ import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
 import { defineSettings, f } from "@discord-dashboard/schema"
+import { discord } from "@discord-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,
   cookieSecret: "test-secret-at-least-32-chars-long-000",
   allowedOrigins: ["http://localhost:3000"],
-  discord: { clientId: "c", clientSecret: "s", redirectUri: "http://localhost/cb" },
+  platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://localhost/cb" })],
 }
 
 const def = defineSettings((s) => ({
@@ -109,7 +110,7 @@ d2("api robustness", () => {
     port: 0,
     cookieSecret: "test-secret-at-least-32-chars-long-000",
     allowedOrigins: ["http://localhost:3000"],
-    discord: { clientId: "c", clientSecret: "s", redirectUri: "http://localhost/cb" },
+    platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://localhost/cb" })],
   }
   const def2 = ds2(() => ({}))
   b2(async () => {

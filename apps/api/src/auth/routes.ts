@@ -1,94 +1,47 @@
 import type { FastifyInstance } from "fastify"
+import { createPlatformRegistry } from "@discord-dashboard/core"
 import type { ApiConfig } from "../config.js"
 import { SESSION_COOKIE, type SessionStore } from "./session.js"
-import { buildAuthorizeUrl, createPkce, createState } from "./oauth.js"
-
-async function exchangeCode(config: ApiConfig, code: string, verifier: string) {
-  const body = new URLSearchParams({
-    client_id: config.discord.clientId,
-    client_secret: config.discord.clientSecret,
-    grant_type: "authorization_code",
-    code,
-    redirect_uri: config.discord.redirectUri,
-    code_verifier: verifier,
-  })
-  const res = await fetch("https://discord.com/api/oauth2/token", {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    body,
-  })
-  if (!res.ok) throw new Error("token exchange failed")
-  return (await res.json()) as { access_token: string }
-}
-
-async function fetchUser(accessToken: string) {
-  const res = await fetch("https://discord.com/api/users/@me", {
-    headers: { authorization: `Bearer ${accessToken}` },
-  })
-  if (!res.ok) throw new Error("user fetch failed")
-  return (await res.json()) as { id: string; username: string; avatar: string | null }
-}
-
-const MANAGE_GUILD = 0x20n
-
-interface DiscordGuild {
-  id: string
-  name: string
-  icon: string | null
-  owner?: boolean
-  permissions?: string
-}
-
-// The guilds a user may manage: ones they own or have Manage Server in.
-async function fetchManageableGuilds(accessToken: string) {
-  const res = await fetch("https://discord.com/api/users/@me/guilds", {
-    headers: { authorization: `Bearer ${accessToken}` },
-  })
-  if (!res.ok) throw new Error("guild fetch failed")
-  const guilds = (await res.json()) as DiscordGuild[]
-  const hasManage = (perms?: string) => {
-    try {
-      return (BigInt(perms ?? "0") & MANAGE_GUILD) !== 0n
-    } catch {
-      return false
-    }
-  }
-  return guilds
-    .filter((g) => g.owner || hasManage(g.permissions))
-    .map((g) => ({ id: g.id, name: g.name, icon: g.icon }))
-}
+import { createPkce, createState } from "./oauth.js"
 
 export async function registerAuthRoutes(
   app: FastifyInstance,
   config: ApiConfig,
   sessions: SessionStore
 ) {
-  app.get("/api/auth/discord", async (req, reply) => {
+  const platforms = createPlatformRegistry(config.platforms)
+
+  // Starts a login with one platform: /api/auth/discord for Discord.
+  app.get("/api/auth/:platform", async (req, reply) => {
+    const platform = platforms.get((req.params as { platform: string }).platform)
+    if (!platform) return reply.code(404).send({ error: "unknown platform" })
     const sid = req.cookies[SESSION_COOKIE] ?? sessions.create()
     const { verifier, challenge } = createPkce()
     const state = createState()
-    sessions.set(sid, { ...(sessions.get(sid) ?? {}), pkceVerifier: verifier, state })
+    sessions.set(sid, {
+      ...(sessions.get(sid) ?? {}),
+      pkceVerifier: verifier,
+      state,
+      authPlatform: platform.id,
+    })
     reply.setCookie(SESSION_COOKIE, sid, {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
       secure: process.env.NODE_ENV === "production",
     })
-    return reply.redirect(
-      buildAuthorizeUrl({
-        clientId: config.discord.clientId,
-        redirectUri: config.discord.redirectUri,
-        state,
-        challenge,
-        scopes: ["identify", "guilds"],
-      })
-    )
+    const start = await platform.auth.start({ state, codeChallenge: challenge })
+    // A widget login (Telegram) is rendered by the web app, not redirected to.
+    if (start.kind === "widget") return { widget: start.config }
+    return reply.redirect(start.url)
   })
 
   app.get("/api/auth/callback", async (req, reply) => {
-    const { code, state } = req.query as { code?: string; state?: string }
+    const query = req.query as Record<string, string | undefined>
+    const { code, state } = query
     const sid = req.cookies[SESSION_COOKIE]
     const session = sessions.get(sid)
+    const platform = platforms.get(session?.authPlatform ?? "")
     // Every piece must be present and the state must match what we issued. A
     // logged in session has no state, so a missing state can never slip through.
     if (
@@ -97,25 +50,30 @@ export async function registerAuthRoutes(
       !state ||
       !session.state ||
       !session.pkceVerifier ||
+      !platform ||
       session.state !== state
     ) {
       return reply.code(400).send({ error: "invalid state" })
     }
     const verifier = session.pkceVerifier
     // Single use: burn the state and verifier so the callback cannot be replayed.
-    sessions.set(sid!, { ...session, state: undefined, pkceVerifier: undefined })
-    const token = await exchangeCode(config, code, verifier)
-    const user = await fetchUser(token.access_token)
-    const guilds = await fetchManageableGuilds(token.access_token)
+    sessions.set(sid!, {
+      ...session,
+      state: undefined,
+      pkceVerifier: undefined,
+      authPlatform: undefined,
+    })
+    const { user, spaces } = await platform.auth.finish({ codeVerifier: verifier, query })
 
     // Rotate the session id on login to prevent session fixation.
     sessions.destroy(sid)
     const newSid = sessions.create()
     sessions.set(newSid, {
+      platform: platform.id,
       userId: user.id,
       username: user.username,
-      avatar: user.avatar,
-      guilds,
+      avatar: user.avatar ?? null,
+      guilds: spaces,
     })
     reply.setCookie(SESSION_COOKIE, newSid, {
       httpOnly: true,

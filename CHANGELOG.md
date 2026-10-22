@@ -31,3 +31,9 @@ A ground up rewrite. Highlights:
   (`resources(spaceId, kind, filter)`) instead of a `DiscordSource`. Stripe
   metadata should use `subjectType: "space"`; older `"guild"` subscriptions
   are still read as spaces.
+- Discord support lives in its own package, `@discord-dashboard/platform-discord`:
+  OAuth login, the list of servers a user may manage, and the discord.js
+  channel and role pickers. Breaking for anyone calling the API directly:
+  `ApiConfig.discord` is replaced by `platforms: [discord({ clientId,
+  clientSecret, redirectUri })]`, and `loadConfig()` takes the platforms to
+  use. The lite `createDashboard({ discord })` option is unchanged.

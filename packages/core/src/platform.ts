@@ -55,8 +55,9 @@ export interface SpaceSummary {
   icon?: string | null
 }
 
+// Each platform owns its client credentials and the redirect uri registered
+// with them, so the contexts only carry what changes per login.
 export interface AuthStartContext {
-  redirectUri: string
   state: string
   codeChallenge: string
 }
@@ -68,7 +69,6 @@ export type AuthStart =
   | { kind: "widget"; config: Record<string, unknown> }
 
 export interface AuthFinishContext {
-  redirectUri: string
   codeVerifier: string
   // The callback's query string (OAuth code, or the widget's signed fields).
   query: Record<string, string | undefined>
@@ -122,6 +122,9 @@ export interface Platform {
   // Field types only this platform has, such as Discord's embed.
   fields?: Record<string, (...args: any[]) => Field>
   billing?: PlatformBilling
+  // Non fatal configuration problems, such as a missing client secret, shown
+  // at startup.
+  warnings?: () => string[]
 }
 
 // Checks a platform definition early, so a typo fails at startup instead of

@@ -21,6 +21,7 @@ manage the bot per guild.
 | --- | --- |
 | `discord-dashboard` | Batteries included lite mode for discord.js self host |
 | `@discord-dashboard/core` | Engine: API, bot gateway, schema render |
+| `@discord-dashboard/platform-discord` | Discord login, server list and discord.js pickers |
 | `@discord-dashboard/schema` | Declarative settings schema (Zod) |
 | `@discord-dashboard/protocol` | Bot adapter protocol, source of truth |
 | `@discord-dashboard/sdk-js` | Bot adapter SDK for Node |

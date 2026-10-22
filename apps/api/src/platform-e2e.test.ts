@@ -9,6 +9,7 @@ import type { ApiConfig } from "./config.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
 import { buildDefFromAdapter } from "@discord-dashboard/core"
 import { Adapter, defineSettings, f } from "@discord-dashboard/sdk-js"
+import { discord } from "@discord-dashboard/platform-discord"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()
@@ -23,7 +24,7 @@ const config: ApiConfig = {
   port: 0,
   cookieSecret: "test-secret-at-least-32-chars-long-000",
   allowedOrigins: ["http://localhost:3000"],
-  discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+  platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" })],
 }
 
 // The full platform path: an HTTP request, authorized against the session's

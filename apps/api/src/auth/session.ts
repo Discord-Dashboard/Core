@@ -1,12 +1,16 @@
 import crypto from "node:crypto"
 
 export interface SessionData {
+  // The platform the user logged in with, such as "discord".
+  platform?: string
   userId?: string
   username?: string
   avatar?: string | null
   guilds?: unknown[]
   pkceVerifier?: string
   state?: string
+  // The platform a login was started with, until its callback arrives.
+  authPlatform?: string
 }
 
 interface Entry {
