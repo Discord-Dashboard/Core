@@ -51,7 +51,7 @@ describe("audit over http", () => {
   it("records a setting change and exposes it to a guild manager", async () => {
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     cookie = `${SESSION_COOKIE}=${sid}`
     app = await buildServer(config, {
       def,
@@ -61,14 +61,14 @@ describe("audit over http", () => {
 
     await app.inject({
       method: "POST",
-      url: "/api/guilds/g/settings/general/prefix",
+      url: "/api/spaces/discord/g/settings/general/prefix",
       headers: { origin: "http://localhost:3000", cookie },
       payload: { value: "!" },
     })
 
     const res = await app.inject({
       method: "GET",
-      url: "/api/guilds/g/audit",
+      url: "/api/spaces/discord/g/audit",
       headers: { cookie },
     })
     expect(res.statusCode).toBe(200)
@@ -81,7 +81,7 @@ describe("audit over http", () => {
     expect(entries[0]!.value).toBe("!")
 
     // A user who does not manage the guild cannot read its audit trail.
-    const other = await app.inject({ method: "GET", url: "/api/guilds/nope/audit", headers: { cookie } })
+    const other = await app.inject({ method: "GET", url: "/api/spaces/discord/nope/audit", headers: { cookie } })
     expect(other.statusCode).toBe(403)
     await app.close()
   })

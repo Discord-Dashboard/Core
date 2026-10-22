@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest"
-import { SessionStore, canManageGuild, SESSION_COOKIE } from "./session.js"
+import { SessionStore, canManageSpace, SESSION_COOKIE } from "./session.js"
 
 describe("SessionStore", () => {
   it("expires pre auth entries after their short ttl", async () => {
@@ -25,10 +25,14 @@ describe("SessionStore", () => {
     expect(store.size).toBeLessThanOrEqual(3)
   })
 
-  it("matches guilds the user manages", () => {
-    expect(canManageGuild({ guilds: [{ id: "g1" }] }, "g1")).toBe(true)
-    expect(canManageGuild({ guilds: [{ id: "g1" }] }, "g2")).toBe(false)
-    expect(canManageGuild(undefined, "g1")).toBe(false)
+  it("matches spaces the user manages on their login platform", () => {
+    const session = { platform: "discord", spaces: [{ id: "g1" }] }
+    expect(canManageSpace(session, "discord", "g1")).toBe(true)
+    expect(canManageSpace(session, "discord", "g2")).toBe(false)
+    // The same id on another platform is a different space.
+    expect(canManageSpace(session, "slack", "g1")).toBe(false)
+    expect(canManageSpace({ spaces: [{ id: "g1" }] }, "discord", "g1")).toBe(false)
+    expect(canManageSpace(undefined, "discord", "g1")).toBe(false)
   })
 
   it("uses a plain cookie name outside production", () => {

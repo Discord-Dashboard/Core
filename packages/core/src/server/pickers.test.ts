@@ -31,7 +31,7 @@ describe("picker endpoints", () => {
   beforeAll(async () => {
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     cookie = `${SESSION_COOKIE}=${sid}`
     app = await buildServer(config, {
       def,
@@ -44,18 +44,18 @@ describe("picker endpoints", () => {
   })
 
   it("lists channels", async () => {
-    const res = await app.inject({ method: "GET", url: "/api/guilds/g/channels", headers: { cookie } })
+    const res = await app.inject({ method: "GET", url: "/api/spaces/discord/g/channels", headers: { cookie } })
     expect(res.statusCode).toBe(200)
     expect((res.json() as { channels: unknown[] }).channels).toEqual([
       { label: "general", value: "c1" },
     ])
   })
   it("lists roles", async () => {
-    const res = await app.inject({ method: "GET", url: "/api/guilds/g/roles", headers: { cookie } })
+    const res = await app.inject({ method: "GET", url: "/api/spaces/discord/g/roles", headers: { cookie } })
     expect((res.json() as { roles: { value: string }[] }).roles[0]?.value).toBe("r1")
   })
   it("requires auth", async () => {
-    const res = await app.inject({ method: "GET", url: "/api/guilds/g/channels" })
+    const res = await app.inject({ method: "GET", url: "/api/spaces/discord/g/channels" })
     expect(res.statusCode).toBe(401)
   })
 })

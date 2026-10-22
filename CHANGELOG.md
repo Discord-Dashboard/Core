@@ -24,7 +24,7 @@ A ground up rewrite, published under a new name. Highlights:
   reaction roles, autoresponder.
 - v2 compatibility layer and a project scaffolder.
 - Every API route lives under `/api`: auth is `/api/auth/*` (OAuth redirect
-  `/api/auth/callback`), webhooks are `/api/webhooks/*`, plus
+  `/api/auth/:platform/callback`), webhooks are `/api/webhooks/*`, plus
   `/api/openapi.json` and `/api/version`. Only the `/health`, `/ready` and
   `/metrics` probes stay at the root.
 - Core is platform neutral: settings, entitlements, audit entries and the
@@ -57,3 +57,9 @@ A ground up rewrite, published under a new name. Highlights:
   `guildId` param (including in `setting.changed`) is `spaceId`. The
   `GuildNotFound` error code is `SpaceNotFound`. Breaking: the gateway refuses
   1.x bots, so update the SDK along with the dashboard.
+- Space routes: `/api/guilds` is `/api/spaces` (returns `{ platform, spaces }`)
+  and `/api/guilds/:guildId/...` is `/api/spaces/:platform/:spaceId/...`. A
+  user can only reach spaces on the platform they logged in with. Each login
+  finishes at `/api/auth/:platform/callback` (Discord's default redirect uri is
+  now `/api/auth/discord/callback`); `/api/auth/callback` still works as an
+  alias, so an app registered with it keeps logging in.

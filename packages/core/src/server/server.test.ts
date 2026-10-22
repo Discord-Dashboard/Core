@@ -69,7 +69,7 @@ describe("api server (integration)", () => {
     }
     expect(doc.openapi).toBe("3.1.0")
     // Fastify :params are rendered as OpenAPI {params}.
-    expect(doc.paths["/api/guilds/{guildId}/values"]?.get).toBeDefined()
+    expect(doc.paths["/api/spaces/{platform}/{spaceId}/values"]?.get).toBeDefined()
     expect(doc.paths["/api/pages/{slug}"]?.post).toBeDefined()
   })
 
@@ -82,7 +82,7 @@ describe("api server (integration)", () => {
   it("rejects an unauthenticated settings write", async () => {
     const res = await app.inject({
       method: "POST",
-      url: "/api/guilds/g/settings/general/prefix",
+      url: "/api/spaces/discord/g/settings/general/prefix",
       payload: { value: "!" },
     })
     expect(res.statusCode).toBe(401)

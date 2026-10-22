@@ -29,7 +29,7 @@ describe("bulk values", () => {
   beforeAll(async () => {
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     cookie = `${SESSION_COOKIE}=${sid}`
     app = await buildServer(config, {
       def,
@@ -44,7 +44,7 @@ describe("bulk values", () => {
   it("returns all values with defaults applied", async () => {
     const res = await app.inject({
       method: "GET",
-      url: "/api/guilds/g/values",
+      url: "/api/spaces/discord/g/values",
       headers: { cookie },
     })
     expect(res.statusCode).toBe(200)
@@ -54,7 +54,7 @@ describe("bulk values", () => {
   })
 
   it("requires authentication", async () => {
-    const res = await app.inject({ method: "GET", url: "/api/guilds/g/values" })
+    const res = await app.inject({ method: "GET", url: "/api/spaces/discord/g/values" })
     expect(res.statusCode).toBe(401)
   })
 })
@@ -70,7 +70,7 @@ describe("live change fan out", () => {
     }, "g")
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     const app = await buildServer(config, {
       def,
       adapter: new InProcessAdapter(def, new MemoryStore()),
@@ -79,7 +79,7 @@ describe("live change fan out", () => {
     })
     await app.inject({
       method: "POST",
-      url: "/api/guilds/g/settings/general/prefix",
+      url: "/api/spaces/discord/g/settings/general/prefix",
       headers: { origin: "http://localhost:3000", cookie: `${SESSION_COOKIE}=${sid}` },
       payload: { value: "!" },
     })

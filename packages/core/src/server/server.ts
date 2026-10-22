@@ -20,7 +20,7 @@ import { EventHub } from "./events-hub.js"
 import { AuditLog } from "./audit.js"
 import {
   SESSION_COOKIE,
-  canManageGuild,
+  canManageSpace,
   type SessionData,
 } from "./auth/session.js"
 
@@ -154,13 +154,13 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     return value
   })
 
-  // Server sent events: live setting changes for a guild.
-  app.get("/api/guilds/:guildId/stream", (req, reply) => {
+  // Server sent events: live setting changes for a space.
+  app.get("/api/spaces/:platform/:spaceId/stream", (req, reply) => {
     const session = sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
-    const { guildId } = req.params as { guildId: string }
-    if (!canManageGuild(session, guildId)) {
-      return reply.code(403).send({ error: "no access to this guild" })
+    const { platform, spaceId } = req.params as { platform: string; spaceId: string }
+    if (!canManageSpace(session, platform, spaceId)) {
+      return reply.code(403).send({ error: "no access to this space" })
     }
     reply.raw.writeHead(200, {
       "content-type": "text/event-stream",
@@ -169,7 +169,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     })
     const off = events.subscribe(
       (e) => reply.raw.write(`data: ${JSON.stringify(e)}\n\n`),
-      guildId
+      spaceId
     )
     req.raw.on("close", off)
   })

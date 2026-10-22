@@ -21,7 +21,7 @@ describe("server with a dynamic def provider", () => {
   beforeAll(async () => {
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     cookie = `${SESSION_COOKIE}=${sid}`
     app = await buildServer(config, {
       def: () => current,
@@ -34,13 +34,13 @@ describe("server with a dynamic def provider", () => {
   })
 
   it("reflects the current provider schema in bulk values", async () => {
-    const empty = await app.inject({ method: "GET", url: "/api/guilds/g/values", headers: { cookie } })
+    const empty = await app.inject({ method: "GET", url: "/api/spaces/discord/g/values", headers: { cookie } })
     expect(empty.json()).toEqual({ values: {} })
 
     current = defineSettings((s) => ({
       general: s.category({ name: "General", options: { prefix: f.text({ default: "!" }) } }),
     }))
-    const after = await app.inject({ method: "GET", url: "/api/guilds/g/values", headers: { cookie } })
+    const after = await app.inject({ method: "GET", url: "/api/spaces/discord/g/values", headers: { cookie } })
     expect((after.json() as { values: Record<string, unknown> }).values["general.prefix"]).toBe("!")
   })
 })

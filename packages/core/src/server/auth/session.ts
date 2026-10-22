@@ -6,7 +6,8 @@ export interface SessionData {
   userId?: string
   username?: string
   avatar?: string | null
-  guilds?: unknown[]
+  // The spaces on that platform the user may manage, captured at login.
+  spaces?: { id: string }[]
   pkceVerifier?: string
   state?: string
   // The platform a login was started with, until its callback arrives.
@@ -124,13 +125,14 @@ export class SessionStore {
 export const SESSION_COOKIE =
   process.env.NODE_ENV === "production" ? "__Host-dd_sid" : "dd_sid"
 
-// A user may only touch guilds they manage, captured at login. This prevents a
-// logged in user from editing a server they have no rights to.
-export function canManageGuild(
+// A user may only touch spaces they manage on the platform they logged in
+// with, captured at login. This prevents a logged in user from editing a space
+// they have no rights to.
+export function canManageSpace(
   session: SessionData | undefined,
-  guildId: string
+  platform: string,
+  spaceId: string
 ): boolean {
-  return Boolean(
-    session?.guilds?.some((g) => (g as { id?: string }).id === guildId)
-  )
+  if (!session?.platform || session.platform !== platform) return false
+  return Boolean(session.spaces?.some((s) => s.id === spaceId))
 }

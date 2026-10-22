@@ -53,7 +53,7 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
         clientSecret: opts.discord.clientSecret,
         redirectUri:
           opts.discord.redirectUri ??
-          `http://localhost:${listenPort}/api/auth/callback`,
+          `http://localhost:${listenPort}/api/auth/discord/callback`,
       }),
     ],
   })

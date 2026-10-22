@@ -31,7 +31,7 @@ describe("security", () => {
   it("rejects a mutating request from a disallowed origin", async () => {
     const res = await app.inject({
       method: "POST",
-      url: "/api/guilds/g/settings/general/prefix",
+      url: "/api/spaces/discord/g/settings/general/prefix",
       headers: { origin: "https://evil.example" },
       payload: { value: "!" },
     })
@@ -41,7 +41,7 @@ describe("security", () => {
   it("allows an allowed origin through to auth", async () => {
     const res = await app.inject({
       method: "POST",
-      url: "/api/guilds/g/settings/general/prefix",
+      url: "/api/spaces/discord/g/settings/general/prefix",
       headers: { origin: "http://localhost:3000" },
       payload: { value: "!" },
     })
