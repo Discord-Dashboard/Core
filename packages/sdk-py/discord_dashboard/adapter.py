@@ -22,6 +22,8 @@ class Adapter:
         self._getter = None
         self._setter = None
         self._action = None
+        self._resources = None
+        self._permissions = None
         self._ws = None
         self._closed = False
 
@@ -41,6 +43,19 @@ class Adapter:
         self._action = fn
         return self
 
+    def on_resources(self, fn):
+        """Lists what a picker offers, such as a space's channels or roles:
+        fn(space_id, kind) returns [{"label": ..., "value": ...}]. A handler
+        that declares filter or platform gets those too."""
+        self._resources = fn
+        return self
+
+    def on_permissions(self, fn):
+        """A member's permissions in a space: fn(space_id, user_id) returns a
+        list such as ["MANAGE_GUILD"]."""
+        self._permissions = fn
+        return self
+
     async def push(self, method, params=None):
         if self._ws is not None:
             await self._ws.send(
@@ -51,10 +66,14 @@ class Adapter:
         self._closed = True
 
     def run(self):
-        asyncio.run(self._run_forever())
+        """Connects and blocks until disconnect(). Use start() inside a
+        program that already runs an asyncio loop, such as a discord.py bot."""
+        asyncio.run(self.start())
 
     # Reconnect automatically so the bot survives a dashboard restart.
-    async def _run_forever(self):
+    async def start(self):
+        """Connects and keeps reconnecting until disconnect(), for example as
+        asyncio.create_task(adapter.start())."""
         while not self._closed:
             try:
                 await self._loop()
@@ -117,6 +136,26 @@ class Adapter:
                     self._setter, (space_id, params.get("key"), params.get("value")), extra
                 )
             return {"ok": True}
+        # Without a handler, an empty list: a picker shows nothing rather than
+        # failing on a malformed answer.
+        if method == RpcMethod.SPACE_RESOURCES:
+            items = None
+            if self._resources:
+                items = await _call(
+                    self._resources,
+                    (space_id, params.get("kind")),
+                    {"filter": params.get("filter"), "platform": params.get("platform")},
+                )
+            return items or []
+        if method == RpcMethod.SPACE_MEMBER_PERMISSIONS:
+            permissions = None
+            if self._permissions:
+                permissions = await _call(
+                    self._permissions,
+                    (space_id, params.get("userId")),
+                    {"platform": params.get("platform")},
+                )
+            return {"permissions": permissions or []}
         if method == RpcMethod.ACTION_INVOKE:
             if self._action:
                 return await _call(

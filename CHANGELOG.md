@@ -15,6 +15,10 @@ A ground up rewrite, published under a new name. Highlights:
 - Protocol first core with a bot adapter over WebSocket. Node and Python SDKs.
 - Declarative settings schema (Zod) shared across server, client and SDKs.
 - Lite mode (SQLite, in process) and a platform profile (Postgres, Redis).
+- Both SDKs answer picker lookups: `onResources` / `on_resources` list a
+  space's channels and roles, and `onPermissions` / `on_permissions` a
+  member's permissions. The Python adapter has a `start()` coroutine for bots
+  that already run an asyncio loop.
 - The web dashboard ships prebuilt as `@asctane-dashboard/web`, and
   `createDashboard` serves it on the API's own port, so a bot gets the full
   dashboard from npm without cloning the repo. Pass `web: false` to serve only

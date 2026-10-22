@@ -16,7 +16,7 @@ const settings = defineSettings((s) => ({
 new Adapter({
   botId: process.env.BOT_ID ?? "example-bot",
   secret: process.env.DASHBOARD_SECRET ?? "dev-secret",
-  gateway: process.env.GATEWAY ?? "ws://localhost:3001/gateway",
+  gateway: process.env.GATEWAY ?? "ws://localhost:3002/gateway",
 })
   .settings(settings)
   .onGet((spaceId, key) => store.get(`${spaceId}:${key}`) ?? null)
