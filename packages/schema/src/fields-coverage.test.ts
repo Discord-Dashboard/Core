@@ -16,10 +16,25 @@ describe("field validation coverage", () => {
     expect(m.zod.safeParse(["a", "b"]).success).toBe(true)
     expect(m.zod.safeParse("a").success).toBe(false)
   })
+  it("multiSelect only accepts its own options", () => {
+    const m = f.multiSelect({ options: { a: "A", b: "B" } })
+    expect(m.zod.safeParse(["a", "c"]).success).toBe(false)
+  })
   it("list validates each item with the item schema", () => {
     const l = f.list(f.text({ max: 2 }))
     expect(l.zod.safeParse(["ok", "hi"]).success).toBe(true)
     expect(l.zod.safeParse(["toolong"]).success).toBe(false)
+  })
+  it("list respects max", () => {
+    const l = f.list(f.text(), { max: 2 })
+    expect(l.zod.safeParse(["a", "b"]).success).toBe(true)
+    expect(l.zod.safeParse(["a", "b", "c"]).success).toBe(false)
+  })
+  it("textarea respects min and max", () => {
+    const t = f.textarea({ min: 2, max: 4 })
+    expect(t.zod.safeParse("abc").success).toBe(true)
+    expect(t.zod.safeParse("a").success).toBe(false)
+    expect(t.zod.safeParse("abcde").success).toBe(false)
   })
   it("ref picks one id, or several when multiple", () => {
     expect(f.ref("channel").zod.safeParse("1").success).toBe(true)
