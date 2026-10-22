@@ -42,6 +42,7 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "migrations"
   ]
 }

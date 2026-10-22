@@ -26,19 +26,23 @@ export const bots = sqliteTable("bots", {
   createdAt: integer("created_at").default(now),
 })
 
-export const guildSettings = sqliteTable(
-  "guild_settings",
+export const spaceSettings = sqliteTable(
+  "space_settings",
   {
     botId: text("bot_id").notNull(),
-    guildId: text("guild_id").notNull(),
+    // The platform the space belongs to, such as "discord". Space ids are only
+    // unique within a platform.
+    platform: text("platform").notNull(),
+    spaceId: text("space_id").notNull(),
     key: text("key").notNull(),
     valueJson: text("value_json"),
     updatedBy: text("updated_by"),
     updatedAt: integer("updated_at").default(now),
   },
-  // One row per setting: the natural key is (bot, guild, key). This is the
-  // conflict target for upserts and stops duplicate rows for the same setting.
-  (t) => [primaryKey({ columns: [t.botId, t.guildId, t.key] })]
+  // One row per setting: the natural key is (bot, platform, space, key). This
+  // is the conflict target for upserts and stops duplicate rows for the same
+  // setting.
+  (t) => [primaryKey({ columns: [t.botId, t.platform, t.spaceId, t.key] })]
 )
 
 export const pages = sqliteTable(
