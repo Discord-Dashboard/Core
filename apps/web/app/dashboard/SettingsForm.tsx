@@ -1,10 +1,10 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { IconCheck, IconSliders } from "../../../components/icons"
-import { Field, type WireOption } from "../../../components/fields"
+import { IconCheck, IconSliders } from "../components/icons"
+import { Field, type WireOption } from "../components/fields"
 
-const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
+const API = process.env.NEXT_PUBLIC_API ?? ""
 
 interface WireCategory {
   id: string

@@ -30,6 +30,7 @@ manage the bot per guild.
 | `@asctane-dashboard/protocol` | Bot adapter protocol, source of truth |
 | `@asctane-dashboard/sdk-js` | Bot adapter SDK for Node |
 | `@asctane-dashboard/sdk-py` | Bot adapter SDK for Python |
+| `@asctane-dashboard/web` | The prebuilt web dashboard that lite mode serves |
 | `@asctane-dashboard/ui` | Component library and themes |
 | `@asctane-dashboard/builder` | Page builder (Puck) and AI generation |
 | `@asctane-dashboard/db` | Drizzle schema and SQLite storage |

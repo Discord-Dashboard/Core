@@ -26,6 +26,7 @@
     "@asctane-dashboard/db": "workspace:*",
     "@asctane-dashboard/platform-discord": "workspace:*",
     "@asctane-dashboard/schema": "workspace:*",
+    "@asctane-dashboard/web": "workspace:*",
     "fastify": "^5.10.0"
   },
   "peerDependencies": {

@@ -28,6 +28,7 @@ const dash = createDashboard({
 
 await client.login(process.env.BOT_TOKEN)
 await dash.listen(3001)
+console.log("Dashboard running on http://localhost:3001")
 `
 
 // Unlike the v2 scaffolder, secrets are read from the environment and never

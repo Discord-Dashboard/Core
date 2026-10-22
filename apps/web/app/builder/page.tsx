@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { IconExternal, IconLayout, IconWand } from "../components/icons"
 
-const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
+const API = process.env.NEXT_PUBLIC_API ?? ""
 
 interface PageSummary {
   slug: string
@@ -56,7 +56,7 @@ export default function BuilderPage() {
         ) : (
           <div className="dd-grid">
             {pages.map((p) => (
-              <a className="dd-pagecard" href={`/p/${p.slug}`} key={p.slug}>
+              <a className="dd-pagecard" href={`/p?slug=${encodeURIComponent(p.slug)}`} key={p.slug}>
                 <span className="dd-pagecard__preview" aria-hidden>
                   <span className="dd-pagecard__lines">
                     <span />

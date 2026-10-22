@@ -3,6 +3,7 @@ import cookie from "@fastify/cookie"
 import cors from "@fastify/cors"
 import helmet from "@fastify/helmet"
 import rateLimit from "@fastify/rate-limit"
+import fastifyStatic from "@fastify/static"
 import type { BotAdapter, DefSource } from "../base.js"
 import { createEntitlements } from "../billing/index.js"
 import { PROTOCOL_VERSION } from "@asctane-dashboard/protocol"
@@ -45,6 +46,9 @@ export interface ServerDeps {
   ready?: () => boolean | Promise<boolean>
   // Extra gauges to expose on /metrics, for example the connected bot count.
   metrics?: () => Record<string, number>
+  // Serves a prebuilt web app (a static export, such as webRoot from
+  // @asctane-dashboard/web) from this directory, on the API's own origin.
+  web?: { root: string }
 }
 
 export async function buildServer(config: ApiConfig, deps: ServerDeps) {
@@ -69,7 +73,20 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   const audit = deps.audit ?? new AuditLog()
   const entitlements = createEntitlements(grants)
 
-  await app.register(helmet)
+  await app.register(helmet, {
+    contentSecurityPolicy: deps.web
+      ? {
+          directives: {
+            // The exported pages hydrate from inline scripts, and avatars and
+            // icons come from the platform's CDN.
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            // Same origin assets must still load on a plain http deployment.
+            upgradeInsecureRequests: null,
+          },
+        }
+      : undefined,
+  })
   await app.register(cookie, { secret: config.cookieSecret })
   await app.register(rateLimit, {
     max: config.rateLimit?.max ?? 100,
@@ -78,14 +95,18 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   await app.register(cors, { origin: config.allowedOrigins, credentials: true })
 
   // CSRF mitigation for cookie auth: a state changing request coming from a
-  // browser carries an Origin header, and it must be an allowed origin.
-  // Webhooks are server to server and exempt.
+  // browser carries an Origin header, and it must be this server's own origin
+  // or an allowed one. Webhooks are server to server and exempt.
   const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"])
   app.addHook("onRequest", async (req, reply) => {
     if (!MUTATING.has(req.method)) return
     if (req.url.startsWith("/api/webhooks/")) return
     const origin = req.headers.origin
-    if (origin && !config.allowedOrigins.includes(origin)) {
+    if (
+      origin &&
+      !config.allowedOrigins.includes(origin) &&
+      !sameOrigin(origin, req.headers.host)
+    ) {
       return reply.code(403).send({ error: "bad origin" })
     }
   })
@@ -94,6 +115,8 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   // real server and never drifts from it.
   const routes: { method: string; url: string }[] = []
   app.addHook("onRoute", (r) => {
+    // The web app's catch all file route is not part of the API.
+    if (r.url.endsWith("*")) return
     const methods = Array.isArray(r.method) ? r.method : [r.method]
     for (const method of methods) {
       if (method === "HEAD" || method === "OPTIONS") continue
@@ -174,8 +197,30 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     req.raw.on("close", off)
   })
 
-  // Structured errors, and never leak internals to the client.
-  app.setNotFoundHandler((_req, reply) => reply.code(404).send({ error: "not found" }))
+  // The web app's pages and assets. A route is a folder with an index.html,
+  // so /manage is served from manage/index.html. A flat export works too:
+  // /manage falls back to manage.html.
+  if (deps.web) {
+    await app.register(fastifyStatic, {
+      root: deps.web.root,
+      extensions: ["html"],
+      // Next.js hashes these file names, so they can be cached for good.
+      setHeaders: (reply, file) => {
+        if (/[\\/]_next[\\/]static[\\/]/.test(file)) {
+          reply.header("cache-control", "public, max-age=31536000, immutable")
+        }
+      },
+    })
+  }
+
+  // Structured errors, and never leak internals to the client. A browser
+  // asking for a page that does not exist gets the web app's 404 page.
+  app.setNotFoundHandler((req, reply) => {
+    if (deps.web && req.method === "GET" && !req.url.startsWith("/api/")) {
+      return reply.code(404).type("text/html").sendFile("404.html")
+    }
+    return reply.code(404).send({ error: "not found" })
+  })
   app.setErrorHandler((err: FastifyError, req, reply) => {
     req.log.error(err)
     reply.code(err.statusCode ?? 500).send({ error: "internal error" })
@@ -200,4 +245,15 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   })
 
   return app
+}
+
+// Whether an Origin header names the host the request was sent to, as it does
+// when the web app is served by this server.
+function sameOrigin(origin: string, host: string | undefined): boolean {
+  if (!host) return false
+  try {
+    return new URL(origin).host === host
+  } catch {
+    return false
+  }
 }

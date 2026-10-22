@@ -10,6 +10,7 @@ import type { SettingsDef } from "@asctane-dashboard/schema"
 import { SqliteKeyValueStore } from "@asctane-dashboard/db"
 import type { FastifyInstance } from "fastify"
 import { discord, discordSourceFromClient } from "@asctane-dashboard/platform-discord"
+import { webRoot } from "@asctane-dashboard/web"
 
 export { defineSettings } from "@asctane-dashboard/schema"
 // The Discord flavored fields: typed channel and role pickers, plus embed.
@@ -32,6 +33,10 @@ export interface CreateDashboardOptions {
   pageEditors?: string[]
   // Optional AI provider that powers page generation.
   ai?: LlmClient
+  // The web dashboard served on the same port as the API. Defaults to the
+  // prebuilt app from @asctane-dashboard/web. Pass the root of your own static
+  // build to serve that instead, or false to serve only the API.
+  web?: { root: string } | false
 }
 
 export interface Dashboard {
@@ -43,22 +48,29 @@ export interface Dashboard {
 // server, OAuth and the settings API. No license, no external services.
 export function createDashboard(opts: CreateDashboardOptions): Dashboard {
   const port = opts.port ?? 3001
-  const configFor = (listenPort: number): ApiConfig => ({
-    port: listenPort,
-    cookieSecret: process.env.COOKIE_SECRET ?? "change-me-in-production",
-    allowedOrigins: (process.env.ALLOWED_ORIGINS ?? "http://localhost:3000")
-      .split(",")
-      .map((o) => o.trim()),
-    platforms: [
-      discord({
-        clientId: opts.discord.clientId,
-        clientSecret: opts.discord.clientSecret,
-        redirectUri:
-          opts.discord.redirectUri ??
-          `http://localhost:${listenPort}/api/auth/discord/callback`,
-      }),
-    ],
-  })
+  const web = opts.web === false ? undefined : (opts.web ?? { root: webRoot })
+  const configFor = (listenPort: number): ApiConfig => {
+    const redirectUri =
+      opts.discord.redirectUri ??
+      `http://localhost:${listenPort}/api/auth/discord/callback`
+    // Login ends on the first allowed origin. With the web app on this server
+    // that is the server's own public origin, which the redirect uri names.
+    const defaultOrigin = web ? new URL(redirectUri).origin : "http://localhost:3000"
+    return {
+      port: listenPort,
+      cookieSecret: process.env.COOKIE_SECRET ?? "change-me-in-production",
+      allowedOrigins: (process.env.ALLOWED_ORIGINS ?? defaultOrigin)
+        .split(",")
+        .map((o) => o.trim()),
+      platforms: [
+        discord({
+          clientId: opts.discord.clientId,
+          clientSecret: opts.discord.clientSecret,
+          redirectUri,
+        }),
+      ],
+    }
+  }
 
   const resolveStorage = (): KeyValueStore => {
     if (opts.storage === "sqlite") {
@@ -87,6 +99,7 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
         adapter,
         canEditPages,
         llm: opts.ai,
+        web,
       })
       await app.listen({ port: listenPort, host: "0.0.0.0" })
       return app

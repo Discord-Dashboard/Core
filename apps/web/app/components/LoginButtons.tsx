@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { IconArrowRight } from "./icons"
 
-const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
+const API = process.env.NEXT_PUBLIC_API ?? ""
 
 interface PlatformInfo {
   id: string

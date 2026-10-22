@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactElement } from "react"
 import { discordWidgets } from "@asctane-dashboard/platform-discord/web"
 import { IconChevronDown } from "./icons"
 
-const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
+const API = process.env.NEXT_PUBLIC_API ?? ""
 
 export interface WireOption {
   id: string
