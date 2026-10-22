@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { IconArrowRight, IconServers } from "../components/icons"
 
-const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
+const API = process.env.NEXT_PUBLIC_API ?? ""
 
 interface Space {
   id: string
@@ -62,7 +62,7 @@ export default function ManagePage() {
       ) : (
         <div className="dd-grid">
           {guilds.map((g) => (
-            <a className="dd-servercard" href={`/dashboard/${platform}/${g.id}`} key={g.id}>
+            <a className="dd-servercard" href={`/dashboard?platform=${encodeURIComponent(platform)}&space=${encodeURIComponent(g.id)}`} key={g.id}>
               <span className="dd-servercard__avatar" aria-hidden>
                 {g.name.slice(0, 1).toUpperCase()}
               </span>

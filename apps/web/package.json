@@ -1,28 +1,50 @@
 {
   "name": "@asctane-dashboard/web",
   "version": "3.1.0-beta.0",
-  "description": "Dashboard, builder and landing (Next.js).",
-  "private": true,
+  "description": "The prebuilt asctane-dashboard web app: dashboard, page builder and landing page.",
   "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Discord-Dashboard/Core.git",
+    "directory": "apps/web"
+  },
+  "homepage": "https://github.com/Discord-Dashboard/Core/tree/v3/apps/web#readme",
+  "bugs": {
+    "url": "https://github.com/Discord-Dashboard/Core/issues"
+  },
   "scripts": {
     "dev": "next dev --webpack -p 3000",
     "build": "next build --webpack",
-    "start": "next start -p 3000",
     "lint": "echo \"no lint yet\"",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
+  "devDependencies": {
     "@asctane-dashboard/builder": "workspace:*",
     "@asctane-dashboard/platform-discord": "workspace:*",
     "@asctane-dashboard/schema": "workspace:*",
     "@asctane-dashboard/theme-default": "workspace:*",
     "@asctane-dashboard/ui": "workspace:*",
+    "@types/react": "^19.2.17",
     "next": "^16.2.10",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.17",
+    "react-dom": "^19.2.7",
     "typescript": "^5.9.3"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "out",
+    "index.js",
+    "index.d.ts"
+  ]
 }

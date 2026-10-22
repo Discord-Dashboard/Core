@@ -46,10 +46,27 @@ describe("lite mode end to end", () => {
     // Editing requires a logged in user.
     const post = await fetch(`http://127.0.0.1:${port}/api/pages/home`, {
       method: "POST",
-      headers: { "content-type": "application/json", origin: "http://localhost:3000" },
+      // The web app posts from the server's own origin.
+      headers: { "content-type": "application/json", origin: `http://127.0.0.1:${port}` },
       body: JSON.stringify({ content: { version: 1, root: { title: "x" }, content: [] } }),
     })
     expect(post.status).toBe(401)
+
+    await app.close()
+  })
+
+  it("serves only the api when the web app is turned off", async () => {
+    const dash = createDashboard({
+      discord: { clientId: "c", clientSecret: "s" },
+      settings: defineSettings(() => ({})),
+      web: false,
+    })
+    const app = (await dash.listen(0)) as FastifyInstance
+    const port = (app.server.address() as { port: number }).port
+
+    const res = await fetch(`http://127.0.0.1:${port}/`)
+    expect(res.status).toBe(404)
+    expect(await res.json()).toEqual({ error: "not found" })
 
     await app.close()
   })

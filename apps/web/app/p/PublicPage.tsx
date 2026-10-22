@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { safeUrl } from "@asctane-dashboard/builder/url"
-import { IconArrowRight, IconCheck, IconDoc } from "../../components/icons"
+import { IconArrowRight, IconCheck, IconDoc } from "../components/icons"
 
-const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"
+const API = process.env.NEXT_PUBLIC_API ?? ""
 
 interface Block {
   type: string
@@ -85,15 +85,14 @@ function renderBlock(block: Block, i: number) {
 }
 
 // Public view of a published builder page.
-export default function PublishedPage() {
-  const params = useParams<{ slug: string }>()
-  const slug = params?.slug
+export function PublicPage() {
+  const slug = useSearchParams().get("slug")
   const [page, setPage] = useState<Page | null>(null)
   const [missing, setMissing] = useState(false)
 
   useEffect(() => {
     if (!slug) return
-    fetch(`${API}/api/pages/${slug}`)
+    fetch(`${API}/api/pages/${encodeURIComponent(slug)}`)
       .then((r) => {
         if (!r.ok) throw new Error("not found")
         return r.json()
