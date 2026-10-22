@@ -12,7 +12,8 @@
     "typecheck": "turbo run typecheck",
     "test": "vitest run",
     "format": "prettier --write .",
-    "smoke:pack": "node scripts/pack-smoke.mjs"
+    "smoke:pack": "node scripts/pack-smoke.mjs",
+    "npm:trust": "node scripts/npm-trust.mjs"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
