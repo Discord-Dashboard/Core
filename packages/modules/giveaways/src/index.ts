@@ -3,6 +3,7 @@ import { defineSettings } from "@asctane-dashboard/schema"
 export const giveaways = {
   id: "giveaways",
   name: "Giveaways",
+  requires: ["channel", "role"],
   settings: defineSettings((s, f) => ({
     giveaways: s.category({
       name: "Giveaways",

@@ -3,6 +3,9 @@ import { defineSettings } from "@asctane-dashboard/schema"
 export const tickets = {
   id: "tickets",
   name: "Tickets",
+  requires: ["channel", "role"],
+  // Tickets open in a Discord channel category, which other platforms lack.
+  platforms: ["discord"],
   settings: defineSettings((s, f) => ({
     tickets: s.category({
       name: "Tickets",

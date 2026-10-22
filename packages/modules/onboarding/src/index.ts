@@ -3,6 +3,7 @@ import { defineSettings } from "@asctane-dashboard/schema"
 export const onboarding = {
   id: "onboarding",
   name: "Onboarding",
+  requires: ["channel", "role"],
   settings: defineSettings((s, f) => ({
     onboarding: s.category({
       name: "Onboarding",
