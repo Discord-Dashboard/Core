@@ -1,4 +1,4 @@
-import { WIRE_VERSION, type SchemaDescriptor, type WireOption } from "@discord-dashboard/protocol"
+import { WIRE_VERSION, type SchemaDescriptor, type WireOption } from "@asctane-dashboard/protocol"
 import type { Field } from "./fields.js"
 import type { SettingsDef } from "./define.js"
 

@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { themeToCss, themes } from "@discord-dashboard/ui"
-import { defaultTheme } from "@discord-dashboard/theme-default"
+import { themeToCss, themes } from "@asctane-dashboard/ui"
+import { defaultTheme } from "@asctane-dashboard/theme-default"
 import { IconPalette, IconChevronDown } from "./components/icons"
 
 // Applies a theme by injecting its tokens. Because everything is built on the

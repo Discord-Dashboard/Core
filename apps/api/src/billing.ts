@@ -1,5 +1,5 @@
-import type { EntitlementSubject } from "@discord-dashboard/core"
-import type { Grant, GrantStore } from "@discord-dashboard/billing"
+import type { EntitlementSubject } from "@asctane-dashboard/core"
+import type { Grant, GrantStore } from "@asctane-dashboard/billing"
 
 // In memory grant store for lite mode. The platform profile swaps this for a
 // database backed store behind the same interface.

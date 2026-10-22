@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { SubjectType } from "@discord-dashboard/core"
+import { SubjectType } from "@asctane-dashboard/core"
 import {
   createEntitlements,
   GrantSource,

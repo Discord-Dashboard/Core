@@ -2,9 +2,9 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest"
 import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
-import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
-import { defineSettings, f } from "@discord-dashboard/schema"
-import { discord } from "@discord-dashboard/platform-discord"
+import { InProcessAdapter, MemoryStore } from "@asctane-dashboard/core"
+import { defineSettings, f } from "@asctane-dashboard/schema"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,
@@ -101,8 +101,8 @@ describe("api server (integration)", () => {
 
 import { describe as d2, it as i2, expect as e2, beforeAll as b2, afterAll as a2 } from "vitest"
 import { buildServer as build2 } from "./server.js"
-import { InProcessAdapter as IPA2, MemoryStore as MS2 } from "@discord-dashboard/core"
-import { defineSettings as ds2 } from "@discord-dashboard/schema"
+import { InProcessAdapter as IPA2, MemoryStore as MS2 } from "@asctane-dashboard/core"
+import { defineSettings as ds2 } from "@asctane-dashboard/schema"
 
 d2("api robustness", () => {
   let app2: import("fastify").FastifyInstance

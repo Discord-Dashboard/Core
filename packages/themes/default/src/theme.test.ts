@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { isSafeTheme, themeToCss } from "@discord-dashboard/ui"
+import { isSafeTheme, themeToCss } from "@asctane-dashboard/ui"
 import { defaultTheme } from "./index.js"
 
 describe("default theme", () => {

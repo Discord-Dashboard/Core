@@ -7,9 +7,9 @@ import { RemoteAdapter } from "./gateway/remote-adapter.js"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
-import { buildDefFromAdapter } from "@discord-dashboard/core"
-import { Adapter, defineSettings, f } from "@discord-dashboard/sdk-js"
-import { discord } from "@discord-dashboard/platform-discord"
+import { buildDefFromAdapter } from "@asctane-dashboard/core"
+import { Adapter, defineSettings, f } from "@asctane-dashboard/sdk-js"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()

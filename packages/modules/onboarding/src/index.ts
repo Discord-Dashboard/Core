@@ -1,4 +1,4 @@
-import { defineSettings } from "@discord-dashboard/schema"
+import { defineSettings } from "@asctane-dashboard/schema"
 
 export const onboarding = {
   id: "onboarding",

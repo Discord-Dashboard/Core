@@ -2,9 +2,9 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest"
 import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
-import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
-import { defineSettings, f } from "@discord-dashboard/schema"
-import { discord } from "@discord-dashboard/platform-discord"
+import { InProcessAdapter, MemoryStore } from "@asctane-dashboard/core"
+import { defineSettings, f } from "@asctane-dashboard/schema"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,
@@ -71,8 +71,8 @@ describe("security", () => {
 
 import { describe as d3, it as i3, expect as e3 } from "vitest"
 import { buildServer as build3 } from "./server.js"
-import { InProcessAdapter as IPA3, MemoryStore as MS3 } from "@discord-dashboard/core"
-import { defineSettings as ds3 } from "@discord-dashboard/schema"
+import { InProcessAdapter as IPA3, MemoryStore as MS3 } from "@asctane-dashboard/core"
+import { defineSettings as ds3 } from "@asctane-dashboard/schema"
 
 d3("rate limiting", () => {
   i3("returns 429 once the limit is exceeded", async () => {
@@ -99,8 +99,8 @@ d3("rate limiting", () => {
 
 import { describe as d9, it as i9, expect as e9 } from "vitest"
 import { buildServer as build9 } from "./server.js"
-import { InProcessAdapter as IPA9, MemoryStore as MS9 } from "@discord-dashboard/core"
-import { defineSettings as ds9 } from "@discord-dashboard/schema"
+import { InProcessAdapter as IPA9, MemoryStore as MS9 } from "@asctane-dashboard/core"
+import { defineSettings as ds9 } from "@asctane-dashboard/schema"
 
 d9("body size limit", () => {
   i9("rejects an oversized request body", async () => {

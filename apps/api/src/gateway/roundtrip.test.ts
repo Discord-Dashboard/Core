@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest"
 import { createServer } from "node:http"
 import { startGateway } from "./gateway.js"
 import { RemoteAdapter } from "./remote-adapter.js"
-import { SettingsService, AllowAll } from "@discord-dashboard/core"
-import { Adapter, defineSettings, f } from "@discord-dashboard/sdk-js"
+import { SettingsService, AllowAll } from "@asctane-dashboard/core"
+import { Adapter, defineSettings, f } from "@asctane-dashboard/sdk-js"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()

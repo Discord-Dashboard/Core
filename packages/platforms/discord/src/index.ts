@@ -1,4 +1,4 @@
-import { definePlatform, type Platform } from "@discord-dashboard/core"
+import { definePlatform, type Platform } from "@asctane-dashboard/core"
 import {
   buildAuthorizeUrl,
   exchangeCode,

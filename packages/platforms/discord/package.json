@@ -1,7 +1,7 @@
 {
-  "name": "@discord-dashboard/platform-discord",
+  "name": "@asctane-dashboard/platform-discord",
   "version": "3.1.0-alpha.0",
-  "description": "Discord support for discord-dashboard: OAuth login, the server list and discord.js pickers.",
+  "description": "Discord support for asctane-dashboard: OAuth login, the server list and discord.js pickers.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -22,7 +22,7 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@discord-dashboard/core": "workspace:*"
+    "@asctane-dashboard/core": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

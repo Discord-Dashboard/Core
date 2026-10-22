@@ -1,12 +1,12 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
-import type { BotAdapter, Entitlements, DefSource } from "@discord-dashboard/core"
-import { SettingsService, SubjectType } from "@discord-dashboard/core"
+import type { BotAdapter, Entitlements, DefSource } from "@asctane-dashboard/core"
+import { SettingsService, SubjectType } from "@asctane-dashboard/core"
 import {
   SESSION_COOKIE,
   canManageGuild,
   type SessionStore,
 } from "../auth/session.js"
-import { ProtocolEvent } from "@discord-dashboard/protocol"
+import { ProtocolEvent } from "@asctane-dashboard/protocol"
 import type { AuditLog } from "../audit.js"
 import { DASHBOARD_SOURCE, type EventHub } from "../events-hub.js"
 

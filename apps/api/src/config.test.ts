@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest"
 import { validateConfig } from "./config.js"
 import type { ApiConfig } from "./config.js"
-import { discord } from "@discord-dashboard/platform-discord"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 const full: ApiConfig = {
   port: 3001,

@@ -1,5 +1,5 @@
 {
-  "name": "@discord-dashboard/module-giveaways",
+  "name": "@asctane-dashboard/module-giveaways",
   "version": "3.1.0-alpha.0",
   "description": "Giveaway module.",
   "type": "module",
@@ -22,7 +22,7 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@discord-dashboard/schema": "workspace:*"
+    "@asctane-dashboard/schema": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

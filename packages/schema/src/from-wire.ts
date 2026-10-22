@@ -1,4 +1,4 @@
-import type { SchemaDescriptor, WireOption } from "@discord-dashboard/protocol"
+import type { SchemaDescriptor, WireOption } from "@asctane-dashboard/protocol"
 import { f, type Field, type BaseFieldOpts } from "./fields.js"
 import type { SettingsDef, CategoryDef } from "./define.js"
 

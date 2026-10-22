@@ -2,8 +2,8 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest"
 import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
-import { fromV2 } from "@discord-dashboard/compat-v2"
-import { discord } from "@discord-dashboard/platform-discord"
+import { fromV2 } from "@asctane-dashboard/compat-v2"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,

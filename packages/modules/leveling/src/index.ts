@@ -1,4 +1,4 @@
-import { defineSettings } from "@discord-dashboard/schema"
+import { defineSettings } from "@asctane-dashboard/schema"
 
 // A module declares its own settings schema. The host renders it and calls the
 // module handlers. This is the successor to the v2 module example.

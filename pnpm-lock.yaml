@@ -38,25 +38,25 @@ importers:
 
   apps/api:
     dependencies:
-      '@discord-dashboard/billing':
+      '@asctane-dashboard/billing':
         specifier: workspace:*
         version: link:../../packages/billing
-      '@discord-dashboard/builder':
+      '@asctane-dashboard/builder':
         specifier: workspace:*
         version: link:../../packages/builder
-      '@discord-dashboard/core':
+      '@asctane-dashboard/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@discord-dashboard/db':
+      '@asctane-dashboard/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@discord-dashboard/platform-discord':
+      '@asctane-dashboard/platform-discord':
         specifier: workspace:*
         version: link:../../packages/platforms/discord
-      '@discord-dashboard/protocol':
+      '@asctane-dashboard/protocol':
         specifier: workspace:*
         version: link:../../packages/protocol
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../packages/schema
       '@fastify/cookie':
@@ -87,16 +87,16 @@ importers:
 
   apps/web:
     dependencies:
-      '@discord-dashboard/builder':
+      '@asctane-dashboard/builder':
         specifier: workspace:*
         version: link:../../packages/builder
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../packages/schema
-      '@discord-dashboard/theme-default':
+      '@asctane-dashboard/theme-default':
         specifier: workspace:*
         version: link:../../packages/themes/default
-      '@discord-dashboard/ui':
+      '@asctane-dashboard/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       next:
@@ -118,7 +118,7 @@ importers:
 
   examples/bot-djs:
     dependencies:
-      '@discord-dashboard/sdk-js':
+      '@asctane-dashboard/sdk-js':
         specifier: workspace:*
         version: link:../../packages/sdk-js
     devDependencies:
@@ -126,21 +126,21 @@ importers:
         specifier: ^4.23.0
         version: 4.23.0
 
-  meta/discord-dashboard:
+  meta/asctane-dashboard:
     dependencies:
-      '@discord-dashboard/api':
+      '@asctane-dashboard/api':
         specifier: workspace:*
         version: link:../../apps/api
-      '@discord-dashboard/core':
+      '@asctane-dashboard/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@discord-dashboard/db':
+      '@asctane-dashboard/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@discord-dashboard/platform-discord':
+      '@asctane-dashboard/platform-discord':
         specifier: workspace:*
         version: link:../../packages/platforms/discord
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../packages/schema
       discord.js:
@@ -152,7 +152,7 @@ importers:
 
   packages/billing:
     dependencies:
-      '@discord-dashboard/core':
+      '@asctane-dashboard/core':
         specifier: workspace:*
         version: link:../core
       stripe:
@@ -177,22 +177,22 @@ importers:
 
   packages/compat-v2:
     dependencies:
-      '@discord-dashboard/core':
+      '@asctane-dashboard/core':
         specifier: workspace:*
         version: link:../core
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../schema
 
   packages/core:
     dependencies:
-      '@discord-dashboard/db':
+      '@asctane-dashboard/db':
         specifier: workspace:*
         version: link:../db
-      '@discord-dashboard/protocol':
+      '@asctane-dashboard/protocol':
         specifier: workspace:*
         version: link:../protocol
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../schema
 
@@ -218,76 +218,76 @@ importers:
 
   packages/modules/all:
     dependencies:
-      '@discord-dashboard/module-automod':
+      '@asctane-dashboard/module-automod':
         specifier: workspace:*
         version: link:../automod
-      '@discord-dashboard/module-autoresponder':
+      '@asctane-dashboard/module-autoresponder':
         specifier: workspace:*
         version: link:../autoresponder
-      '@discord-dashboard/module-giveaways':
+      '@asctane-dashboard/module-giveaways':
         specifier: workspace:*
         version: link:../giveaways
-      '@discord-dashboard/module-leveling':
+      '@asctane-dashboard/module-leveling':
         specifier: workspace:*
         version: link:../leveling
-      '@discord-dashboard/module-onboarding':
+      '@asctane-dashboard/module-onboarding':
         specifier: workspace:*
         version: link:../onboarding
-      '@discord-dashboard/module-reaction-roles':
+      '@asctane-dashboard/module-reaction-roles':
         specifier: workspace:*
         version: link:../reaction-roles
-      '@discord-dashboard/module-tickets':
+      '@asctane-dashboard/module-tickets':
         specifier: workspace:*
         version: link:../tickets
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/automod:
     dependencies:
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/autoresponder:
     dependencies:
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/giveaways:
     dependencies:
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/leveling:
     dependencies:
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/onboarding:
     dependencies:
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/reaction-roles:
     dependencies:
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/tickets:
     dependencies:
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/platforms/discord:
     dependencies:
-      '@discord-dashboard/core':
+      '@asctane-dashboard/core':
         specifier: workspace:*
         version: link:../../core
 
@@ -295,7 +295,7 @@ importers:
 
   packages/schema:
     dependencies:
-      '@discord-dashboard/protocol':
+      '@asctane-dashboard/protocol':
         specifier: workspace:*
         version: link:../protocol
       zod:
@@ -304,10 +304,10 @@ importers:
 
   packages/sdk-js:
     dependencies:
-      '@discord-dashboard/protocol':
+      '@asctane-dashboard/protocol':
         specifier: workspace:*
         version: link:../protocol
-      '@discord-dashboard/schema':
+      '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../schema
       ws:
@@ -320,7 +320,7 @@ importers:
 
   packages/themes/default:
     dependencies:
-      '@discord-dashboard/ui':
+      '@asctane-dashboard/ui':
         specifier: workspace:*
         version: link:../../ui
 

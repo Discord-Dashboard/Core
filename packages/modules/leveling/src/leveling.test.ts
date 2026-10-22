@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { leveling } from "./index.js"
-import { toWire } from "@discord-dashboard/schema"
+import { toWire } from "@asctane-dashboard/schema"
 
 describe("leveling module", () => {
   it("exposes an id and a settings schema", () => {

@@ -6,8 +6,8 @@ import {
   WIRE_VERSION,
   HandshakeType,
   RpcMethod,
-} from "@discord-dashboard/protocol"
-import { toWire, type SettingsDef } from "@discord-dashboard/schema"
+} from "@asctane-dashboard/protocol"
+import { toWire, type SettingsDef } from "@asctane-dashboard/schema"
 
 interface Actor {
   userId?: string

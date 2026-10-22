@@ -7,7 +7,7 @@ import {
   HandshakeType,
   ProtocolErrorCode,
   type HelloParams,
-} from "@discord-dashboard/protocol"
+} from "@asctane-dashboard/protocol"
 
 interface Pending {
   resolve: (value: unknown) => void

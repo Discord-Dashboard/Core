@@ -1,15 +1,15 @@
-import { buildServer, type ApiConfig, type LlmClient } from "@discord-dashboard/api"
+import { buildServer, type ApiConfig, type LlmClient } from "@asctane-dashboard/api"
 import {
   InProcessAdapter,
   MemoryStore,
   type KeyValueStore,
-} from "@discord-dashboard/core"
-import type { SettingsDef } from "@discord-dashboard/schema"
-import { SqliteKeyValueStore } from "@discord-dashboard/db"
+} from "@asctane-dashboard/core"
+import type { SettingsDef } from "@asctane-dashboard/schema"
+import { SqliteKeyValueStore } from "@asctane-dashboard/db"
 import type { FastifyInstance } from "fastify"
-import { discord, discordSourceFromClient } from "@discord-dashboard/platform-discord"
+import { discord, discordSourceFromClient } from "@asctane-dashboard/platform-discord"
 
-export { defineSettings, f } from "@discord-dashboard/schema"
+export { defineSettings, f } from "@asctane-dashboard/schema"
 
 export interface CreateDashboardOptions {
   client?: unknown

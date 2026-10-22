@@ -6,8 +6,8 @@ import {
   SettingsService,
   AllowAll,
   buildDefFromAdapter,
-} from "@discord-dashboard/core"
-import { Adapter, defineSettings, f } from "@discord-dashboard/sdk-js"
+} from "@asctane-dashboard/core"
+import { Adapter, defineSettings, f } from "@asctane-dashboard/sdk-js"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()

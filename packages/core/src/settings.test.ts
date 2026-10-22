@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest"
 import { SettingsService } from "./settings.js"
 import { InProcessAdapter, MemoryStore } from "./inprocess.js"
 import { AllowAll, type Entitlements } from "./entitlements.js"
-import { defineSettings, f } from "@discord-dashboard/schema"
+import { defineSettings, f } from "@asctane-dashboard/schema"
 
 const def = defineSettings((s) => ({
   general: s.category({ name: "General", options: { prefix: f.text({ max: 3 }) } }),
@@ -47,7 +47,7 @@ import { describe as d5, it as i5, expect as e5 } from "vitest"
 import { SettingsService as SS5 } from "./settings.js"
 import { InProcessAdapter as IPA5, MemoryStore as MS5 } from "./inprocess.js"
 import { AllowAll as AA5 } from "./entitlements.js"
-import { defineSettings as ds5, f as f5 } from "@discord-dashboard/schema"
+import { defineSettings as ds5, f as f5 } from "@asctane-dashboard/schema"
 
 d5("SettingsService defaults", () => {
   const def5 = ds5((s) => ({
@@ -71,7 +71,7 @@ import { describe as d8, it as i8, expect as e8 } from "vitest"
 import { SettingsService as SS8 } from "./settings.js"
 import { InProcessAdapter as IPA8, MemoryStore as MS8 } from "./inprocess.js"
 import { AllowAll as AA8 } from "./entitlements.js"
-import { defineSettings as ds8, f as f8 } from "@discord-dashboard/schema"
+import { defineSettings as ds8, f as f8 } from "@asctane-dashboard/schema"
 
 d8("validation error detail", () => {
   const def8 = ds8((s) => ({
@@ -90,7 +90,7 @@ import { describe as dA, it as iA, expect as eA } from "vitest"
 import { SettingsService as SSA } from "./settings.js"
 import { InProcessAdapter as IPAA, MemoryStore as MSA } from "./inprocess.js"
 import { AllowAll as AAA } from "./entitlements.js"
-import { defineSettings as dsA, f as fA } from "@discord-dashboard/schema"
+import { defineSettings as dsA, f as fA } from "@asctane-dashboard/schema"
 
 dA("dynamic schema provider", () => {
   iA("uses the current schema returned by the provider", async () => {

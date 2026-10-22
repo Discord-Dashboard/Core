@@ -1,5 +1,5 @@
-import { defineSettings, f, type Field } from "@discord-dashboard/schema"
-import type { BotAdapter } from "@discord-dashboard/core"
+import { defineSettings, f, type Field } from "@asctane-dashboard/schema"
+import type { BotAdapter } from "@asctane-dashboard/core"
 
 interface V2Option {
   optionId: string
@@ -67,7 +67,7 @@ export function fromV2(settings: V2Category[]) {
 
   const adapter: BotAdapter = {
     async describeSchema(locale?: string) {
-      const { toWire } = await import("@discord-dashboard/schema")
+      const { toWire } = await import("@asctane-dashboard/schema")
       return toWire(def, locale)
     },
     async getChannels() {

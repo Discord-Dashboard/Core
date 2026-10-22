@@ -1,5 +1,5 @@
 {
-  "name": "@discord-dashboard/billing",
+  "name": "@asctane-dashboard/billing",
   "version": "3.1.0-alpha.0",
   "description": "Entitlements over Stripe Connect and Discord SKUs.",
   "type": "module",
@@ -22,7 +22,7 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@discord-dashboard/core": "workspace:*"
+    "@asctane-dashboard/core": "workspace:*"
   },
   "peerDependencies": {
     "stripe": "^22.3.0"

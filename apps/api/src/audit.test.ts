@@ -4,9 +4,9 @@ import { AuditLog } from "./audit.js"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
-import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
-import { defineSettings, f } from "@discord-dashboard/schema"
-import { discord } from "@discord-dashboard/platform-discord"
+import { InProcessAdapter, MemoryStore } from "@asctane-dashboard/core"
+import { defineSettings, f } from "@asctane-dashboard/schema"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 describe("AuditLog", () => {
   it("returns a guild's entries newest first", () => {

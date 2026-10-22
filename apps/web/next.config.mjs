@@ -9,10 +9,10 @@ const nextConfig = {
     return [{ source: "/api/:path*", destination: `${API}/api/:path*` }]
   },
   transpilePackages: [
-    "@discord-dashboard/ui",
-    "@discord-dashboard/schema",
-    "@discord-dashboard/builder",
-    "@discord-dashboard/theme-default",
+    "@asctane-dashboard/ui",
+    "@asctane-dashboard/schema",
+    "@asctane-dashboard/builder",
+    "@asctane-dashboard/theme-default",
   ],
   webpack: (config) => {
     // Resolve ESM style .js imports to their .ts source in transpiled packages.

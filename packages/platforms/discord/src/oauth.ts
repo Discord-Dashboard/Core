@@ -1,4 +1,4 @@
-import type { SpaceSummary } from "@discord-dashboard/core"
+import type { SpaceSummary } from "@asctane-dashboard/core"
 
 const API = "https://discord.com/api"
 

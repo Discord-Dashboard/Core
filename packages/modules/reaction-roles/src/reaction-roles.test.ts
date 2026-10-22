@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { reactionRoles } from "./index.js"
-import { toWire } from "@discord-dashboard/schema"
+import { toWire } from "@asctane-dashboard/schema"
 
 describe("reaction-roles module", () => {
   it("has an id and settings", () => {

@@ -3,7 +3,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify"
 import {
   grantFromStripeSubscription,
   grantFromDiscordEntitlement,
-} from "@discord-dashboard/billing"
+} from "@asctane-dashboard/billing"
 import type { MemoryGrantStore } from "../billing.js"
 
 function safeEqual(a: string, b: string): boolean {

@@ -1,11 +1,11 @@
-import type { Platform } from "@discord-dashboard/core"
+import type { Platform } from "@asctane-dashboard/core"
 
 export interface ApiConfig {
   port: number
   cookieSecret: string
   allowedOrigins: string[]
   // The platforms people can log in with. The host builds these, for example
-  // discord() from @discord-dashboard/platform-discord; core never imports a
+  // discord() from @asctane-dashboard/platform-discord; core never imports a
   // platform package itself.
   platforms: Platform[]
   rateLimit?: { max: number; timeWindow: string | number }

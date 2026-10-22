@@ -1,4 +1,4 @@
-# discord-dashboard
+# asctane-dashboard
 
 Open source dashboard framework for Discord bots.
 
@@ -19,20 +19,20 @@ manage the bot per guild.
 
 | Package | Role |
 | --- | --- |
-| `discord-dashboard` | Batteries included lite mode for discord.js self host |
-| `@discord-dashboard/core` | Engine: API, bot gateway, schema render |
-| `@discord-dashboard/platform-discord` | Discord login, server list and discord.js pickers |
-| `@discord-dashboard/schema` | Declarative settings schema (Zod) |
-| `@discord-dashboard/protocol` | Bot adapter protocol, source of truth |
-| `@discord-dashboard/sdk-js` | Bot adapter SDK for Node |
-| `@discord-dashboard/sdk-py` | Bot adapter SDK for Python |
-| `@discord-dashboard/ui` | Component library and themes |
-| `@discord-dashboard/builder` | Page builder (Puck) and AI generation |
-| `@discord-dashboard/billing` | Entitlements: Stripe Connect and Discord SKUs |
-| `@discord-dashboard/db` | Drizzle schema and SQLite storage |
-| `@discord-dashboard/compat-v2` | Adapter for v2 settings, for migration |
-| `@discord-dashboard/marketplace` | Module and theme registry |
-| `@discord-dashboard/modules/*` | Reference feature modules (leveling, tickets, automod, and more) |
+| `asctane-dashboard` | Batteries included lite mode for discord.js self host |
+| `@asctane-dashboard/core` | Engine: API, bot gateway, schema render |
+| `@asctane-dashboard/platform-discord` | Discord login, server list and discord.js pickers |
+| `@asctane-dashboard/schema` | Declarative settings schema (Zod) |
+| `@asctane-dashboard/protocol` | Bot adapter protocol, source of truth |
+| `@asctane-dashboard/sdk-js` | Bot adapter SDK for Node |
+| `@asctane-dashboard/sdk-py` | Bot adapter SDK for Python |
+| `@asctane-dashboard/ui` | Component library and themes |
+| `@asctane-dashboard/builder` | Page builder (Puck) and AI generation |
+| `@asctane-dashboard/billing` | Entitlements: Stripe Connect and Discord SKUs |
+| `@asctane-dashboard/db` | Drizzle schema and SQLite storage |
+| `@asctane-dashboard/compat-v2` | Adapter for v2 settings, for migration |
+| `@asctane-dashboard/marketplace` | Module and theme registry |
+| `@asctane-dashboard/modules/*` | Reference feature modules (leveling, tickets, automod, and more) |
 
 ## Status
 

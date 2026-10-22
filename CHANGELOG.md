@@ -2,11 +2,15 @@
 
 ## Unreleased (3.1.0-alpha)
 
-Versioned 3.1.0 because npm already holds older 3.0.x prereleases from earlier
-attempts, which would otherwise sort above this alpha.
+Versioned 3.1.0 to follow the 3.0.x prereleases published as discord-dashboard
+from earlier attempts.
 
-A ground up rewrite. Highlights:
+A ground up rewrite, published under a new name. Highlights:
 
+- New npm names: the main package is `asctane-dashboard` (was
+  `discord-dashboard`), every other package moves from `@discord-dashboard/*`
+  to `@asctane-dashboard/*`, and the scaffolder is `@asctane-dashboard/create`
+  (`npm init @asctane-dashboard`). The Python SDK keeps its PyPI name for now.
 - Fully open source (MIT). No license server, no obfuscation.
 - Protocol first core with a bot adapter over WebSocket. Node and Python SDKs.
 - Declarative settings schema (Zod) shared across server, client and SDKs.
@@ -31,7 +35,7 @@ A ground up rewrite. Highlights:
   (`resources(spaceId, kind, filter)`) instead of a `DiscordSource`. Stripe
   metadata should use `subjectType: "space"`; older `"guild"` subscriptions
   are still read as spaces.
-- Discord support lives in its own package, `@discord-dashboard/platform-discord`:
+- Discord support lives in its own package, `@asctane-dashboard/platform-discord`:
   OAuth login, the list of servers a user may manage, and the discord.js
   channel and role pickers. Breaking for anyone calling the API directly:
   `ApiConfig.discord` is replaced by `platforms: [discord({ clientId,
