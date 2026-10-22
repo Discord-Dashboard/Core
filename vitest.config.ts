@@ -15,6 +15,7 @@ export default defineConfig({
       pkg("@discord-dashboard/protocol", "packages/protocol/src/index.ts"),
       pkg("@discord-dashboard/schema", "packages/schema/src/index.ts"),
       pkg("@discord-dashboard/core", "packages/core/src/index.ts"),
+      pkg("@discord-dashboard/platform-discord", "packages/platforms/discord/src/index.ts"),
       pkg("@discord-dashboard/billing", "packages/billing/src/index.ts"),
       pkg("@discord-dashboard/sdk-js", "packages/sdk-js/src/index.ts"),
       pkg("@discord-dashboard/api", "apps/api/src/index.ts"),

@@ -4,12 +4,13 @@ import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
 import { defineSettings, f } from "@discord-dashboard/schema"
+import { discord } from "@discord-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,
   cookieSecret: "test-secret-at-least-32-chars-long-000",
   allowedOrigins: ["http://localhost:3000"],
-  discord: { clientId: "c", clientSecret: "s", redirectUri: "http://localhost/cb" },
+  platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://localhost/cb" })],
 }
 const def = defineSettings((s) => ({
   general: s.category({ name: "General", options: { prefix: f.text({ max: 3 }) } }),
@@ -81,7 +82,7 @@ d3("rate limiting", () => {
         port: 0,
         cookieSecret: "test-secret-at-least-32-chars-long-000",
         allowedOrigins: ["http://localhost:3000"],
-        discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+        platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" })],
         rateLimit: { max: 2, timeWindow: "1 minute" },
       },
       { def: def3, adapter: new IPA3(def3, new MS3()) }
@@ -109,7 +110,7 @@ d9("body size limit", () => {
         port: 0,
         cookieSecret: "test-secret-at-least-32-chars-long-000",
         allowedOrigins: ["http://localhost:3000"],
-        discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+        platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" })],
       },
       { def: def9, adapter: new IPA9(def9, new MS9()) }
     )

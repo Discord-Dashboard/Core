@@ -34,7 +34,8 @@
     "fastify": "^5.10.0",
     "ws": "^8.21.0",
     "@discord-dashboard/billing": "workspace:*",
-    "@discord-dashboard/builder": "workspace:*"
+    "@discord-dashboard/builder": "workspace:*",
+    "@discord-dashboard/platform-discord": "workspace:*"
   },
   "devDependencies": {
     "@types/ws": "^8.18.1",

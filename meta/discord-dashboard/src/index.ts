@@ -7,7 +7,7 @@ import {
 import type { SettingsDef } from "@discord-dashboard/schema"
 import { SqliteKeyValueStore } from "@discord-dashboard/db"
 import type { FastifyInstance } from "fastify"
-import { discordSourceFromClient } from "./discord-source.js"
+import { discord, discordSourceFromClient } from "@discord-dashboard/platform-discord"
 
 export { defineSettings, f } from "@discord-dashboard/schema"
 
@@ -39,19 +39,22 @@ export interface Dashboard {
 // server, OAuth and the settings API. No license, no external services.
 export function createDashboard(opts: CreateDashboardOptions): Dashboard {
   const port = opts.port ?? 3001
-  const config: ApiConfig = {
-    port,
+  const configFor = (listenPort: number): ApiConfig => ({
+    port: listenPort,
     cookieSecret: process.env.COOKIE_SECRET ?? "change-me-in-production",
     allowedOrigins: (process.env.ALLOWED_ORIGINS ?? "http://localhost:3000")
       .split(",")
       .map((o) => o.trim()),
-    discord: {
-      clientId: opts.discord.clientId,
-      clientSecret: opts.discord.clientSecret,
-      redirectUri:
-        opts.discord.redirectUri ?? `http://localhost:${port}/api/auth/callback`,
-    },
-  }
+    platforms: [
+      discord({
+        clientId: opts.discord.clientId,
+        clientSecret: opts.discord.clientSecret,
+        redirectUri:
+          opts.discord.redirectUri ??
+          `http://localhost:${listenPort}/api/auth/callback`,
+      }),
+    ],
+  })
 
   const resolveStorage = (): KeyValueStore => {
     if (opts.storage === "sqlite") {
@@ -72,14 +75,10 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
 
   return {
     async listen(listenPort = port) {
-      // Keep the OAuth redirect uri in step with the port we actually bind. If
-      // the caller listens on a different port than configured and did not set
-      // an explicit redirect uri, a stale uri would break login with a
-      // redirect_uri mismatch, so derive it from the real port here.
-      if (!opts.discord.redirectUri && listenPort !== port) {
-        config.discord.redirectUri = `http://localhost:${listenPort}/api/auth/callback`
-      }
-      const app = await buildServer(config, {
+      // Build the config for the port we actually bind, so a default OAuth
+      // redirect uri follows it. A stale uri would break login with a
+      // redirect_uri mismatch.
+      const app = await buildServer(configFor(listenPort), {
         def: opts.settings,
         adapter,
         canEditPages,

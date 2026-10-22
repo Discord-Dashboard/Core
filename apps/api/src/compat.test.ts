@@ -3,12 +3,13 @@ import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { fromV2 } from "@discord-dashboard/compat-v2"
+import { discord } from "@discord-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,
   cookieSecret: "test-secret-at-least-32-chars-long-000",
   allowedOrigins: ["http://localhost:3000"],
-  discord: { clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" },
+  platforms: [discord({ clientId: "c", clientSecret: "s", redirectUri: "http://x/cb" })],
 }
 
 // A legacy v2 style settings array with the old callback handlers.

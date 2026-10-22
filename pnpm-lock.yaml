@@ -50,6 +50,9 @@ importers:
       '@discord-dashboard/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@discord-dashboard/platform-discord':
+        specifier: workspace:*
+        version: link:../../packages/platforms/discord
       '@discord-dashboard/protocol':
         specifier: workspace:*
         version: link:../../packages/protocol
@@ -134,6 +137,9 @@ importers:
       '@discord-dashboard/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@discord-dashboard/platform-discord':
+        specifier: workspace:*
+        version: link:../../packages/platforms/discord
       '@discord-dashboard/schema':
         specifier: workspace:*
         version: link:../../packages/schema
@@ -278,6 +284,12 @@ importers:
       '@discord-dashboard/schema':
         specifier: workspace:*
         version: link:../../schema
+
+  packages/platforms/discord:
+    dependencies:
+      '@discord-dashboard/core':
+        specifier: workspace:*
+        version: link:../../core
 
   packages/protocol: {}
 
