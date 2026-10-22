@@ -85,3 +85,9 @@ A ground up rewrite, published under a new name. Highlights:
   Discord can run them, `platforms: ["discord"]` (tickets and reaction roles).
   `modulesFor(modules, platform)` and `composeModules(mods, { platform })`
   leave out the modules a platform cannot run.
+- Web app: space pages live at `/dashboard/:platform/:spaceId`, and `/login`
+  shows one button per configured platform (from the new `/api/platforms`).
+  Settings render through a field widget registry: core widgets (switch,
+  select, text, and a live `ref` picker backed by the new
+  `/api/spaces/:platform/:spaceId/resources/:kind`), plus each platform's own.
+  Discord's embed editor ships in `@asctane-dashboard/platform-discord/web`.

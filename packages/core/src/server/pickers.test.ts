@@ -16,8 +16,11 @@ const config: ApiConfig = {
 const def = defineSettings(() => ({}))
 
 const source: SpaceSource = {
-  async resources(_spaceId, kind) {
-    if (kind === "channel") return [{ label: "general", value: "c1" }]
+  async resources(_spaceId, kind, filter) {
+    if (kind === "channel") {
+      const nsfw = (filter as { onlyNsfw?: boolean } | undefined)?.onlyNsfw
+      return nsfw ? [] : [{ label: "general", value: "c1" }]
+    }
     return [{ label: "mod", value: "r1" }]
   },
   async memberPermissions() {
@@ -53,6 +56,31 @@ describe("picker endpoints", () => {
   it("lists roles", async () => {
     const res = await app.inject({ method: "GET", url: "/api/spaces/discord/g/roles", headers: { cookie } })
     expect((res.json() as { roles: { value: string }[] }).roles[0]?.value).toBe("r1")
+  })
+  it("lists any ref kind the platform has, with the field's filter", async () => {
+    const roles = await app.inject({ method: "GET", url: "/api/spaces/discord/g/resources/role", headers: { cookie } })
+    expect((roles.json() as { items: { value: string }[] }).items[0]?.value).toBe("r1")
+    const filter = encodeURIComponent(JSON.stringify({ onlyNsfw: true }))
+    const nsfw = await app.inject({
+      method: "GET",
+      url: `/api/spaces/discord/g/resources/channel?filter=${filter}`,
+      headers: { cookie },
+    })
+    expect((nsfw.json() as { items: unknown[] }).items).toEqual([])
+  })
+  it("rejects a kind the platform does not have, or a bad filter", async () => {
+    const thread = await app.inject({ method: "GET", url: "/api/spaces/discord/g/resources/emoji", headers: { cookie } })
+    expect(thread.statusCode).toBe(404)
+    const bad = await app.inject({
+      method: "GET",
+      url: "/api/spaces/discord/g/resources/channel?filter=nope",
+      headers: { cookie },
+    })
+    expect(bad.statusCode).toBe(400)
+  })
+  it("lists the platforms to log in with", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/platforms" })
+    expect(res.json()).toEqual({ platforms: [{ id: "discord", name: "Discord" }] })
   })
   it("requires auth", async () => {
     const res = await app.inject({ method: "GET", url: "/api/spaces/discord/g/channels" })

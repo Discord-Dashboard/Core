@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@asctane-dashboard/builder": "workspace:*",
+    "@asctane-dashboard/platform-discord": "workspace:*",
     "@asctane-dashboard/schema": "workspace:*",
     "@asctane-dashboard/theme-default": "workspace:*",
     "@asctane-dashboard/ui": "workspace:*",
