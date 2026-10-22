@@ -58,7 +58,7 @@ describe("platform end to end", () => {
       .onSet(async (guildId, key, value, actor) => {
         setter = actor?.userId
         store.set(`${guildId}:${key}`, value)
-        await bot.push("setting.changed", { guildId, key, value })
+        await bot.push("setting.changed", { spaceId: guildId, key, value })
       })
     bot.connect()
     await waitFor(() => gateway.sessions.has(botId))

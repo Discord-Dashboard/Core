@@ -14,9 +14,8 @@ class HandshakeType(str, Enum):
 
 class RpcMethod(str, Enum):
     SETTINGS_DESCRIBE = "settings.describe"
-    GUILD_CHANNELS = "guild.channels"
-    GUILD_ROLES = "guild.roles"
-    GUILD_MEMBER_PERMISSIONS = "guild.member.permissions"
+    SPACE_RESOURCES = "space.resources"
+    SPACE_MEMBER_PERMISSIONS = "space.member.permissions"
     SETTING_GET = "setting.get"
     SETTING_SET = "setting.set"
     ACTION_INVOKE = "action.invoke"
@@ -24,6 +23,6 @@ class RpcMethod(str, Enum):
 
 class ProtocolEvent(str, Enum):
     SETTING_CHANGED = "setting.changed"
-    GUILD_UPDATED = "guild.updated"
+    SPACE_UPDATED = "space.updated"
     STATS_PUSH = "stats.push"
     MODULE_EVENT = "module.event"

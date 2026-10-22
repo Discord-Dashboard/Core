@@ -143,7 +143,7 @@ export class Adapter {
           : { version: WIRE_VERSION, categories: [] }
       case RpcMethod.SettingGet: {
         const value = await this.getter?.(
-          String(params?.guildId),
+          String(params?.spaceId),
           String(params?.key),
           params?.actor as Actor | undefined
         )
@@ -151,7 +151,7 @@ export class Adapter {
       }
       case RpcMethod.SettingSet: {
         await this.setter?.(
-          String(params?.guildId),
+          String(params?.spaceId),
           String(params?.key),
           params?.value,
           params?.actor as Actor | undefined
@@ -161,7 +161,7 @@ export class Adapter {
       case RpcMethod.ActionInvoke:
         return (
           (await this.action?.(
-            String(params?.guildId),
+            String(params?.spaceId),
             String(params?.name),
             params?.payload
           )) ?? null

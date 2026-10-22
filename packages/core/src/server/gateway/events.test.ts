@@ -29,7 +29,7 @@ describe("gateway notifications", () => {
     bot.connect()
     await waitFor(() => gateway.sessions.has(botId))
 
-    bot.push("setting.changed", { guildId: "g", key: "general.prefix", value: "!" })
+    bot.push("setting.changed", { spaceId: "g", key: "general.prefix", value: "!" })
     await waitFor(() => events.length > 0)
 
     expect(events[0]?.method).toBe("setting.changed")

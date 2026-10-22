@@ -26,8 +26,8 @@ never imports a platform.
 The bot connects out to the gateway over WebSocket and proves identity by
 signing a server nonce (HMAC-SHA256). Frames are JSON-RPC 2.0. No inbound port
 is needed on the bot side. The dashboard calls `settings.describe`,
-`setting.get`, `setting.set`, `guild.channels`, `guild.roles` and
-`guild.member.permissions`. The bot pushes `setting.changed` and stats.
+`setting.get`, `setting.set`, `space.resources` and
+`space.member.permissions`. The bot pushes `setting.changed` and stats.
 
 A bot in any language works as long as it speaks the protocol. This repo ships
 Node and Python SDKs, verified by a cross language wire parity test.

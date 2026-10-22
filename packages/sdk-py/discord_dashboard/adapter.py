@@ -103,20 +103,20 @@ class Adapter:
         if method == RpcMethod.SETTINGS_DESCRIBE:
             return to_wire(self._schema) if self._schema else {"version": WIRE_VERSION, "categories": []}
         if method == RpcMethod.SETTING_GET:
-            value = self._getter(params.get("guildId"), params.get("key")) if self._getter else None
+            value = self._getter(params.get("spaceId"), params.get("key")) if self._getter else None
             if asyncio.iscoroutine(value):
                 value = await value
             return {"value": value}
         if method == RpcMethod.SETTING_SET:
             if self._setter:
-                res = self._setter(params.get("guildId"), params.get("key"), params.get("value"))
+                res = self._setter(params.get("spaceId"), params.get("key"), params.get("value"))
                 if asyncio.iscoroutine(res):
                     await res
             return {"ok": True}
         if method == RpcMethod.ACTION_INVOKE:
             if self._action:
                 res = self._action(
-                    params.get("guildId"), params.get("name"), params.get("payload")
+                    params.get("spaceId"), params.get("name"), params.get("payload")
                 )
                 if asyncio.iscoroutine(res):
                     res = await res

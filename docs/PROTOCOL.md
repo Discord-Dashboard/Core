@@ -13,23 +13,33 @@ JSON-RPC 2.0. Either side can be the caller.
 ## Methods (dashboard to bot)
 
 - settings.describe `{ locale? }`
-- guild.channels `{ guildId, filter? }`
-- guild.roles `{ guildId, filter? }`
-- guild.member.permissions `{ guildId, userId }`
-- setting.get `{ guildId, key, actor? }`
-- setting.set `{ guildId, key, value, actor? }`
-- action.invoke `{ guildId, name, payload? }`
+- space.resources `{ spaceId, kind, filter? }`
+- space.member.permissions `{ spaceId, userId }`
+- setting.get `{ spaceId, key, actor? }`
+- setting.set `{ spaceId, key, value, actor? }`
+- action.invoke `{ spaceId, name, payload? }`
 
-The guild id is always supplied by the server from the authorized request, so a
-bot must act on that guild and never trust a guild id found inside a payload.
+A space is the platform's unit a dashboard manages, such as a Discord guild.
+`space.resources` lists one kind of thing in it for a picker (`channel` and
+`role` on Discord), and returns `{ label, value }` items.
+
+The space id is always supplied by the server from the authorized request, so a
+bot must act on that space and never trust a space id found inside a payload.
 The optional `actor` carries the acting user (`{ userId }`) so a bot can record
 who changed a setting.
 
 ## Notifications (bot to dashboard)
 
-- setting.changed
-- guild.updated
+- setting.changed `{ spaceId, key, value }`
+- space.updated `{ spaceId }`
 - stats.push
 - module.event
+
+## Versions
+
+The current version is 2.0.0. The gateway closes the connection with 4400 when
+a bot's major version differs. Version 1 used `guild.channels`, `guild.roles`,
+`guild.member.permissions`, `guild.updated` and `guildId` params; a 1.x bot has
+to update its SDK.
 
 A bot in any language that speaks this protocol works with the dashboard.

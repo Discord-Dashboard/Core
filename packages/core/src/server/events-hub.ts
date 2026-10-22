@@ -13,7 +13,7 @@ export interface HubEvent {
 type Listener = (event: HubEvent) => void
 
 interface Subscription {
-  guildId?: string
+  spaceId?: string
   fn: Listener
 }
 
@@ -22,16 +22,16 @@ interface Subscription {
 export class EventHub {
   private readonly subs = new Set<Subscription>()
 
-  subscribe(fn: Listener, guildId?: string): () => void {
-    const sub: Subscription = { guildId, fn }
+  subscribe(fn: Listener, spaceId?: string): () => void {
+    const sub: Subscription = { spaceId, fn }
     this.subs.add(sub)
     return () => this.subs.delete(sub)
   }
 
   publish(event: HubEvent) {
-    const guildId = (event.params as { guildId?: string })?.guildId
+    const spaceId = (event.params as { spaceId?: string })?.spaceId
     for (const sub of this.subs) {
-      if (!sub.guildId || sub.guildId === guildId) sub.fn(event)
+      if (!sub.spaceId || sub.spaceId === spaceId) sub.fn(event)
     }
   }
 }

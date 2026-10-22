@@ -25,7 +25,7 @@ const bot = new Adapter({
   .onAction((guildId, name, payload) => ({ guild: guildId, ran: name }))
 
 bot.connect()
-bot.push("setting.changed", { guildId: "g", key: "general.prefix", value: "!" })
+bot.push("setting.changed", { spaceId: "g", key: "general.prefix", value: "!" })
 ```
 
 No inbound port is needed on the bot. The Python SDK mirrors this API.
