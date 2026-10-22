@@ -23,3 +23,11 @@ A ground up rewrite. Highlights:
   `/api/auth/callback`), webhooks are `/api/webhooks/*`, plus
   `/api/openapi.json` and `/api/version`. Only the `/health`, `/ready` and
   `/metrics` probes stay at the root.
+- Core is platform neutral: settings, entitlements, audit entries and the
+  in-process adapter are scoped to a space (a Discord server, Slack
+  workspace, Telegram group or Twitch channel) instead of a guild.
+  Breaking: `SubjectType.Guild` is now `SubjectType.Space`, settings
+  contexts take `spaceId`, and the in-process adapter takes a `SpaceSource`
+  (`resources(spaceId, kind, filter)`) instead of a `DiscordSource`. Stripe
+  metadata should use `subjectType: "space"`; older `"guild"` subscriptions
+  are still read as spaces.

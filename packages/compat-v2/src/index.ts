@@ -79,25 +79,25 @@ export function fromV2(settings: V2Category[]) {
     async getMemberPermissions() {
       return []
     },
-    async getSetting(guildId, key, actor) {
+    async getSetting(spaceId, key, actor) {
       const option = lookup.get(key)
       return (
         (await option?.getActualSet?.({
-          guild: { id: guildId },
+          guild: { id: spaceId },
           user: { id: actor?.userId ?? "" },
         })) ?? null
       )
     },
-    async setSetting(guildId, key, value, actor) {
+    async setSetting(spaceId, key, value, actor) {
       const option = lookup.get(key)
       await option?.setNew?.({
-        guild: { id: guildId },
+        guild: { id: spaceId },
         user: { id: actor?.userId ?? "" },
         newData: value,
       })
       return { ok: true }
     },
-    async invokeAction(_guildId: string, _name: string, _payload?: unknown) {
+    async invokeAction(_spaceId: string, _name: string, _payload?: unknown) {
       return null
     },
   }

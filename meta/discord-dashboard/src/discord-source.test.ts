@@ -28,12 +28,12 @@ function fakeClient() {
 describe("discordSourceFromClient", () => {
   it("filters channels by semantic type name", async () => {
     const src = discordSourceFromClient(fakeClient())
-    const channels = await src.channels("g", { types: ["text"] })
+    const channels = await src.resources("g", "channel", { types: ["text"] })
     expect(channels).toEqual([{ label: "general", value: "c1" }])
   })
   it("lists roles and excludes the everyone role", async () => {
     const src = discordSourceFromClient(fakeClient())
-    const roles = await src.roles("g")
+    const roles = await src.resources("g", "role")
     expect(roles).toEqual([{ label: "mod", value: "r1" }])
   })
   it("maps member permissions to an array", async () => {
@@ -59,8 +59,8 @@ describe("discordSourceFromClient", () => {
   })
   it("returns empty lists for an unknown guild", async () => {
     const src = discordSourceFromClient(fakeClient())
-    expect(await src.channels("nope")).toEqual([])
-    expect(await src.roles("nope")).toEqual([])
+    expect(await src.resources("nope", "channel")).toEqual([])
+    expect(await src.resources("nope", "role")).toEqual([])
   })
 })
 
@@ -84,12 +84,12 @@ function clientWithNsfw() {
 d6("channel nsfw filtering", () => {
   i6("hides nsfw channels when asked", async () => {
     const src = dsc6(clientWithNsfw())
-    const channels = await src.channels("g", { hideNsfw: true })
+    const channels = await src.resources("g", "channel", { hideNsfw: true })
     e6(channels.map((c) => c.value)).toEqual(["c1"])
   })
   i6("returns only nsfw channels when asked", async () => {
     const src = dsc6(clientWithNsfw())
-    const channels = await src.channels("g", { onlyNsfw: true })
+    const channels = await src.resources("g", "channel", { onlyNsfw: true })
     e6(channels.map((c) => c.value)).toEqual(["c2"])
   })
 })
@@ -115,12 +115,12 @@ function clientWithManagedRole() {
 d7("role bot filtering", () => {
   i7("hides managed bot roles by default", async () => {
     const src = dsc7(clientWithManagedRole())
-    const roles = await src.roles("g")
+    const roles = await src.resources("g", "role")
     e7(roles.map((r) => r.value)).toEqual(["r1"])
   })
   i7("includes bot roles when asked", async () => {
     const src = dsc7(clientWithManagedRole())
-    const roles = await src.roles("g", { includeBots: true })
+    const roles = await src.resources("g", "role", { includeBots: true })
     e7(roles.map((r) => r.value)).toEqual(["r1", "r2"])
   })
 })

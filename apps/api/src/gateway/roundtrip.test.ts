@@ -43,13 +43,13 @@ describe("settings round trip over the gateway", () => {
     const remote = new RemoteAdapter(gateway, botId)
     const service = new SettingsService(def, remote, AllowAll)
 
-    const set = await service.set({ guildId: "g1", userId: "u1" }, "general", "prefix", "!")
+    const set = await service.set({ spaceId: "g1", userId: "u1" }, "general", "prefix", "!")
     expect(set.ok).toBe(true)
-    const value = await service.get({ guildId: "g1", userId: "u1" }, "general", "prefix")
+    const value = await service.get({ spaceId: "g1", userId: "u1" }, "general", "prefix")
     expect(value).toBe("!")
 
     // A value violating the schema is rejected before it reaches the bot.
-    const bad = await service.set({ guildId: "g1", userId: "u1" }, "general", "prefix", "toolong")
+    const bad = await service.set({ spaceId: "g1", userId: "u1" }, "general", "prefix", "toolong")
     expect(bad.ok).toBe(false)
 
     bot.disconnect()

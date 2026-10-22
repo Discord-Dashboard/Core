@@ -11,22 +11,22 @@ describe("AuditLog", () => {
   it("returns a guild's entries newest first", () => {
     let t = 0
     const log = new AuditLog(1000, () => ++t)
-    log.record({ guildId: "g", userId: "u1", key: "a.b", value: 1 })
-    log.record({ guildId: "other", userId: "u2", key: "a.b", value: 9 })
-    log.record({ guildId: "g", userId: "u1", key: "a.b", value: 2 })
+    log.record({ spaceId: "g", userId: "u1", key: "a.b", value: 1 })
+    log.record({ spaceId: "other", userId: "u2", key: "a.b", value: 9 })
+    log.record({ spaceId: "g", userId: "u1", key: "a.b", value: 2 })
     const entries = log.list("g")
     expect(entries.map((e) => e.value)).toEqual([2, 1])
-    expect(entries.every((e) => e.guildId === "g")).toBe(true)
+    expect(entries.every((e) => e.spaceId === "g")).toBe(true)
   })
   it("keeps only the most recent entries up to the limit", () => {
     const log = new AuditLog(2, () => 0)
-    for (let i = 0; i < 5; i++) log.record({ guildId: "g", userId: "u", key: "k", value: i })
+    for (let i = 0; i < 5; i++) log.record({ spaceId: "g", userId: "u", key: "k", value: i })
     expect(log.list("g").map((e) => e.value)).toEqual([4, 3])
   })
   it("caps retention per guild so one guild cannot evict another", () => {
     const log = new AuditLog(2, () => 0)
-    for (let i = 0; i < 5; i++) log.record({ guildId: "busy", userId: "u", key: "k", value: i })
-    log.record({ guildId: "quiet", userId: "u", key: "k", value: 99 })
+    for (let i = 0; i < 5; i++) log.record({ spaceId: "busy", userId: "u", key: "k", value: i })
+    log.record({ spaceId: "quiet", userId: "u", key: "k", value: 99 })
     // The quiet guild still has its entry despite the busy guild's churn.
     expect(log.list("quiet").map((e) => e.value)).toEqual([99])
     expect(log.list("busy").map((e) => e.value)).toEqual([4, 3])

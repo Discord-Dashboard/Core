@@ -5,6 +5,14 @@ import { GrantSource, GrantStatus, type Grant } from "./entitlements.js"
 const STRIPE_ACTIVE = "active"
 
 // Both billing sources reduce to the same Grant shape before they are stored.
+// Subscriptions created before 3.1 carry subjectType "guild"; they now mean a
+// space.
+const LEGACY_GUILD = "guild"
+
+function subjectTypeFromMetadata(type: string | undefined): string {
+  return type === LEGACY_GUILD ? SubjectType.Space : (type ?? "")
+}
+
 export function grantFromStripeSubscription(sub: {
   id: string
   status: string
@@ -12,7 +20,7 @@ export function grantFromStripeSubscription(sub: {
 }): Grant {
   const meta = sub.metadata ?? {}
   return {
-    subjectType: meta.subjectType ?? "",
+    subjectType: subjectTypeFromMetadata(meta.subjectType),
     subjectId: meta.subjectId ?? "",
     feature: meta.feature ?? "",
     source: GrantSource.Stripe,
@@ -27,7 +35,7 @@ export function grantFromDiscordEntitlement(ent: {
   deleted?: boolean
 }): Grant {
   return {
-    subjectType: ent.guild_id ? SubjectType.Guild : SubjectType.User,
+    subjectType: ent.guild_id ? SubjectType.Space : SubjectType.User,
     subjectId: ent.guild_id ?? ent.user_id ?? "",
     feature: ent.sku_id,
     source: GrantSource.Discord,

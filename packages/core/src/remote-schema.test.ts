@@ -29,11 +29,11 @@ function fakeRemoteBot(): BotAdapter {
     async getMemberPermissions() {
       return []
     },
-    async getSetting(guildId, key) {
-      return store.get(`${guildId}:${key}`) ?? null
+    async getSetting(spaceId, key) {
+      return store.get(`${spaceId}:${key}`) ?? null
     },
-    async setSetting(guildId, key, value) {
-      store.set(`${guildId}:${key}`, value)
+    async setSetting(spaceId, key, value) {
+      store.set(`${spaceId}:${key}`, value)
       return { ok: true }
     },
     async invokeAction() {
@@ -48,9 +48,9 @@ describe("buildDefFromAdapter", () => {
     const def = await buildDefFromAdapter(adapter)
     const service = new SettingsService(def, adapter, AllowAll)
 
-    const good = await service.set({ guildId: "g", userId: "u" }, "general", "prefix", "!")
+    const good = await service.set({ spaceId: "g", userId: "u" }, "general", "prefix", "!")
     expect(good.ok).toBe(true)
-    const bad = await service.set({ guildId: "g", userId: "u" }, "general", "prefix", "toolong")
+    const bad = await service.set({ spaceId: "g", userId: "u" }, "general", "prefix", "toolong")
     expect(bad.ok).toBe(false)
   })
 })
