@@ -75,6 +75,6 @@ export function discordFromEnv(env: NodeJS.ProcessEnv = process.env): Platform {
   return discord({
     clientId: env.DISCORD_CLIENT_ID ?? "",
     clientSecret: env.DISCORD_CLIENT_SECRET ?? "",
-    redirectUri: env.DISCORD_REDIRECT_URI ?? "http://localhost:3001/api/auth/callback",
+    redirectUri: env.DISCORD_REDIRECT_URI ?? "http://localhost:3001/api/auth/discord/callback",
   })
 }

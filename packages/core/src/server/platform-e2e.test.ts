@@ -69,7 +69,7 @@ describe("platform end to end", () => {
 
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     const cookie = `${SESSION_COOKIE}=${sid}`
 
     let app: FastifyInstance | undefined
@@ -85,7 +85,7 @@ describe("platform end to end", () => {
       // Write through the HTTP API, authorized for guild g.
       const set = await app.inject({
         method: "POST",
-        url: "/api/guilds/g/settings/general/prefix",
+        url: "/api/spaces/discord/g/settings/general/prefix",
         headers: { cookie, origin: "http://localhost:3000" },
         payload: { value: "ab" },
       })
@@ -96,7 +96,7 @@ describe("platform end to end", () => {
       // Read it back: the value made a full trip to the live bot and returned.
       const get = await app.inject({
         method: "GET",
-        url: "/api/guilds/g/settings/general/prefix",
+        url: "/api/spaces/discord/g/settings/general/prefix",
         headers: { cookie },
       })
       expect((get.json() as { value: unknown }).value).toBe("ab")
@@ -104,7 +104,7 @@ describe("platform end to end", () => {
       // A user who does not manage guild g is refused.
       const forbidden = await app.inject({
         method: "GET",
-        url: "/api/guilds/other/settings/general/prefix",
+        url: "/api/spaces/discord/other/settings/general/prefix",
         headers: { cookie },
       })
       expect(forbidden.statusCode).toBe(403)
@@ -148,7 +148,7 @@ describe("platform end to end", () => {
     const def = await buildDefFromAdapter(remote)
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     const cookie = `${SESSION_COOKIE}=${sid}`
 
     let app: FastifyInstance | undefined
@@ -157,7 +157,7 @@ describe("platform end to end", () => {
       // "toolong" exceeds max 3, so validation rejects it before it reaches the bot.
       const set = await app.inject({
         method: "POST",
-        url: "/api/guilds/g/settings/general/prefix",
+        url: "/api/spaces/discord/g/settings/general/prefix",
         headers: { cookie, origin: "http://localhost:3000" },
         payload: { value: "toolong" },
       })

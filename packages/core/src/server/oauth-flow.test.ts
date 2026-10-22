@@ -10,7 +10,7 @@ const config: ApiConfig = {
   port: 0,
   cookieSecret: "test-secret-at-least-32-chars-long-000",
   allowedOrigins: ["http://localhost:3000"],
-  platforms: [discord({ clientId: "cid", clientSecret: "sec", redirectUri: "http://localhost:3001/api/auth/callback" })],
+  platforms: [discord({ clientId: "cid", clientSecret: "sec", redirectUri: "http://localhost:3001/api/auth/discord/callback" })],
 }
 const def = defineSettings(() => ({}))
 
@@ -58,6 +58,13 @@ describe("oauth flow", () => {
     await app.close()
   })
 
+  async function startLogin() {
+    const start = await app.inject({ method: "GET", url: "/api/auth/discord" })
+    const cookie = cookieValue(start.headers["set-cookie"])
+    const state = new URL(String(start.headers["location"])).searchParams.get("state")!
+    return { cookie, state }
+  }
+
   it("logs a user in via the discord callback", async () => {
     const start = await app.inject({ method: "GET", url: "/api/auth/discord" })
     expect(start.statusCode).toBe(302)
@@ -68,7 +75,7 @@ describe("oauth flow", () => {
 
     const cb = await app.inject({
       method: "GET",
-      url: `/api/auth/callback?code=abc&state=${state}`,
+      url: `/api/auth/discord/callback?code=abc&state=${state}`,
       headers: { cookie },
     })
     expect(cb.statusCode).toBe(302)
@@ -81,10 +88,37 @@ describe("oauth flow", () => {
     expect(me.statusCode).toBe(200)
     expect((me.json() as { id: string }).id).toBe("u1")
 
-    const guilds = await app.inject({ method: "GET", url: "/api/guilds", headers: { cookie: newCookie } })
-    const list = (guilds.json() as { guilds: { id: string }[] }).guilds
+    const res = await app.inject({ method: "GET", url: "/api/spaces", headers: { cookie: newCookie } })
+    const body = res.json() as { platform: string; spaces: { id: string }[] }
+    expect(body.platform).toBe("discord")
     // Only the owned and Manage Server guilds, not the plain member one.
-    expect(list.map((g) => g.id).sort()).toEqual(["g1", "g2"])
+    expect(body.spaces.map((g) => g.id).sort()).toEqual(["g1", "g2"])
+  })
+
+  it("still logs in through the old /api/auth/callback alias", async () => {
+    const { cookie, state } = await startLogin()
+    const cb = await app.inject({
+      method: "GET",
+      url: `/api/auth/callback?code=abc&state=${state}`,
+      headers: { cookie },
+    })
+    expect(cb.statusCode).toBe(302)
+    const me = await app.inject({
+      method: "GET",
+      url: "/api/auth/me",
+      headers: { cookie: cookieValue(cb.headers["set-cookie"]) },
+    })
+    expect(me.statusCode).toBe(200)
+  })
+
+  it("rejects a callback for a different platform than the login started with", async () => {
+    const { cookie, state } = await startLogin()
+    const cb = await app.inject({
+      method: "GET",
+      url: `/api/auth/slack/callback?code=abc&state=${state}`,
+      headers: { cookie },
+    })
+    expect(cb.statusCode).toBe(400)
   })
 
   it("rejects a callback with a mismatched state", async () => {
@@ -92,7 +126,7 @@ describe("oauth flow", () => {
     const cookie = cookieValue(start.headers["set-cookie"])
     const cb = await app.inject({
       method: "GET",
-      url: "/api/auth/callback?code=abc&state=wrong",
+      url: "/api/auth/discord/callback?code=abc&state=wrong",
       headers: { cookie },
     })
     expect(cb.statusCode).toBe(400)
@@ -104,7 +138,7 @@ describe("oauth flow", () => {
     // A missing state must not slip past by comparing undefined to undefined.
     const cb = await app.inject({
       method: "GET",
-      url: "/api/auth/callback?code=abc",
+      url: "/api/auth/discord/callback?code=abc",
       headers: { cookie },
     })
     expect(cb.statusCode).toBe(400)
@@ -116,14 +150,14 @@ describe("oauth flow", () => {
     const state = new URL(String(start.headers["location"])).searchParams.get("state")!
     const first = await app.inject({
       method: "GET",
-      url: `/api/auth/callback?code=abc&state=${state}`,
+      url: `/api/auth/discord/callback?code=abc&state=${state}`,
       headers: { cookie },
     })
     expect(first.statusCode).toBe(302)
     // The old cookie's state and verifier were burned on first use.
     const replay = await app.inject({
       method: "GET",
-      url: `/api/auth/callback?code=abc&state=${state}`,
+      url: `/api/auth/discord/callback?code=abc&state=${state}`,
       headers: { cookie },
     })
     expect(replay.statusCode).toBe(400)

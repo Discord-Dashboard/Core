@@ -16,9 +16,9 @@ export default function ManagePage() {
   const [guilds, setGuilds] = useState<Guild[] | null>(null)
 
   useEffect(() => {
-    fetch(`${API}/api/guilds`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : { guilds: [] }))
-      .then((data) => setGuilds(data.guilds ?? []))
+    fetch(`${API}/api/spaces`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : { spaces: [] }))
+      .then((data) => setGuilds(data.spaces ?? []))
       .catch(() => setGuilds([]))
   }, [])
 

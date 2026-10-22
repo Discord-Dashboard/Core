@@ -28,7 +28,7 @@ describe("monetization gating over http", () => {
   beforeAll(async () => {
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     cookie = `${SESSION_COOKIE}=${sid}`
     app = await buildServer(config, {
       def,
@@ -44,7 +44,7 @@ describe("monetization gating over http", () => {
     const write = () =>
       app.inject({
         method: "POST",
-        url: "/api/guilds/g/settings/pro/color",
+        url: "/api/spaces/discord/g/settings/pro/color",
         headers: { origin, cookie },
         payload: { value: "red" },
       })
@@ -88,7 +88,7 @@ dE("entitlements endpoint reports gated features", () => {
   iE("reflects the gate state before and after a grant", async () => {
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     const cookie = `${SESSION_COOKIE}=${sid}`
     const app = await buildServer(config, {
       def,
@@ -98,7 +98,7 @@ dE("entitlements endpoint reports gated features", () => {
     const read = async () => {
       const res = await app.inject({
         method: "GET",
-        url: "/api/guilds/g/entitlements",
+        url: "/api/spaces/discord/g/entitlements",
         headers: { cookie },
       })
       return (res.json() as { entitlements: Record<string, boolean> }).entitlements
@@ -114,7 +114,7 @@ dE("entitlements endpoint reports gated features", () => {
     // A user who does not manage the guild is refused.
     const forbidden = await app.inject({
       method: "GET",
-      url: "/api/guilds/other/entitlements",
+      url: "/api/spaces/discord/other/entitlements",
       headers: { cookie },
     })
     eE(forbidden.statusCode).toBe(403)
@@ -128,7 +128,7 @@ dS("stripe subscription unlocks a gated setting", () => {
   iS("grants the entitlement from a stripe webhook end to end", async () => {
     const sessions = new SessionStore()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "g", name: "G", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "g", name: "G", icon: null }] })
     const cookie = `${SESSION_COOKIE}=${sid}`
     const app = await buildServer(config, {
       def,
@@ -138,7 +138,7 @@ dS("stripe subscription unlocks a gated setting", () => {
     const write = () =>
       app.inject({
         method: "POST",
-        url: "/api/guilds/g/settings/pro/color",
+        url: "/api/spaces/discord/g/settings/pro/color",
         headers: { origin, cookie },
         payload: { value: "blue" },
       })
@@ -170,7 +170,7 @@ dG("guild access control", () => {
   iG("forbids managing a guild the user does not manage", async () => {
     const sessions = new SSG()
     const sid = sessions.create()
-    sessions.set(sid, { userId: "u1", guilds: [{ id: "allowed", name: "A", icon: null }] })
+    sessions.set(sid, { userId: "u1", platform: "discord", spaces: [{ id: "allowed", name: "A", icon: null }] })
     const defG = dsG(() => ({}))
     const app = await bG(
       {
@@ -183,7 +183,7 @@ dG("guild access control", () => {
     )
     const res = await app.inject({
       method: "GET",
-      url: "/api/guilds/other/values",
+      url: "/api/spaces/discord/other/values",
       headers: { cookie: `${SCG}=${sid}` },
     })
     eG(res.statusCode).toBe(403)

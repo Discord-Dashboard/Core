@@ -1,4 +1,4 @@
-import type { FastifyInstance } from "fastify"
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
 import { createPlatformRegistry } from "../../base.js"
 import type { ApiConfig } from "../config.js"
 import { SESSION_COOKIE, type SessionStore } from "./session.js"
@@ -36,12 +36,23 @@ export async function registerAuthRoutes(
     return reply.redirect(start.url)
   })
 
-  app.get("/api/auth/callback", async (req, reply) => {
+  // Finishes a login. Each platform's redirect uri points at its own callback,
+  // /api/auth/discord/callback for Discord, and the platform in the URL must be
+  // the one the login was started with.
+  async function finishLogin(
+    req: FastifyRequest,
+    reply: FastifyReply,
+    platformId: string | undefined
+  ) {
     const query = req.query as Record<string, string | undefined>
     const { code, state } = query
     const sid = req.cookies[SESSION_COOKIE]
     const session = sessions.get(sid)
-    const platform = platforms.get(session?.authPlatform ?? "")
+    const started = session?.authPlatform
+    const platform =
+      started && (platformId === undefined || platformId === started)
+        ? platforms.get(started)
+        : undefined
     // Every piece must be present and the state must match what we issued. A
     // logged in session has no state, so a missing state can never slip through.
     if (
@@ -73,7 +84,7 @@ export async function registerAuthRoutes(
       userId: user.id,
       username: user.username,
       avatar: user.avatar ?? null,
-      guilds: spaces,
+      spaces,
     })
     reply.setCookie(SESSION_COOKIE, newSid, {
       httpOnly: true,
@@ -82,12 +93,20 @@ export async function registerAuthRoutes(
       secure: process.env.NODE_ENV === "production",
     })
     return reply.redirect(config.allowedOrigins[0] ?? "/")
-  })
+  }
 
-  app.get("/api/guilds", async (req, reply) => {
+  app.get("/api/auth/:platform/callback", (req, reply) =>
+    finishLogin(req, reply, (req.params as { platform: string }).platform)
+  )
+  // The v3 alpha's Discord redirect uri. It finishes whichever login the session
+  // started, so an app registered with it keeps working.
+  app.get("/api/auth/callback", (req, reply) => finishLogin(req, reply, undefined))
+
+  // The spaces the user may manage, on the platform they logged in with.
+  app.get("/api/spaces", async (req, reply) => {
     const session = sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
-    return { guilds: session.guilds ?? [] }
+    return { platform: session.platform, spaces: session.spaces ?? [] }
   })
 
   // Logout is a state change, so it is POST and covered by the origin check. A
