@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { createServer } from "node:http"
 import { startGateway, type GatewayEvent } from "./gateway.js"
-import { Adapter, defineSettings } from "@discord-dashboard/sdk-js"
+import { Adapter, defineSettings } from "@asctane-dashboard/sdk-js"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()

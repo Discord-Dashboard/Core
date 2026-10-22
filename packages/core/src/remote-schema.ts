@@ -1,4 +1,4 @@
-import { fromWire, type SettingsDef } from "@discord-dashboard/schema"
+import { fromWire, type SettingsDef } from "@asctane-dashboard/schema"
 import type { BotAdapter } from "./adapter.js"
 
 // Build a validating schema definition from whatever a connected bot reports.

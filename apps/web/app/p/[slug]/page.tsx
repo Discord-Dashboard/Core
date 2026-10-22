@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-import { safeUrl } from "@discord-dashboard/builder/url"
+import { safeUrl } from "@asctane-dashboard/builder/url"
 import { IconArrowRight, IconCheck, IconDoc } from "../../components/icons"
 
 const API = process.env.NEXT_PUBLIC_API ?? "http://localhost:3001"

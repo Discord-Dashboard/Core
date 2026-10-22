@@ -3,9 +3,9 @@ import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
-import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
-import { defineSettings, f } from "@discord-dashboard/schema"
-import { discord } from "@discord-dashboard/platform-discord"
+import { InProcessAdapter, MemoryStore } from "@asctane-dashboard/core"
+import { defineSettings, f } from "@asctane-dashboard/schema"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,
@@ -79,8 +79,8 @@ describe("monetization gating over http", () => {
 import { describe as dG, it as iG, expect as eG } from "vitest"
 import { buildServer as bG } from "./server.js"
 import { SessionStore as SSG, SESSION_COOKIE as SCG } from "./auth/session.js"
-import { InProcessAdapter as IPAG, MemoryStore as MSG } from "@discord-dashboard/core"
-import { defineSettings as dsG } from "@discord-dashboard/schema"
+import { InProcessAdapter as IPAG, MemoryStore as MSG } from "@asctane-dashboard/core"
+import { defineSettings as dsG } from "@asctane-dashboard/schema"
 
 import { describe as dE, it as iE, expect as eE } from "vitest"
 

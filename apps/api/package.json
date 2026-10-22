@@ -1,7 +1,7 @@
 {
-  "name": "@discord-dashboard/api",
+  "name": "@asctane-dashboard/api",
   "version": "3.1.0-alpha.0",
-  "description": "HTTP API, OAuth and bot gateway for discord-dashboard.",
+  "description": "HTTP API, OAuth and bot gateway for asctane-dashboard.",
   "type": "module",
   "main": "./src/index.ts",
   "license": "MIT",
@@ -23,19 +23,19 @@
     "start": "node dist/main.js"
   },
   "dependencies": {
-    "@discord-dashboard/core": "workspace:*",
-    "@discord-dashboard/db": "workspace:*",
-    "@discord-dashboard/protocol": "workspace:*",
-    "@discord-dashboard/schema": "workspace:*",
+    "@asctane-dashboard/core": "workspace:*",
+    "@asctane-dashboard/db": "workspace:*",
+    "@asctane-dashboard/protocol": "workspace:*",
+    "@asctane-dashboard/schema": "workspace:*",
     "@fastify/cookie": "^11.1.0",
     "@fastify/cors": "^11.3.0",
     "@fastify/helmet": "^13.1.0",
     "@fastify/rate-limit": "^11.1.0",
     "fastify": "^5.10.0",
     "ws": "^8.21.0",
-    "@discord-dashboard/billing": "workspace:*",
-    "@discord-dashboard/builder": "workspace:*",
-    "@discord-dashboard/platform-discord": "workspace:*"
+    "@asctane-dashboard/billing": "workspace:*",
+    "@asctane-dashboard/builder": "workspace:*",
+    "@asctane-dashboard/platform-discord": "workspace:*"
   },
   "devDependencies": {
     "@types/ws": "^8.18.1",

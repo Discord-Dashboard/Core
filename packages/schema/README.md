@@ -1,10 +1,10 @@
-# @discord-dashboard/schema
+# @asctane-dashboard/schema
 
-Declarative settings for discord-dashboard. Define once, validate on the server,
+Declarative settings for asctane-dashboard. Define once, validate on the server,
 render on the client, and serialize to a language neutral wire format.
 
 ```ts
-import { defineSettings, f, toWire, fromWire } from "@discord-dashboard/schema"
+import { defineSettings, f, toWire, fromWire } from "@asctane-dashboard/schema"
 
 const settings = defineSettings((s) => ({
   general: s.category({

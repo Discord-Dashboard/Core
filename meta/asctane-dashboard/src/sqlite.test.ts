@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
-import { InProcessAdapter } from "@discord-dashboard/core"
-import { SqliteKeyValueStore } from "@discord-dashboard/db"
-import { defineSettings, f } from "@discord-dashboard/schema"
+import { InProcessAdapter } from "@asctane-dashboard/core"
+import { SqliteKeyValueStore } from "@asctane-dashboard/db"
+import { defineSettings, f } from "@asctane-dashboard/schema"
 
 // Proves the SQLite store works as the engine's persistence, so lite mode can
 // keep settings across restarts instead of losing them with the in memory store.

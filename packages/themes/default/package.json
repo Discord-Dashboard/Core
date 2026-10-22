@@ -1,7 +1,7 @@
 {
-  "name": "@discord-dashboard/theme-default",
+  "name": "@asctane-dashboard/theme-default",
   "version": "3.1.0-alpha.0",
-  "description": "The default base theme for discord-dashboard, shipped as a module.",
+  "description": "The default base theme for asctane-dashboard, shipped as a module.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -22,7 +22,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@discord-dashboard/ui": "workspace:*"
+    "@asctane-dashboard/ui": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

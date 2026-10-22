@@ -1,5 +1,5 @@
 {
-  "name": "@discord-dashboard/compat-v2",
+  "name": "@asctane-dashboard/compat-v2",
   "version": "3.1.0-alpha.0",
   "description": "Run v2 style settings on v3 without a rewrite.",
   "type": "module",
@@ -22,8 +22,8 @@
     "lint": "echo \"no lint yet\""
   },
   "dependencies": {
-    "@discord-dashboard/core": "workspace:*",
-    "@discord-dashboard/schema": "workspace:*"
+    "@asctane-dashboard/core": "workspace:*",
+    "@asctane-dashboard/schema": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

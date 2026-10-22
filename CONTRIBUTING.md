@@ -29,7 +29,7 @@ one version.
 
 The release workflow refuses to publish when a package version does not match
 the tag. A tag with a prerelease part (`-alpha.0`, `-beta.1`, `-rc.0`)
-publishes under that dist tag, so `npm install discord-dashboard` keeps giving
+publishes under that dist tag, so `npm install asctane-dashboard` keeps giving
 people the latest stable release. It needs an `NPM_TOKEN` secret from an npm
-account that can publish `discord-dashboard`, `create-discord-dashboard` and
-the `@discord-dashboard` scope.
+account that can publish `asctane-dashboard` and the `@asctane-dashboard`
+scope (the scaffolder is `@asctane-dashboard/create`).

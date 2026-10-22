@@ -212,7 +212,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="dd-footer">
         <div className="dd-footer__inner">
-          <span>© {new Date().getFullYear()} discord-dashboard — MIT licensed</span>
+          <span>© {new Date().getFullYear()} asctane-dashboard — MIT licensed</span>
           <nav className="dd-footer__links" aria-label="Footer">
             <a href="/#features">Features</a>
             <a href="/builder">Builder</a>

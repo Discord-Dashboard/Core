@@ -3,9 +3,9 @@ import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
-import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
-import { defineSettings, f, type SettingsDef } from "@discord-dashboard/schema"
-import { discord } from "@discord-dashboard/platform-discord"
+import { InProcessAdapter, MemoryStore } from "@asctane-dashboard/core"
+import { defineSettings, f, type SettingsDef } from "@asctane-dashboard/schema"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,

@@ -1,4 +1,4 @@
-import { ProtocolEvent } from "@discord-dashboard/protocol"
+import { ProtocolEvent } from "@asctane-dashboard/protocol"
 import type { Gateway } from "./gateway/gateway.js"
 
 // The source id used for events the dashboard itself emits (not a bot push).

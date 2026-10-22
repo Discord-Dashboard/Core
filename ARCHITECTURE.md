@@ -3,14 +3,14 @@
 The core idea is protocol first. Three things are stable and everything else is
 a client or a deployment of them:
 
-1. Schema. Settings and pages are declared as data (`@discord-dashboard/schema`).
-2. Bot adapter protocol. How a bot and the dashboard talk (`@discord-dashboard/protocol`).
-3. Entitlements. One question, many billing sources (`@discord-dashboard/billing`).
+1. Schema. Settings and pages are declared as data (`@asctane-dashboard/schema`).
+2. Bot adapter protocol. How a bot and the dashboard talk (`@asctane-dashboard/protocol`).
+3. Entitlements. One question, many billing sources (`@asctane-dashboard/billing`).
 
 ## Two profiles, one codebase
 
 - Lite: the bot and dashboard run in one process. The adapter is in process,
-  storage is SQLite, no external services. This is the `discord-dashboard`
+  storage is SQLite, no external services. This is the `asctane-dashboard`
   meta package and is the fastest way to self host.
 - Platform: the dashboard is a standalone service. Bots connect over the
   gateway from any language. Storage is Postgres, sessions and pub sub use

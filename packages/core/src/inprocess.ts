@@ -1,6 +1,6 @@
 import type { BotAdapter, SettingActor } from "./adapter.js"
-import type { ChannelFilter, RoleFilter } from "@discord-dashboard/protocol"
-import { toWire, type SettingsDef } from "@discord-dashboard/schema"
+import type { ChannelFilter, RoleFilter } from "@asctane-dashboard/protocol"
+import { toWire, type SettingsDef } from "@asctane-dashboard/schema"
 import type { SpaceSource } from "./platform.js"
 
 export interface KeyValueStore {

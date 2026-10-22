@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
-import { pageSchema, COMPONENT_TYPES } from "@discord-dashboard/builder/schema"
-import { generatePage, type LlmClient } from "@discord-dashboard/builder/ai"
+import { pageSchema, COMPONENT_TYPES } from "@asctane-dashboard/builder/schema"
+import { generatePage, type LlmClient } from "@asctane-dashboard/builder/ai"
 import {
   SESSION_COOKIE,
   type SessionData,

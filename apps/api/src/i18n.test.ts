@@ -2,9 +2,9 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest"
 import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
-import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
-import { defineSettings, f } from "@discord-dashboard/schema"
-import { discord } from "@discord-dashboard/platform-discord"
+import { InProcessAdapter, MemoryStore } from "@asctane-dashboard/core"
+import { defineSettings, f } from "@asctane-dashboard/schema"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 const config: ApiConfig = {
   port: 0,

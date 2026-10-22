@@ -1,9 +1,9 @@
 import { describe, it, expect, afterEach } from "vitest"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
-import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
-import { defineSettings } from "@discord-dashboard/schema"
-import { discord } from "@discord-dashboard/platform-discord"
+import { InProcessAdapter, MemoryStore } from "@asctane-dashboard/core"
+import { defineSettings } from "@asctane-dashboard/schema"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 const def = defineSettings(() => ({}))
 const base = {

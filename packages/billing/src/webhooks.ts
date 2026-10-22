@@ -1,4 +1,4 @@
-import { SubjectType } from "@discord-dashboard/core"
+import { SubjectType } from "@asctane-dashboard/core"
 import { GrantSource, GrantStatus, type Grant } from "./entitlements.js"
 
 // The literal status the Stripe API sends for an active subscription.

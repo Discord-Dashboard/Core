@@ -1,5 +1,5 @@
 {
-  "name": "@discord-dashboard/modules",
+  "name": "@asctane-dashboard/modules",
   "version": "3.1.0-alpha.0",
   "description": "Bundle of the reference feature modules.",
   "type": "module",
@@ -22,14 +22,14 @@
     "lint": "echo \"no lint yet\""
   },
   "dependencies": {
-    "@discord-dashboard/schema": "workspace:*",
-    "@discord-dashboard/module-leveling": "workspace:*",
-    "@discord-dashboard/module-automod": "workspace:*",
-    "@discord-dashboard/module-tickets": "workspace:*",
-    "@discord-dashboard/module-giveaways": "workspace:*",
-    "@discord-dashboard/module-onboarding": "workspace:*",
-    "@discord-dashboard/module-reaction-roles": "workspace:*",
-    "@discord-dashboard/module-autoresponder": "workspace:*"
+    "@asctane-dashboard/schema": "workspace:*",
+    "@asctane-dashboard/module-leveling": "workspace:*",
+    "@asctane-dashboard/module-automod": "workspace:*",
+    "@asctane-dashboard/module-tickets": "workspace:*",
+    "@asctane-dashboard/module-giveaways": "workspace:*",
+    "@asctane-dashboard/module-onboarding": "workspace:*",
+    "@asctane-dashboard/module-reaction-roles": "workspace:*",
+    "@asctane-dashboard/module-autoresponder": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

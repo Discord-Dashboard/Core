@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify"
-import { createPlatformRegistry } from "@discord-dashboard/core"
+import { createPlatformRegistry } from "@asctane-dashboard/core"
 import type { ApiConfig } from "../config.js"
 import { SESSION_COOKIE, type SessionStore } from "./session.js"
 import { createPkce, createState } from "./oauth.js"

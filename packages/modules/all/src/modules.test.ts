@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { modules, composeModules } from "./index.js"
-import { toWire } from "@discord-dashboard/schema"
+import { toWire } from "@asctane-dashboard/schema"
 
 describe("reference modules", () => {
   it("all have unique ids", () => {
@@ -32,4 +32,4 @@ describe("composeModules", () => {
   })
 })
 
-import { leveling } from "@discord-dashboard/module-leveling"
+import { leveling } from "@asctane-dashboard/module-leveling"

@@ -1,9 +1,9 @@
-# @discord-dashboard/sdk-js
+# @asctane-dashboard/sdk-js
 
-Connect a Node bot to the discord-dashboard gateway.
+Connect a Node bot to the asctane-dashboard gateway.
 
 ```ts
-import { Adapter, defineSettings, f } from "@discord-dashboard/sdk-js"
+import { Adapter, defineSettings, f } from "@asctane-dashboard/sdk-js"
 
 const store = new Map()
 

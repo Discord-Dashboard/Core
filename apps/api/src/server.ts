@@ -3,9 +3,9 @@ import cookie from "@fastify/cookie"
 import cors from "@fastify/cors"
 import helmet from "@fastify/helmet"
 import rateLimit from "@fastify/rate-limit"
-import type { BotAdapter, DefSource } from "@discord-dashboard/core"
-import { createEntitlements } from "@discord-dashboard/billing"
-import { PROTOCOL_VERSION } from "@discord-dashboard/protocol"
+import type { BotAdapter, DefSource } from "@asctane-dashboard/core"
+import { createEntitlements } from "@asctane-dashboard/billing"
+import { PROTOCOL_VERSION } from "@asctane-dashboard/protocol"
 import type { ApiConfig } from "./config.js"
 import { SessionStore } from "./auth/session.js"
 import { registerAuthRoutes } from "./auth/routes.js"
@@ -13,7 +13,7 @@ import { registerSettingsRoutes } from "./routes/settings.js"
 import { registerBillingRoutes } from "./routes/billing.js"
 import { registerPageRoutes } from "./routes/pages.js"
 import { MemoryPageStore, type PageStore } from "./pages/store.js"
-import type { LlmClient } from "@discord-dashboard/builder/ai"
+import type { LlmClient } from "@asctane-dashboard/builder/ai"
 import { MemoryGrantStore } from "./billing.js"
 import { StatsRegistry } from "./stats.js"
 import { EventHub } from "./events-hub.js"
@@ -114,7 +114,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     }
     return {
       openapi: "3.1.0",
-      info: { title: "discord-dashboard", version: PROTOCOL_VERSION },
+      info: { title: "asctane-dashboard", version: PROTOCOL_VERSION },
       paths,
     }
   })

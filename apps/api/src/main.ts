@@ -10,9 +10,9 @@ import {
   MemoryStore,
   buildDefFromAdapter,
   type DefSource,
-} from "@discord-dashboard/core"
-import { discordFromEnv } from "@discord-dashboard/platform-discord"
-import { defineSettings, type SettingsDef } from "@discord-dashboard/schema"
+} from "@asctane-dashboard/core"
+import { discordFromEnv } from "@asctane-dashboard/platform-discord"
+import { defineSettings, type SettingsDef } from "@asctane-dashboard/schema"
 
 // Standalone bootstrap. Lite mode runs an in process demo adapter. Platform
 // mode (BOT_ID set) proxies to a bot connected over the gateway and refreshes

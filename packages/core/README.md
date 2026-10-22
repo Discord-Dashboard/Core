@@ -1,4 +1,4 @@
-# @discord-dashboard/core
+# @asctane-dashboard/core
 
 The engine that binds the protocol, schema and entitlements together.
 

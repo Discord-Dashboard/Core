@@ -1,4 +1,4 @@
-import type { Page } from "@discord-dashboard/builder/schema"
+import type { Page } from "@asctane-dashboard/builder/schema"
 
 export enum PageStatus {
   Draft = "draft",

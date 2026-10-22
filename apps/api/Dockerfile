@@ -7,7 +7,7 @@ FROM base AS deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY . .
 RUN pnpm install --no-frozen-lockfile
-RUN pnpm --filter @discord-dashboard/api build
+RUN pnpm --filter @asctane-dashboard/api build
 
 FROM base AS run
 COPY --from=deps /app /app

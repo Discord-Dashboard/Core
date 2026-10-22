@@ -4,9 +4,9 @@ import { startGateway } from "./gateway/gateway.js"
 import { StatsRegistry, wireStats } from "./stats.js"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
-import { InProcessAdapter, MemoryStore } from "@discord-dashboard/core"
-import { Adapter, defineSettings } from "@discord-dashboard/sdk-js"
-import { discord } from "@discord-dashboard/platform-discord"
+import { InProcessAdapter, MemoryStore } from "@asctane-dashboard/core"
+import { Adapter, defineSettings } from "@asctane-dashboard/sdk-js"
+import { discord } from "@asctane-dashboard/platform-discord"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()

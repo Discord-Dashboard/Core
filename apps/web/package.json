@@ -1,5 +1,5 @@
 {
-  "name": "@discord-dashboard/web",
+  "name": "@asctane-dashboard/web",
   "version": "3.1.0-alpha.0",
   "description": "Dashboard, builder and landing (Next.js).",
   "private": true,
@@ -12,10 +12,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@discord-dashboard/builder": "workspace:*",
-    "@discord-dashboard/schema": "workspace:*",
-    "@discord-dashboard/theme-default": "workspace:*",
-    "@discord-dashboard/ui": "workspace:*",
+    "@asctane-dashboard/builder": "workspace:*",
+    "@asctane-dashboard/schema": "workspace:*",
+    "@asctane-dashboard/theme-default": "workspace:*",
+    "@asctane-dashboard/ui": "workspace:*",
     "next": "^16.2.10",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"

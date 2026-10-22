@@ -1,7 +1,7 @@
 import type {
   Entitlements,
   EntitlementSubject,
-} from "@discord-dashboard/core"
+} from "@asctane-dashboard/core"
 
 export enum GrantSource {
   Manual = "manual",

@@ -1,7 +1,7 @@
-import "@discord-dashboard/ui"
+import "@asctane-dashboard/ui"
 import "./globals.css"
-import { themeToCss } from "@discord-dashboard/ui"
-import { defaultTheme } from "@discord-dashboard/theme-default"
+import { themeToCss } from "@asctane-dashboard/ui"
+import { defaultTheme } from "@asctane-dashboard/theme-default"
 import { AppShell } from "./components/AppShell"
 import type { ReactNode } from "react"
 

@@ -7,7 +7,7 @@
     "start": "tsx src/index.ts"
   },
   "dependencies": {
-    "@discord-dashboard/sdk-js": "workspace:*"
+    "@asctane-dashboard/sdk-js": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.23.0"

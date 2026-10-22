@@ -1,7 +1,7 @@
 {
-  "name": "@discord-dashboard/module-leveling",
+  "name": "@asctane-dashboard/module-leveling",
   "version": "3.1.0-alpha.0",
-  "description": "Reference leveling module for discord-dashboard.",
+  "description": "Reference leveling module for asctane-dashboard.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -22,7 +22,7 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@discord-dashboard/schema": "workspace:*"
+    "@asctane-dashboard/schema": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

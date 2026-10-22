@@ -1,5 +1,5 @@
 {
-  "name": "discord-dashboard-monorepo",
+  "name": "asctane-dashboard-monorepo",
   "private": true,
   "packageManager": "pnpm@9.7.0",
   "engines": {

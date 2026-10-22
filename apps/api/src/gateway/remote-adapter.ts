@@ -1,11 +1,11 @@
-import type { BotAdapter, SettingActor } from "@discord-dashboard/core"
+import type { BotAdapter, SettingActor } from "@asctane-dashboard/core"
 import {
   RpcMethod,
   type SchemaDescriptor,
   type OptionListItem,
   type ChannelFilter,
   type RoleFilter,
-} from "@discord-dashboard/protocol"
+} from "@asctane-dashboard/protocol"
 import type { Gateway } from "./gateway.js"
 
 // A BotAdapter backed by a bot connected over the gateway. The bot may be
