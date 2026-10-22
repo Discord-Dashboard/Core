@@ -1,6 +1,6 @@
 {
   "name": "@asctane-dashboard/module-giveaways",
-  "version": "3.1.0-alpha.0",
+  "version": "3.1.0-beta.0",
   "description": "Giveaway module.",
   "type": "module",
   "main": "./src/index.ts",

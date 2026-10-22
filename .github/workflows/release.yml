@@ -13,14 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+      # Trusted publishing (OIDC) needs Node 22.14 or later and npm 11.5.1 or
+      # later. There is no npm token: npm trades the job's id-token for a
+      # short lived publish token, and adds provenance on its own.
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
+      - run: npm install -g npm@^11.5.1
       - run: pnpm install --frozen-lockfile
       # The tag decides the version and the npm dist tag. v3.1.0 publishes to
-      # latest, v3.1.0-alpha.0 to alpha, so a prerelease never replaces the
+      # latest, v3.1.0-beta.0 to beta, so a prerelease never replaces the
       # version people get from a plain `npm install`.
       - name: Resolve version and dist tag
         id: version
@@ -45,7 +49,18 @@ jobs:
           fi
       - run: pnpm build
       - run: pnpm test
-      - run: pnpm smoke:pack
-      - run: pnpm -r publish --access public --no-git-checks --provenance --tag ${{ steps.version.outputs.tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # Pack with pnpm, which turns workspace: ranges into real versions, then
+      # publish the tarballs with npm, which does the OIDC exchange. A version
+      # that is already on npm (a first publish done by hand) is skipped, so
+      # re-running a tag only publishes what is missing.
+      - run: pnpm smoke:pack --out .packs
+      - name: Publish
+        run: |
+          for tarball in .packs/*.tgz; do
+            name=$(tar -xzOf "$tarball" package/package.json | node -p 'JSON.parse(require("fs").readFileSync(0, "utf8")).name')
+            if npm view "$name@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
+              echo "$name@${{ steps.version.outputs.version }} is already on npm, skipping"
+              continue
+            fi
+            npm publish "$tarball" --access public --tag "${{ steps.version.outputs.tag }}"
+          done

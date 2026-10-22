@@ -96,7 +96,7 @@ export const f = {
       ...(filter ? { filter } : {}),
     })
   },
-  // Aliases of f.ref for the alpha. Platform packages export typed versions.
+  // Aliases of f.ref for the beta. Platform packages export typed versions.
   channel(opts: BaseFieldOpts & { types?: string[] } = {}): Field {
     const { types, ...rest } = opts
     return f.ref("channel", { ...rest, ...(types ? { filter: { types } } : {}) })

@@ -1,6 +1,6 @@
 [project]
 name = "discord-dashboard"
-version = "3.1.0a0"
+version = "3.1.0b0"
 description = "Bot adapter SDK for Python. Connects a bot to the dashboard gateway."
 readme = "README.md"
 requires-python = ">=3.10"

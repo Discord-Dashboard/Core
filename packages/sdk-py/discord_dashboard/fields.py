@@ -30,7 +30,7 @@ class _Fields:
             field["filter"] = filter
         return field
 
-    # Aliases of ref for the alpha, with Discord's filter options.
+    # Aliases of ref for the beta, with Discord's filter options.
     def channel(self, types=None, multiple=False, **opts):
         return self.ref("channel", multiple, {"types": types} if types else None, **opts)
 

@@ -1,6 +1,6 @@
 {
   "name": "@asctane-dashboard/create",
-  "version": "3.1.0-alpha.0",
+  "version": "3.1.0-beta.0",
   "description": "Scaffold a new asctane-dashboard project.",
   "type": "module",
   "main": "./src/index.ts",

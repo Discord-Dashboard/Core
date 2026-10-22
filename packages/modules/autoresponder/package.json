@@ -1,6 +1,6 @@
 {
   "name": "@asctane-dashboard/module-autoresponder",
-  "version": "3.1.0-alpha.0",
+  "version": "3.1.0-beta.0",
   "description": "Autoresponder module for asctane-dashboard.",
   "type": "module",
   "main": "./src/index.ts",
