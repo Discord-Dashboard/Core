@@ -4,8 +4,8 @@ import { fromV2, fieldFor } from "./index.js"
 describe("compat-v2", () => {
   it("maps v2 form types to v3 fields", () => {
     expect(fieldFor("switch").type).toBe("switch")
-    expect(fieldFor("channelsSelect").type).toBe("channel")
-    expect(fieldFor("rolesMultiSelect").type).toBe("roleMulti")
+    expect(fieldFor("channelsSelect").opts).toMatchObject({ kind: "channel" })
+    expect(fieldFor("rolesMultiSelect").opts).toMatchObject({ kind: "role", multiple: true })
     expect(fieldFor(undefined).type).toBe("text")
   })
   it("bridges getActualSet and setNew through the adapter", async () => {

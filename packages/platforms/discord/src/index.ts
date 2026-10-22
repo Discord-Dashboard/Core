@@ -7,10 +7,18 @@ import {
 } from "./oauth.js"
 import { discordSourceFromClient } from "./source.js"
 import { discordBilling } from "./billing.js"
+import { discordFields } from "./fields.js"
 
 export { discordSourceFromClient } from "./source.js"
 export { buildAuthorizeUrl } from "./oauth.js"
 export { discordBilling } from "./billing.js"
+export {
+  f,
+  discordFields,
+  type DiscordChannelType,
+  type ChannelFieldOpts,
+  type RoleFieldOpts,
+} from "./fields.js"
 
 export interface DiscordOptions {
   clientId: string
@@ -30,6 +38,7 @@ export function discord(options: DiscordOptions): Platform {
     id: "discord",
     name: "Discord",
     resources: ["channel", "role"],
+    fields: discordFields,
     auth: {
       start: ({ state, codeChallenge }) => ({
         kind: "redirect",

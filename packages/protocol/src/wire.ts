@@ -22,6 +22,11 @@ export interface WireOption {
   ui?: Record<string, unknown>
   // For a list field: the type of each item, so the schema can be rebuilt.
   item?: string
+  // For a ref field: what it picks (channel, role...), whether it picks
+  // several, and the platform's filter for the picker.
+  kind?: string
+  multiple?: boolean
+  filter?: Record<string, unknown>
 }
 
 export interface WireCategory {

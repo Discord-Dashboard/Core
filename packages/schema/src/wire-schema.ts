@@ -17,6 +17,10 @@ export const wireOption = z.object({
   max: z.number().optional(),
   entitlement: z.string().optional(),
   ui: z.record(z.string(), z.unknown()).optional(),
+  item: z.string().optional(),
+  kind: z.string().optional(),
+  multiple: z.boolean().optional(),
+  filter: z.record(z.string(), z.unknown()).optional(),
 })
 
 export const wireCategory = z.object({

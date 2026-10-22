@@ -9,8 +9,8 @@ export const reactionRoles = {
       icon: "smile",
       options: {
         enabled: f.switch({ label: "Enable reaction roles", default: false }),
-        channel: f.channel({ types: ["text"], label: "Panel channel" }),
-        roles: f.roleMulti({ label: "Assignable roles" }),
+        channel: f.ref("channel", { filter: { types: ["text"] }, label: "Panel channel" }),
+        roles: f.ref("role", { multiple: true, label: "Assignable roles" }),
         unique: f.switch({ label: "Only one role at a time", default: false }),
       },
     }),

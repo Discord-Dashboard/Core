@@ -17,8 +17,28 @@ export interface Field {
   zod: z.ZodTypeAny
 }
 
-function make(type: string, zod: z.ZodTypeAny, opts: BaseFieldOpts = {}): Field {
+// Builds a field of any type. The f factories below use it, and a platform
+// package uses it for field types only that platform has (Discord's embed).
+export function defineField(
+  type: string,
+  zod: z.ZodTypeAny,
+  // BaseFieldOpts plus whatever else the type needs on the wire.
+  opts: object = {}
+): Field {
   return { type, zod, opts: { ...opts } as Record<string, unknown> }
+}
+const make = defineField
+
+// Rebuilds a field from its wire options. A platform passes these to fromWire
+// for its own field types.
+export type FieldFactory = (opts: BaseFieldOpts) => Field
+
+export interface RefFieldOpts extends BaseFieldOpts {
+  // Pick several instead of one.
+  multiple?: boolean
+  // Narrows the picker. What it may contain depends on the platform and the
+  // kind, such as { types: ["text"] } for Discord channels.
+  filter?: Record<string, unknown>
 }
 
 // Defaults can arrive from the wire as untrusted strings, so a plain
@@ -64,26 +84,40 @@ export const f = {
   multiSelect(opts: BaseFieldOpts & { options: Record<string, string> }): Field {
     return make("multiSelect", z.array(z.string()), opts)
   },
+  // A pick of something that lives in the space, such as a channel or a role,
+  // listed live by the platform. The value is its id (or ids when multiple).
+  ref(kind: string, opts: RefFieldOpts = {}): Field {
+    const zod = opts.multiple ? z.array(z.string()) : z.string().optional()
+    const { filter, multiple, ...rest } = opts
+    return make("ref", zod, {
+      ...rest,
+      kind,
+      ...(multiple ? { multiple: true } : {}),
+      ...(filter ? { filter } : {}),
+    })
+  },
+  // Aliases of f.ref for the alpha. Platform packages export typed versions.
   channel(opts: BaseFieldOpts & { types?: string[] } = {}): Field {
-    return make("channel", z.string().optional(), opts)
+    const { types, ...rest } = opts
+    return f.ref("channel", { ...rest, ...(types ? { filter: { types } } : {}) })
   },
   channelMulti(opts: BaseFieldOpts & { types?: string[] } = {}): Field {
-    return make("channelMulti", z.array(z.string()), opts)
+    const { types, ...rest } = opts
+    return f.ref("channel", { ...rest, multiple: true, ...(types ? { filter: { types } } : {}) })
   },
   role(opts: BaseFieldOpts & { hideHigher?: boolean } = {}): Field {
-    return make("role", z.string().optional(), opts)
+    const { hideHigher, ...rest } = opts
+    return f.ref("role", { ...rest, ...(hideHigher ? { filter: { hideHigher } } : {}) })
   },
   roleMulti(opts: BaseFieldOpts & { hideHigher?: boolean } = {}): Field {
-    return make("roleMulti", z.array(z.string()), opts)
+    const { hideHigher, ...rest } = opts
+    return f.ref("role", { ...rest, multiple: true, ...(hideHigher ? { filter: { hideHigher } } : {}) })
   },
   color(opts: BaseFieldOpts & { default?: string } = {}): Field {
     return make("color", z.string().optional(), opts)
   },
   list(item: Field, opts: BaseFieldOpts & { max?: number } = {}): Field {
     return make("list", z.array(item.zod), { ...opts, item: item.type } as BaseFieldOpts)
-  },
-  embed(opts: BaseFieldOpts & { default?: unknown } = {}): Field {
-    return make("embed", z.record(z.string(), z.unknown()).optional(), opts)
   },
   url(opts: BaseFieldOpts = {}): Field {
     return make("url", z.string().regex(/^https?:\/\/.+/).optional(), opts)

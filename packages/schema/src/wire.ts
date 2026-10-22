@@ -26,6 +26,11 @@ function optionToWire(id: string, field: Field, locale?: string): WireOption {
   if (typeof opts.min === "number") wire.min = opts.min
   if (typeof opts.max === "number") wire.max = opts.max
   if (typeof opts.item === "string") wire.item = opts.item
+  if (typeof opts.kind === "string") wire.kind = opts.kind
+  if (opts.multiple === true) wire.multiple = true
+  if (opts.filter && typeof opts.filter === "object") {
+    wire.filter = opts.filter as Record<string, unknown>
+  }
   if (opts.ui && typeof opts.ui === "object") {
     wire.ui = opts.ui as Record<string, unknown>
   }

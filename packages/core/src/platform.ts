@@ -1,5 +1,5 @@
 import type { OptionListItem } from "@asctane-dashboard/protocol"
-import type { Field } from "@asctane-dashboard/schema"
+import type { FieldFactory } from "@asctane-dashboard/schema"
 import type { EntitlementSubject } from "./entitlements.js"
 
 // A space is where a bot's settings apply: a Discord server, a Slack
@@ -120,7 +120,7 @@ export interface Platform {
   // Wraps the bot's client (discord.js, Bolt, grammY...) for lite mode.
   source?: (client: unknown) => SpaceSource
   // Field types only this platform has, such as Discord's embed.
-  fields?: Record<string, (...args: any[]) => Field>
+  fields?: Record<string, FieldFactory>
   billing?: PlatformBilling
   // Non fatal configuration problems, such as a missing client secret, shown
   // at startup.

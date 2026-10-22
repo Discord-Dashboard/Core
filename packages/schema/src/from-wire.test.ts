@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest"
-import { defineSettings, f } from "./index.js"
+import { z } from "zod"
+import { defineField, defineSettings, f } from "./index.js"
 import { toWire } from "./wire.js"
 import { fromWire } from "./from-wire.js"
 
@@ -48,15 +49,53 @@ describe("fromWire", () => {
     expect(field.zod.safeParse("nope").success).toBe(false)
   })
 
-  it("rebuilds an embed field as an object, not a string", () => {
+  it("rebuilds a platform field type from the factories passed in", () => {
+    const embed = (opts: object) =>
+      defineField("embed", z.record(z.string(), z.unknown()).optional(), opts)
     const wire = toWire(
       defineSettings((s) => ({
-        c: s.category({ name: "C", options: { e: f.embed() } }),
+        c: s.category({ name: "C", options: { e: embed({}) } }),
       }))
     )
-    const field = fromWire(wire).categories["c"]!.options["e"]!
+    const field = fromWire(wire, { embed }).categories["c"]!.options["e"]!
     expect(field.type).toBe("embed")
     expect(field.zod.safeParse({ title: "hi" }).success).toBe(true)
+  })
+
+  it("round trips a ref field with its kind, multiple and filter", () => {
+    const wire = toWire(
+      defineSettings((s) => ({
+        c: s.category({
+          name: "C",
+          options: { log: f.ref("channel", { multiple: true, filter: { types: ["text"] } }) },
+        }),
+      }))
+    )
+    const option = wire.categories[0]!.options[0]!
+    expect(option).toMatchObject({ type: "ref", kind: "channel", multiple: true, filter: { types: ["text"] } })
+    const field = fromWire(wire).categories["c"]!.options["log"]!
+    expect(field.opts).toMatchObject({ kind: "channel", multiple: true, filter: { types: ["text"] } })
+    expect(field.zod.safeParse(["1"]).success).toBe(true)
+    expect(field.zod.safeParse("1").success).toBe(false)
+  })
+
+  it("reads the older channel and roleMulti wire types as refs", () => {
+    const def = fromWire({
+      version: "1.0",
+      categories: [
+        {
+          id: "c",
+          name: "C",
+          options: [
+            { id: "log", type: "channel" },
+            { id: "mods", type: "roleMulti" },
+          ],
+        },
+      ],
+    })
+    const { log, mods } = def.categories["c"]!.options
+    expect(log!.opts).toMatchObject({ kind: "channel" })
+    expect(mods!.opts).toMatchObject({ kind: "role", multiple: true })
   })
 
   it("coerces a string switch default from the wire to a boolean", () => {

@@ -9,8 +9,8 @@ export const giveaways = {
       icon: "gift",
       options: {
         enabled: f.switch({ label: "Enable giveaways", default: false }),
-        managerRoles: f.roleMulti({ label: "Manager roles" }),
-        defaultChannel: f.channel({ types: ["text"], label: "Default channel" }),
+        managerRoles: f.ref("role", { multiple: true, label: "Manager roles" }),
+        defaultChannel: f.ref("channel", { filter: { types: ["text"] }, label: "Default channel" }),
       },
     }),
   })),

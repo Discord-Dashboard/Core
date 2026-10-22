@@ -12,8 +12,8 @@ export const leveling = {
       options: {
         enabled: f.switch({ label: "Enable leveling", default: false }),
         xpPerMessage: f.number({ label: "XP per message", min: 1, max: 100, default: 15 }),
-        announceChannel: f.channel({ types: ["text"], label: "Level up channel" }),
-        levelRoles: f.roleMulti({ label: "Level roles" }),
+        announceChannel: f.ref("channel", { filter: { types: ["text"] }, label: "Level up channel" }),
+        levelRoles: f.ref("role", { multiple: true, label: "Level roles" }),
       },
     }),
   })),

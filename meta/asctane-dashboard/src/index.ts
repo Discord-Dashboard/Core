@@ -11,7 +11,9 @@ import { SqliteKeyValueStore } from "@asctane-dashboard/db"
 import type { FastifyInstance } from "fastify"
 import { discord, discordSourceFromClient } from "@asctane-dashboard/platform-discord"
 
-export { defineSettings, f } from "@asctane-dashboard/schema"
+export { defineSettings } from "@asctane-dashboard/schema"
+// The Discord flavored fields: typed channel and role pickers, plus embed.
+export { f } from "@asctane-dashboard/platform-discord"
 
 export interface CreateDashboardOptions {
   client?: unknown

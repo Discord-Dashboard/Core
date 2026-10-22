@@ -15,7 +15,7 @@ export const automod = {
           default: "off",
         }),
         blocklist: f.list(f.text(), { label: "Blocked words", max: 200 }),
-        logChannel: f.channel({ types: ["text"], label: "Log channel" }),
+        logChannel: f.ref("channel", { filter: { types: ["text"] }, label: "Log channel" }),
       },
     }),
   })),
