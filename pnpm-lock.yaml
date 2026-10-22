@@ -140,6 +140,9 @@ importers:
       '@asctane-dashboard/core':
         specifier: workspace:*
         version: link:../core
+      '@asctane-dashboard/platform-discord':
+        specifier: workspace:*
+        version: link:../platforms/discord
       '@asctane-dashboard/schema':
         specifier: workspace:*
         version: link:../schema

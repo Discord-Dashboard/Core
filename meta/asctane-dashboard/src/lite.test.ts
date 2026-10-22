@@ -70,4 +70,48 @@ describe("lite mode end to end", () => {
 
     await app.close()
   })
+
+  it("reads settings for the bot, with defaults", async () => {
+    const values = new Map<string, unknown>()
+    const dash = createDashboard({
+      discord: { clientId: "c", clientSecret: "s" },
+      settings: defineSettings((s) => ({
+        general: s.category({
+          name: "General",
+          options: { prefix: f.text({ default: "!" }), log: f.channel() },
+        }),
+      })),
+      storage: { get: (k) => values.get(k), set: (k, v) => void values.set(k, v) },
+    })
+    expect(await dash.get("g1", "general.prefix")).toBe("!")
+    expect(await dash.get("g1", "general.log")).toBeUndefined()
+    values.set("g1:general.prefix", "?")
+    expect(await dash.get("g1", "general.prefix")).toBe("?")
+  })
+
+  it("runs on a custom adapter", async () => {
+    const settings = defineSettings((s) => ({
+      general: s.category({ name: "General", options: { prefix: f.text() } }),
+    }))
+    const dash = createDashboard({
+      discord: { clientId: "c", clientSecret: "s" },
+      settings,
+      web: false,
+      adapter: {
+        describeSchema: async () => ({ version: "1.0", categories: [] }),
+        getChannels: async () => [],
+        getRoles: async () => [],
+        getMemberPermissions: async () => [],
+        getSetting: async () => "from-adapter",
+        setSetting: async () => ({ ok: true }),
+        invokeAction: async () => null,
+      },
+    })
+    expect(await dash.get("g1", "general.prefix")).toBe("from-adapter")
+    const app = (await dash.listen(0)) as FastifyInstance
+    const port = (app.server.address() as { port: number }).port
+    const res = await fetch(`http://127.0.0.1:${port}/api/schema`)
+    expect(((await res.json()) as { categories: unknown[] }).categories).toEqual([])
+    await app.close()
+  })
 })
