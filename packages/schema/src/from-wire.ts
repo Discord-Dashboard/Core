@@ -47,7 +47,7 @@ export function fieldFromWire(
         multiple: option.multiple,
         filter: option.filter,
       })
-    // Older bots (and the alpha SDKs) still send the Discord field names.
+    // Older bots and SDKs still send the Discord field names.
     case "channel":
     case "role":
       return f.ref(option.type, { ...opts, filter: option.filter })

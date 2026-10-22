@@ -53,7 +53,7 @@ export function scaffold(targetDir: string, opts: ScaffoldOptions = {}) {
           scripts: { start: "node --env-file=.env index.js" },
           engines: { node: ">=20.6" },
           dependencies: {
-            "asctane-dashboard": "^3.1.0-alpha.0",
+            "asctane-dashboard": "^3.1.0-beta.0",
             "discord.js": "^14.26.4",
           },
         },

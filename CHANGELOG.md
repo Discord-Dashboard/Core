@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased (3.1.0-alpha)
+## Unreleased (3.1.0-beta)
 
 Versioned 3.1.0 to follow the 3.0.x prereleases published as discord-dashboard
 from earlier attempts.
@@ -69,7 +69,7 @@ A ground up rewrite, published under a new name. Highlights:
   applies them.
 - Fields: `f.ref(kind, { multiple, filter })` is the one picker for things in
   a space. `f.channel`, `f.channelMulti`, `f.role` and `f.roleMulti` are
-  aliases of it for the alpha, and their wire type is now `ref` (older
+  aliases of it for the beta, and their wire type is now `ref` (older
   `channel` and `roleMulti` descriptors are still read). Breaking: `f.embed`
   moved to `@asctane-dashboard/platform-discord`, which exports an extended `f`
   with typed Discord channel and role options; the main `asctane-dashboard`

@@ -25,10 +25,10 @@ one version.
 2. Run `pnpm build && pnpm smoke:pack`. It packs each package, installs the
    tarballs into an empty project and imports them, so a missing file or a
    private dependency fails here rather than for users.
-3. Push a tag named after the version, for example `v3.1.0-alpha.0`.
+3. Push a tag named after the version, for example `v3.1.0-beta.0`.
 
 The release workflow refuses to publish when a package version does not match
-the tag. A tag with a prerelease part (`-alpha.0`, `-beta.1`, `-rc.0`)
+the tag. A tag with a prerelease part (`-beta.0`, `-rc.0`)
 publishes under that dist tag, so `npm install asctane-dashboard` keeps giving
 people the latest stable release.
 
@@ -40,7 +40,7 @@ package goes out by hand once, from an npm account that can publish
 `asctane-dashboard` and the `@asctane-dashboard` scope:
 
 1. `pnpm build && pnpm smoke:pack --out .packs`
-2. `npm publish .packs/<tarball> --access public --tag alpha` for each new
+2. `npm publish .packs/<tarball> --access public --tag beta` for each new
    package (use the tag's dist tag).
 3. `pnpm npm:trust` links every package to the workflow. It needs npm 11.15
    or later and 2FA on the account; `--dry-run` prints the commands.

@@ -28,7 +28,7 @@ ref, color, list, url, duration.
 such as a channel or a role, from a list the platform fills in live. The filter
 is the platform's own: `{ types: ["text"] }` narrows Discord channels.
 `f.channel`, `f.channelMulti`, `f.role` and `f.roleMulti` remain as aliases of
-`f.ref` during the alpha.
+`f.ref` during the beta.
 
 Field types only one platform has live in that platform's package. Discord's
 `embed` field and its typed channel and role pickers come from

@@ -1,6 +1,6 @@
 {
   "name": "@asctane-dashboard/core",
-  "version": "3.1.0-alpha.0",
+  "version": "3.1.0-beta.0",
   "description": "Engine for asctane-dashboard: the HTTP API, OAuth, the bot gateway, settings and entitlements.",
   "type": "module",
   "main": "./src/index.ts",

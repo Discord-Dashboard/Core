@@ -103,7 +103,7 @@ export async function registerAuthRoutes(
   app.get("/api/auth/:platform/callback", (req, reply) =>
     finishLogin(req, reply, (req.params as { platform: string }).platform)
   )
-  // The v3 alpha's Discord redirect uri. It finishes whichever login the session
+  // The earlier v3 Discord redirect uri. It finishes whichever login the session
   // started, so an app registered with it keeps working.
   app.get("/api/auth/callback", (req, reply) => finishLogin(req, reply, undefined))
 
