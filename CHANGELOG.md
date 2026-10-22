@@ -63,3 +63,7 @@ A ground up rewrite, published under a new name. Highlights:
   finishes at `/api/auth/:platform/callback` (Discord's default redirect uri is
   now `/api/auth/discord/callback`); `/api/auth/callback` still works as an
   alias, so an app registered with it keeps logging in.
+- Database: the `guild_settings` table is now `space_settings`, keyed by
+  (bot, platform, space, key), so the same id on two platforms never clashes.
+  The SQL migrations ship in `@asctane-dashboard/db` and `migrateDb(db)`
+  applies them.

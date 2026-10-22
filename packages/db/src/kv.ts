@@ -2,7 +2,7 @@ import Database from "better-sqlite3"
 
 // A durable key value store backed by SQLite. It satisfies the same shape as the
 // in memory store, so lite mode can persist settings across restarts just by
-// swapping the store. Keys are the engine's `${guildId}:${key}` strings and
+// swapping the store. Keys are the engine's `${spaceId}:${key}` strings and
 // values are stored as JSON.
 export class SqliteKeyValueStore {
   private readonly db: Database.Database

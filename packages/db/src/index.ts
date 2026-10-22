@@ -1,4 +1,6 @@
+import { fileURLToPath } from "node:url"
 import { drizzle } from "drizzle-orm/better-sqlite3"
+import { migrate } from "drizzle-orm/better-sqlite3/migrator"
 import Database from "better-sqlite3"
 import * as schema from "./schema.js"
 
@@ -13,3 +15,12 @@ export function createDb(path = "data.sqlite") {
 }
 
 export type Db = ReturnType<typeof createDb>
+
+// The generated SQL migrations ship with the package, next to src and dist.
+export const MIGRATIONS_FOLDER = fileURLToPath(new URL("../migrations", import.meta.url))
+
+// Creates or updates the tables. Safe to run on every start: applied
+// migrations are recorded and skipped.
+export function migrateDb(db: Db) {
+  migrate(db, { migrationsFolder: MIGRATIONS_FOLDER })
+}
