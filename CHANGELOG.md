@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.1.0-beta.0 (public beta, unreleased)
+## 3.1.0-beta.0 (public beta)
 
 Versioned 3.1.0 to follow the 3.0.x prereleases published as discord-dashboard
 from earlier attempts.
