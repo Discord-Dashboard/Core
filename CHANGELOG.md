@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased (3.1.0-beta)
+## 3.1.0-beta.0 (public beta, unreleased)
 
 Versioned 3.1.0 to follow the 3.0.x prereleases published as discord-dashboard
 from earlier attempts.
@@ -35,6 +35,9 @@ A ground up rewrite, published under a new name. Highlights:
 - Reference modules: leveling, automod, tickets, giveaways, onboarding,
   reaction roles, autoresponder.
 - v2 compatibility layer and a project scaffolder.
+- Every package ships a README and declares Node.js 20 or later. The
+  scaffolder prints the next steps, and each release tag creates a GitHub
+  release with its changelog section.
 - Every API route lives under `/api`: auth is `/api/auth/*` (OAuth redirect
   `/api/auth/:platform/callback`), webhooks are `/api/webhooks/*`, plus
   `/api/openapi.json` and `/api/version`. Only the `/health`, `/ready` and

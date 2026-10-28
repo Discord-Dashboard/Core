@@ -1,6 +1,6 @@
 # ADR 9: Docs on Mintlify at dbd-docs.assistantscenter.com
 
-- Status: Proposed
+- Status: Deferred (2026-10-28, see ADR 11)
 - Date: 2026-10-22
 
 **Context.** The v3 docs are written and merged in [Discord-Dashboard/Docs](https://github.com/Discord-Dashboard/Docs) (Docs PR #3), in Mintlify's `docs.json` format, but nothing hosts them yet. The old address, dbd-docs.assistantscenter.com, returns Cloudflare error 522 as of 2026-10-22, and so does assistantscenter.com: the server behind it is down. The domain is on breftejk's Cloudflare account.

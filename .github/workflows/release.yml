@@ -64,3 +64,26 @@ jobs:
             fi
             npm publish "$tarball" --access public --tag "${{ steps.version.outputs.tag }}"
           done
+
+  # The GitHub release carries this version's changelog section, and is marked
+  # as a prerelease for a beta or rc tag. It runs after publishing, in its own
+  # job, so only this step gets write access to the repo.
+  github-release:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          awk '/^## /{n++} n==1' CHANGELOG.md | tail -n +2 > release-notes.md
+          flags=""
+          case "$GITHUB_REF_NAME" in *-*) flags="--prerelease" ;; esac
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "$GITHUB_REF_NAME already has a release"
+          else
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file release-notes.md $flags
+          fi

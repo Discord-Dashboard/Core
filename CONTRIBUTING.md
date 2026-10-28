@@ -40,7 +40,8 @@ package goes out by hand once, from an npm account that can publish
 `asctane-dashboard` and the `@asctane-dashboard` scope:
 
 1. `pnpm build && pnpm smoke:pack --out .packs`
-2. `npm publish .packs/<tarball> --access public --tag beta` for each new
-   package (use the tag's dist tag).
+2. `pnpm npm:publish-first` publishes every tarball under the version's dist
+   tag and skips versions already on npm, so it can be run again after a
+   failure. `--dry-run` prints the commands.
 3. `pnpm npm:trust` links every package to the workflow. It needs npm 11.15
    or later and 2FA on the account; `--dry-run` prints the commands.
