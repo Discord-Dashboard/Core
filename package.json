@@ -13,6 +13,7 @@
     "test": "vitest run",
     "format": "prettier --write .",
     "smoke:pack": "node scripts/pack-smoke.mjs",
+    "npm:publish-first": "node scripts/publish-first.mjs",
     "npm:trust": "node scripts/npm-trust.mjs"
   },
   "devDependencies": {

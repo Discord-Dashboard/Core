@@ -10,6 +10,9 @@
     "./web": "./src/web.tsx"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Discord-Dashboard/Core.git",

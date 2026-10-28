@@ -9,6 +9,9 @@
     "create-asctane-dashboard": "./bin.js"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Discord-Dashboard/Core.git",
