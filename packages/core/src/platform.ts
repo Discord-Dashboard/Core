@@ -102,11 +102,24 @@ export interface PlatformGrant {
   subject: EntitlementSubject
   feature: string
   active: boolean
+  // When the grant ends on its own, in seconds since the epoch.
+  expiresAt?: number
+}
+
+// A webhook request as the platform signed it: the headers and the exact body
+// bytes, since a signature covers the raw body, not a re-serialized one.
+export interface WebhookRequest {
+  headers: Record<string, string | string[] | undefined>
+  rawBody: string
 }
 
 export interface PlatformBilling {
   // Turns a verified webhook body from the platform into grants.
   grantsFromWebhook(body: unknown): PlatformGrant[]
+  // Checks the platform's own signature on a webhook, such as Discord's
+  // Ed25519 one. Left out when the platform was not given its key; then core
+  // falls back to the shared webhookSecret header, or refuses the webhook.
+  verify?(req: WebhookRequest): boolean
 }
 
 // Everything core needs from one platform. Core never imports a platform

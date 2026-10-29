@@ -5,10 +5,17 @@ import {
   JSONRPC_VERSION,
   WIRE_VERSION,
   HandshakeType,
+  ProtocolErrorCode,
   RpcMethod,
   type OptionListItem,
 } from "@asctane-dashboard/protocol"
 import { toWire, type SettingsDef } from "@asctane-dashboard/schema"
+
+// Whether a parsed frame is a JSON object rather than null, an array or a
+// primitive.
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+}
 
 interface Actor {
   userId?: string
@@ -105,7 +112,11 @@ export class Adapter {
   private open() {
     const ws = new WebSocket(this.opts.gateway)
     this.ws = ws
-    ws.on("message", (raw) => this.handle(raw.toString()))
+    // handle is async: without the catch, a throw in a bot's handler would be
+    // an unhandled rejection, and Node would exit the whole bot process.
+    ws.on("message", (raw) => {
+      this.handle(raw.toString()).catch(() => {})
+    })
     ws.on("error", () => {})
     ws.on("close", () => {
       const delay = this.opts.reconnectMs ?? 1000
@@ -128,12 +139,14 @@ export class Adapter {
   }
 
   private async handle(raw: string) {
-    let frame: Record<string, unknown>
+    let parsed: unknown
     try {
-      frame = JSON.parse(raw)
+      parsed = JSON.parse(raw)
     } catch {
       return
     }
+    if (!isObject(parsed)) return
+    const frame = parsed
 
     if (frame.type === HandshakeType.Challenge) {
       const nonce = String(frame.nonce)
@@ -156,11 +169,22 @@ export class Adapter {
     }
 
     if (typeof frame.method === "string" && "id" in frame) {
-      const result = await this.dispatch(
-        frame.method,
-        frame.params as Record<string, unknown> | undefined
-      )
-      this.send({ jsonrpc: JSONRPC_VERSION, id: frame.id, result })
+      const params = isObject(frame.params) ? frame.params : undefined
+      try {
+        const result = await this.dispatch(frame.method, params)
+        this.send({ jsonrpc: JSONRPC_VERSION, id: frame.id, result })
+      } catch (err) {
+        // A handler failed. Answer with a JSON-RPC error so the dashboard call
+        // fails at once instead of waiting for its timeout, and keep running.
+        this.send({
+          jsonrpc: JSONRPC_VERSION,
+          id: frame.id,
+          error: {
+            code: ProtocolErrorCode.InternalError,
+            message: err instanceof Error ? err.message : "handler failed",
+          },
+        })
+      }
     }
   }
 

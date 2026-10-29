@@ -236,7 +236,12 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     events,
     platforms: config.platforms,
   })
-  await registerBillingRoutes(app, grants, config.webhookSecret, config.platforms)
+  await registerBillingRoutes(
+    app,
+    grants,
+    { stripeWebhookSecret: config.stripeWebhookSecret, webhookSecret: config.webhookSecret },
+    config.platforms
+  )
   await registerPageRoutes(app, {
     pages,
     sessions,

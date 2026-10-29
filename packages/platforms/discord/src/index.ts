@@ -6,12 +6,12 @@ import {
   fetchUser,
 } from "./oauth.js"
 import { discordSourceFromClient } from "./source.js"
-import { discordBilling } from "./billing.js"
+import { discordBilling, discordSignatureVerifier } from "./billing.js"
 import { discordFields } from "./fields.js"
 
 export { discordSourceFromClient } from "./source.js"
 export { buildAuthorizeUrl } from "./oauth.js"
-export { discordBilling } from "./billing.js"
+export { discordBilling, discordSignatureVerifier } from "./billing.js"
 export {
   f,
   discordFields,
@@ -27,6 +27,10 @@ export interface DiscordOptions {
   redirectUri: string
   // OAuth scopes. identify and guilds are what login and the server list need.
   scopes?: string[]
+  // The application's public key (General Information in the Developer
+  // Portal). Needed to accept SKU purchase webhooks: without it they are only
+  // accepted through the shared webhookSecret header, or not at all.
+  publicKey?: string
 }
 
 const DEFAULT_SCOPES = ["identify", "guilds"]
@@ -68,7 +72,9 @@ export function discord(options: DiscordOptions): Platform {
       },
     },
     source: discordSourceFromClient,
-    billing: discordBilling,
+    billing: options.publicKey
+      ? { ...discordBilling, verify: discordSignatureVerifier(options.publicKey) }
+      : discordBilling,
     warnings: () => {
       const out: string[] = []
       if (!options.clientId) out.push("DISCORD_CLIENT_ID is not set")
@@ -78,12 +84,13 @@ export function discord(options: DiscordOptions): Platform {
   })
 }
 
-// Reads the options from DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET and
-// DISCORD_REDIRECT_URI, for a standalone server.
+// Reads the options from DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET,
+// DISCORD_REDIRECT_URI and DISCORD_PUBLIC_KEY, for a standalone server.
 export function discordFromEnv(env: NodeJS.ProcessEnv = process.env): Platform {
   return discord({
     clientId: env.DISCORD_CLIENT_ID ?? "",
     clientSecret: env.DISCORD_CLIENT_SECRET ?? "",
     redirectUri: env.DISCORD_REDIRECT_URI ?? "http://localhost:3001/api/auth/discord/callback",
+    ...(env.DISCORD_PUBLIC_KEY ? { publicKey: env.DISCORD_PUBLIC_KEY } : {}),
   })
 }

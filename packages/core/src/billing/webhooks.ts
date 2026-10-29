@@ -39,5 +39,6 @@ export function grantFromPlatform(platform: string, grant: PlatformGrant): Grant
     source: GrantSource.Platform,
     platform,
     status: grant.active ? GrantStatus.Active : GrantStatus.Canceled,
+    ...(grant.expiresAt !== undefined ? { expiresAt: grant.expiresAt } : {}),
   }
 }

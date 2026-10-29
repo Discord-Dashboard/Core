@@ -9,6 +9,12 @@ export interface ApiConfig {
   // platform package itself.
   platforms: Platform[]
   rateLimit?: { max: number; timeWindow: string | number }
+  // The signing secret of a Stripe webhook endpoint (whsec_...). Stripe events
+  // are only accepted with a valid Stripe-Signature for it.
+  stripeWebhookSecret?: string
+  // A shared secret for webhooks relayed by your own service, sent in the
+  // x-webhook-secret header. Used where no platform signature is configured.
+  // Stripe and Discord cannot send it themselves.
   webhookSecret?: string
 }
 
@@ -20,6 +26,7 @@ export function loadConfig(platforms: Platform[] = []): ApiConfig {
       .split(",")
       .map((o) => o.trim()),
     platforms,
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
     webhookSecret: process.env.WEBHOOK_SECRET,
   }
 }
@@ -32,9 +39,6 @@ export function validateConfig(config: ApiConfig): string[] {
   }
   for (const platform of config.platforms) {
     warnings.push(...(platform.warnings?.() ?? []))
-  }
-  if (process.env.NODE_ENV === "production" && !config.webhookSecret) {
-    warnings.push("WEBHOOK_SECRET is not set; billing webhooks are unauthenticated")
   }
   return warnings
 }

@@ -55,7 +55,9 @@ describe("security", () => {
       headers: { origin: "https://discord.com" },
       payload: { guild_id: "g", sku_id: "pro" },
     })
-    expect(res.statusCode).toBe(200)
+    // It reaches the handler (no 403 from the origin check), which refuses it
+    // because this server has no way to verify Discord's signature.
+    expect(res.statusCode).toBe(503)
   })
 
   it("sets security headers from helmet", async () => {
