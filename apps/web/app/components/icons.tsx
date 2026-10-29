@@ -130,6 +130,12 @@ export const IconCheck = (p: IconProps) => (
   </Svg>
 )
 
+export const IconX = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6 6l12 12M18 6 6 18" />
+  </Svg>
+)
+
 export const IconPalette = (p: IconProps) => (
   <Svg {...p}>
     <path d="M12 3a9 9 0 1 0 0 18h1.2a2 2 0 0 0 1.4-3.4 2 2 0 0 1 1.4-3.4H19a2 2 0 0 0 2-2A9.2 9.2 0 0 0 12 3Z" />

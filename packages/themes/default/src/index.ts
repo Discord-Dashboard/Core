@@ -10,6 +10,9 @@ export const defaultTheme: DashboardTheme = {
   id: "default",
   name: "Default",
   tokens: {
+    // Light or dark, for native controls and scrollbars.
+    "color-scheme": "dark",
+
     // Surfaces, from deepest background to the most raised card.
     "color-bg": "#07080d",
     "color-bg-subtle": "#0b0d14",

@@ -1,8 +1,9 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import type { ReactNode } from "react"
+import { useEffect, type ReactNode } from "react"
 import { ThemeSwitcher } from "../ThemeSwitcher"
+import { avatarUrl, logout, useSession, type SessionUser } from "./session"
 import {
   IconLogo,
   IconHome,
@@ -36,11 +37,38 @@ function pageTitle(pathname: string): string {
   return "Overview"
 }
 
+function UserChip({ user }: { user: SessionUser }) {
+  const name = user.username ?? "Signed in"
+  const picture = avatarUrl(user)
+  return (
+    <span className="dd-userchip" title={`Signed in as ${name}`}>
+      {picture ? (
+        <img className="dd-userchip__avatar" src={picture} alt="" />
+      ) : (
+        <span className="dd-userchip__avatar" aria-hidden>
+          {name.slice(0, 1).toUpperCase()}
+        </span>
+      )}
+      <span className="dd-userchip__name">{name}</span>
+      <button type="button" className="dd-userchip__logout" onClick={() => logout()}>
+        Log out
+      </button>
+    </span>
+  )
+}
+
 // The application chrome. Marketing routes ("/" and published pages) get a
 // slim centered header; app routes get the full sidebar + top bar shell.
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? "/"
   const isMarketing = pathname === "/" || pathname.startsWith("/p/")
+  const session = useSession()
+  // Every app page but the login page needs a login. The API refuses the data
+  // anyway; this sends a logged out visitor to log in instead of an empty page.
+  const needsLogin = !isMarketing && !pathname.startsWith("/login")
+  useEffect(() => {
+    if (needsLogin && session === null) window.location.replace("/login")
+  }, [needsLogin, session])
 
   if (isMarketing) {
     return (
@@ -142,15 +170,22 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
           <div className="dd-topbar__actions">
             <ThemeSwitcher />
-            <span className="dd-userchip" title="Signed in with Discord">
-              <span className="dd-userchip__avatar" aria-hidden>
-                A
-              </span>
-              <span className="dd-userchip__name">Admin</span>
-            </span>
+            {session ? (
+              <UserChip user={session} />
+            ) : session === null ? (
+              <a className="dd-btn dd-btn--primary dd-btn--sm" href="/login">
+                Log in
+              </a>
+            ) : null}
           </div>
         </header>
-        <div className="dd-content">{children}</div>
+        <div className="dd-content">
+          {needsLogin && !session ? (
+            <div className="dd-skeleton" style={{ minHeight: 180 }} aria-busy="true" />
+          ) : (
+            children
+          )}
+        </div>
       </div>
     </div>
   )
