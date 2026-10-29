@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { themeToCss, themes } from "@asctane-dashboard/ui"
 import { defaultTheme } from "@asctane-dashboard/theme-default"
 import { IconPalette, IconChevronDown } from "./components/icons"
@@ -13,8 +13,32 @@ const options: Record<string, Record<string, string>> = {
   ...themes,
 }
 
+const STORAGE_KEY = "dd-theme"
+
+// Storage can be blocked (private windows, strict settings), so the choice is
+// remembered only where it works.
+function readStored(): string | null {
+  try {
+    return localStorage.getItem(STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
+function store(name: string) {
+  try {
+    localStorage.setItem(STORAGE_KEY, name)
+  } catch {
+    // Not remembered, but the theme still applies.
+  }
+}
+
 export function ThemeSwitcher() {
   const [name, setName] = useState("default")
+  useEffect(() => {
+    const saved = readStored()
+    if (saved && saved in options) setName(saved)
+  }, [])
   return (
     <span className="dd-theme">
       <style>{themeToCss(options[name] ?? {})}</style>
@@ -27,7 +51,10 @@ export function ThemeSwitcher() {
       <select
         id="dd-theme-select"
         value={name}
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) => {
+          setName(e.target.value)
+          store(e.target.value)
+        }}
       >
         {Object.keys(options).map((t) => (
           <option key={t} value={t}>

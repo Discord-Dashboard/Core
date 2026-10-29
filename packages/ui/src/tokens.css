@@ -1,6 +1,9 @@
 /* Design tokens. Override these to rebrand without touching components. The
    default theme module ships the same values; these are the SSR fallback. */
 :root {
+  /* Light or dark, for native controls and scrollbars. */
+  --dd-color-scheme: dark;
+
   /* Surfaces, from deepest background to the most raised card. */
   --dd-color-bg: #07080d;
   --dd-color-bg-subtle: #0b0d14;
@@ -60,6 +63,7 @@
 }
 
 :root[data-theme="light"] {
+  --dd-color-scheme: light;
   --dd-color-bg: #f4f6fb;
   --dd-color-bg-subtle: #eef1f7;
   --dd-color-surface: #ffffff;

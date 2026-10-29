@@ -125,6 +125,11 @@ export async function registerAuthRoutes(
   app.get("/api/auth/me", async (req, reply) => {
     const session = sessions.get(req.cookies[SESSION_COOKIE])
     if (!session?.userId) return reply.code(401).send({ error: "unauthorized" })
-    return { id: session.userId, username: session.username, avatar: session.avatar }
+    return {
+      id: session.userId,
+      username: session.username,
+      avatar: session.avatar,
+      platform: session.platform,
+    }
   })
 }

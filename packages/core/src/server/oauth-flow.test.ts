@@ -86,7 +86,7 @@ describe("oauth flow", () => {
 
     const me = await app.inject({ method: "GET", url: "/api/auth/me", headers: { cookie: newCookie } })
     expect(me.statusCode).toBe(200)
-    expect((me.json() as { id: string }).id).toBe("u1")
+    expect(me.json()).toMatchObject({ id: "u1", platform: "discord" })
 
     const res = await app.inject({ method: "GET", url: "/api/spaces", headers: { cookie: newCookie } })
     const body = res.json() as { platform: string; spaces: { id: string }[] }

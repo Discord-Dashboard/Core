@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Web dashboard: logged-out visitors are sent to the login page instead of
+  seeing a server's settings page, and a server you can't manage says so. The
+  top bar shows your name and avatar with a log out button, and a Log in
+  button when you're signed out.
+- Web dashboard: multi-value fields (channels, roles, multi-select) use a
+  searchable picker with removable chips instead of a small list box.
+- The Daylight theme is a full light theme, so cards, inputs and text all
+  switch. Themes can set `color-scheme`, and the dashboard remembers the theme
+  you picked.
+
 ## 3.1.0-beta.0 (public beta)
 
 Versioned 3.1.0 to follow the 3.0.x prereleases published as discord-dashboard

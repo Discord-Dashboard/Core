@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState, type ReactElement } from "react"
+import { useEffect, useRef, useState, type ReactElement } from "react"
 import { discordWidgets } from "@asctane-dashboard/platform-discord/web"
-import { IconChevronDown } from "./icons"
+import { IconCheck, IconChevronDown, IconX } from "./icons"
 
 const API = process.env.NEXT_PUBLIC_API ?? ""
 
@@ -97,22 +97,142 @@ function ColorField({ id, value, onChange }: FieldProps) {
   )
 }
 
-function MultiSelectField({ id, option, value, onChange }: FieldProps) {
+interface Choice {
+  label: string
+  value: string
+}
+
+// A picker label without the tree lines a platform draws in front of nested
+// items, for the chips.
+const chipLabel = (label: string) => label.replace(/^[\s\u2500-\u257f]+/, "")
+
+// Picks several values: the chosen ones show as chips, and typing filters a
+// list to add more. Backspace in the empty search removes the last chip.
+function MultiPicker({
+  id,
+  choices,
+  value,
+  onChange,
+  loading = false,
+  placeholder = "Search",
+}: {
+  id: string
+  choices: Choice[]
+  value: unknown
+  onChange: (value: string[]) => void
+  loading?: boolean
+  placeholder?: string
+}) {
   const selected = Array.isArray(value) ? value.map(String) : []
+  const [query, setQuery] = useState("")
+  const [open, setOpen] = useState(false)
+  const [active, setActive] = useState(0)
+  const root = useRef<HTMLDivElement>(null)
+  const listId = `${id}-list`
+
+  const q = query.trim().toLowerCase()
+  const shown = q ? choices.filter((c) => c.label.toLowerCase().includes(q)) : choices
+  const labelOf = (v: string) => chipLabel(choices.find((c) => c.value === v)?.label ?? v)
+
+  const toggle = (v: string) =>
+    onChange(selected.includes(v) ? selected.filter((s) => s !== v) : [...selected, v])
+
   return (
-    <select
-      id={id}
-      multiple
-      value={selected}
-      onChange={(e) => onChange(Array.from(e.target.selectedOptions, (o) => o.value))}
+    <div
+      className={`dd-multi${open ? " is-open" : ""}`}
+      ref={root}
+      onBlur={(e) => {
+        if (!root.current?.contains(e.relatedTarget as Node | null)) setOpen(false)
+      }}
     >
-      {(option.enum ?? []).map((o) => (
-        <option key={o.value} value={o.value}>
-          {o.label}
-        </option>
-      ))}
-    </select>
+      <div className="dd-multi__box" onClick={() => root.current?.querySelector("input")?.focus()}>
+        {selected.map((v) => (
+          <span className="dd-multi__chip" key={v}>
+            <span>{labelOf(v)}</span>
+            <button
+              type="button"
+              className="dd-multi__remove"
+              aria-label={`Remove ${labelOf(v)}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                toggle(v)
+              }}
+            >
+              <IconX size={12} />
+            </button>
+          </span>
+        ))}
+        <input
+          id={id}
+          role="combobox"
+          aria-expanded={open}
+          aria-controls={listId}
+          aria-busy={loading || undefined}
+          autoComplete="off"
+          value={query}
+          placeholder={selected.length ? "Add more" : placeholder}
+          onFocus={() => setOpen(true)}
+          onChange={(e) => {
+            setQuery(e.target.value)
+            setActive(0)
+            setOpen(true)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setOpen(false)
+            else if (e.key === "ArrowDown") {
+              e.preventDefault()
+              setOpen(true)
+              setActive((i) => Math.min(i + 1, shown.length - 1))
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault()
+              setActive((i) => Math.max(i - 1, 0))
+            } else if (e.key === "Enter") {
+              e.preventDefault()
+              const pick = shown[active]
+              if (open && pick) toggle(pick.value)
+            } else if (e.key === "Backspace" && query === "" && selected.length) {
+              onChange(selected.slice(0, -1))
+            }
+          }}
+        />
+        <IconChevronDown size={14} className="dd-multi__chev" />
+      </div>
+      {open && (
+        <ul className="dd-multi__list" id={listId} role="listbox" aria-multiselectable="true">
+          {loading ? (
+            <li className="dd-multi__empty">Loading…</li>
+          ) : shown.length === 0 ? (
+            <li className="dd-multi__empty">Nothing matches</li>
+          ) : (
+            shown.map((c, i) => {
+              const on = selected.includes(c.value)
+              return (
+                <li
+                  key={c.value}
+                  role="option"
+                  aria-selected={on}
+                  className={`dd-multi__option${i === active ? " is-active" : ""}`}
+                  // Keeps the focus in the search, so the list stays open.
+                  onMouseDown={(e) => e.preventDefault()}
+                  onMouseEnter={() => setActive(i)}
+                  onClick={() => toggle(c.value)}
+                >
+                  <span className="dd-multi__check" aria-hidden>
+                    {on && <IconCheck size={13} />}
+                  </span>
+                  <span className="dd-multi__label">{c.label}</span>
+                </li>
+              )
+            })
+          )}
+        </ul>
+      )}
+    </div>
   )
+}
+
+function MultiSelectField({ id, option, value, onChange }: FieldProps) {
+  return <MultiPicker id={id} choices={option.enum ?? []} value={value} onChange={onChange} />
 }
 
 // Turns what someone typed into the value to save. Returns invalid while the
@@ -249,21 +369,15 @@ function RefField({ id, option, value, onChange, space }: FieldProps) {
 
   const list = items ?? []
   if (option.multiple) {
-    const selected = Array.isArray(value) ? value.map(String) : []
     return (
-      <select
+      <MultiPicker
         id={id}
-        multiple
-        value={selected}
-        aria-busy={items === null}
-        onChange={(e) => onChange(Array.from(e.target.selectedOptions, (o) => o.value))}
-      >
-        {list.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+        choices={list}
+        value={value}
+        onChange={onChange}
+        loading={items === null}
+        placeholder={option.kind ? `Search ${option.kind}s` : "Search"}
+      />
     )
   }
   return (

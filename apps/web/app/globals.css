@@ -12,11 +12,8 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: var(--dd-color-scheme, dark);
   scroll-behavior: smooth;
-}
-:root[data-theme="light"] {
-  color-scheme: light;
 }
 
 body {
@@ -404,10 +401,30 @@ p {
   color: var(--dd-color-on-primary);
   background: var(--dd-gradient-brand);
 }
+img.dd-userchip__avatar {
+  object-fit: cover;
+  background: var(--dd-color-elevated);
+}
 .dd-userchip__name {
   font-size: 0.83rem;
   font-weight: 600;
   color: var(--dd-color-muted);
+}
+.dd-userchip__logout {
+  margin-left: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--dd-color-border);
+  border-radius: var(--dd-radius-pill);
+  background: transparent;
+  color: var(--dd-color-faint);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dd-userchip__logout:hover {
+  color: var(--dd-color-text);
+  border-color: var(--dd-color-border-strong);
 }
 
 .dd-content {
@@ -754,10 +771,148 @@ input[type="checkbox"]:focus-visible {
   min-height: 72px;
   resize: vertical;
 }
-.dd-field__control select[multiple] {
-  padding-right: 13px;
-  min-width: min(100%, 220px);
-  min-height: 96px;
+
+/* Searchable multi-select: chips plus a filterable list */
+.dd-multi {
+  position: relative;
+  width: min(100%, 360px);
+}
+.dd-multi__box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 5px 34px 5px 6px;
+  background: color-mix(in srgb, var(--dd-color-bg-subtle) 90%, transparent);
+  border: 1px solid var(--dd-color-border-strong);
+  border-radius: var(--dd-radius-sm);
+  cursor: text;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.dd-multi__box:hover {
+  border-color: color-mix(in srgb, var(--dd-color-border-strong) 55%, var(--dd-color-primary));
+}
+.dd-multi.is-open .dd-multi__box,
+.dd-multi__box:focus-within {
+  border-color: var(--dd-color-primary);
+  box-shadow: var(--dd-ring);
+}
+.dd-multi__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 3px 4px 3px 9px;
+  border-radius: var(--dd-radius-pill);
+  background: var(--dd-color-primary-soft);
+  border: 1px solid var(--dd-color-primary-border);
+  color: var(--dd-color-text);
+  font-size: 0.82rem;
+  font-weight: 560;
+}
+.dd-multi__chip > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dd-multi__remove {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dd-color-muted);
+  cursor: pointer;
+}
+.dd-multi__remove:hover {
+  color: var(--dd-color-text);
+  background: color-mix(in srgb, var(--dd-color-text) 12%, transparent);
+}
+.dd-multi__box input {
+  flex: 1 1 90px;
+  min-width: 90px;
+  max-width: none;
+  width: auto;
+  padding: 4px 6px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+.dd-multi__box input:hover,
+.dd-multi__box input:focus {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+.dd-multi__chev {
+  position: absolute;
+  right: 12px;
+  top: 20px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--dd-color-faint);
+  transition: transform 0.15s ease;
+}
+.dd-multi.is-open .dd-multi__chev {
+  transform: translateY(-50%) rotate(180deg);
+}
+.dd-multi__list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  background: var(--dd-color-elevated);
+  border: 1px solid var(--dd-color-border-strong);
+  border-radius: var(--dd-radius-sm);
+  box-shadow: var(--dd-shadow-lg);
+}
+.dd-multi__option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border-radius: calc(var(--dd-radius-sm) - 2px);
+  color: var(--dd-color-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.dd-multi__option.is-active {
+  background: color-mix(in srgb, var(--dd-color-primary) 14%, transparent);
+}
+.dd-multi__check {
+  display: inline-grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  flex: none;
+  border: 1px solid var(--dd-color-border-strong);
+  border-radius: 5px;
+  color: var(--dd-color-on-primary);
+}
+.dd-multi__option[aria-selected="true"] .dd-multi__check {
+  background: var(--dd-color-primary);
+  border-color: var(--dd-color-primary);
+}
+.dd-multi__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dd-multi__empty {
+  padding: 9px;
+  color: var(--dd-color-faint);
+  font-size: 0.86rem;
 }
 input[aria-invalid="true"],
 textarea[aria-invalid="true"] {

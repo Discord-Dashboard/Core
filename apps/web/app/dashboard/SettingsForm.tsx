@@ -27,6 +27,9 @@ export function SettingsForm({ platform, spaceId }: { platform: string; spaceId:
   const [savedKey, setSavedKey] = useState<string | null>(null)
   // Why the last save of a field was refused, by key.
   const [errors, setErrors] = useState<Record<string, string>>({})
+  // The API refuses a space the user may not manage.
+  const [noAccess, setNoAccess] = useState(false)
+  const [live, setLive] = useState(false)
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -34,7 +37,10 @@ export function SettingsForm({ platform, spaceId }: { platform: string; spaceId:
     Promise.all([
       fetch(`${API}/api/schema`, opts).then((r) => r.json()),
       fetch(`${API}/api/spaces/${platform}/${spaceId}/values`, opts)
-        .then((r) => (r.ok ? r.json() : { values: {} }))
+        .then((r) => {
+          if (r.status === 401 || r.status === 403) setNoAccess(true)
+          return r.ok ? r.json() : { values: {} }
+        })
         .catch(() => ({ values: {} })),
     ])
       .then(([schema, valuesRes]) => {
@@ -58,6 +64,8 @@ export function SettingsForm({ platform, spaceId }: { platform: string; spaceId:
     const es = new EventSource(`${API}/api/spaces/${platform}/${spaceId}/stream`, {
       withCredentials: true,
     })
+    es.onopen = () => setLive(true)
+    es.onerror = () => setLive(false)
     es.onmessage = (e) => {
       try {
         const event = JSON.parse(e.data)
@@ -116,16 +124,33 @@ export function SettingsForm({ platform, spaceId }: { platform: string; spaceId:
             <span className="dd-guildhead__id">ID {spaceId}</span>
           </div>
         </div>
-        <span className="dd-chip dd-chip--live" title="Connected to the live event stream">
-          <span className="dd-pulse" aria-hidden />
-          Live sync on
-        </span>
+        {live ? (
+          <span className="dd-chip dd-chip--live" title="Connected to the live event stream">
+            <span className="dd-pulse" aria-hidden />
+            Live sync on
+          </span>
+        ) : (
+          <span className="dd-chip" title="Not connected to the live event stream">
+            Live sync off
+          </span>
+        )}
       </div>
       <p className="dd-page-sub">
         Changes save instantly and sync live to everyone editing this server.
       </p>
 
-      {!categories ? (
+      {noAccess ? (
+        <div className="dd-empty">
+          <span className="dd-empty__icon" aria-hidden>
+            <IconSliders size={20} />
+          </span>
+          <h2>You can&apos;t manage this server</h2>
+          <p>
+            Pick one from <a href="/manage">your servers</a>, or ask its owner for
+            permission to manage it.
+          </p>
+        </div>
+      ) : !categories ? (
         <div className="dd-stack" aria-busy="true" aria-label="Loading settings">
           <div className="dd-skeleton" style={{ minHeight: 180 }} />
           <div className="dd-skeleton" style={{ minHeight: 180 }} />
