@@ -115,3 +115,28 @@ describe("lite mode end to end", () => {
     await app.close()
   })
 })
+
+describe("lite mode billing webhooks", () => {
+  it("refuses a webhook it cannot verify instead of granting it", async () => {
+    const settings = defineSettings(() => ({}))
+    const dash = createDashboard({ discord: { clientId: "c", clientSecret: "s" }, settings, port: 0, web: false })
+    const app = (await dash.listen(0)) as FastifyInstance
+    const port = (app.server.address() as { port: number }).port
+    const forged = await fetch(`http://127.0.0.1:${port}/api/webhooks/stripe`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        type: "customer.subscription.created",
+        data: { object: { id: "s", status: "active", metadata: { subjectType: "space", subjectId: "g", feature: "pro" } } },
+      }),
+    })
+    expect(forged.status).toBe(503)
+    const discord = await fetch(`http://127.0.0.1:${port}/api/webhooks/discord`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ guild_id: "g", sku_id: "pro" }),
+    })
+    expect(discord.status).toBe(503)
+    await app.close()
+  })
+})

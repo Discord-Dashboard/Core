@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- Security: the bot gateway no longer lets one malformed message or broken
+  WebSocket frame stop the server, and frames are capped at 1 MiB
+  (`maxPayload` option).
+- Security, breaking: billing webhooks are only accepted when they can be
+  verified, and answer 503 otherwise. Stripe webhooks check `Stripe-Signature`
+  against `STRIPE_WEBHOOK_SECRET` (`stripeWebhookSecret`). Discord webhooks
+  check Discord's Ed25519 signature against the app's public key
+  (`discord({ publicKey })`, `DISCORD_PUBLIC_KEY`), read Discord's
+  `ENTITLEMENT_CREATE`, `_UPDATE` and `_DELETE` events and answer PING with
+  204. `WEBHOOK_SECRET` stays as a shared header for your own relays.
+  `createDashboard` takes `discord.publicKey` and `billing`.
+- Bot SDKs (JS and Python): a handler that throws now answers the dashboard
+  with a JSON-RPC error and keeps the connection, instead of exiting the bot
+  (JS) or dropping the connection (Python).
 - Web dashboard: logged-out visitors are sent to the login page instead of
   seeing a server's settings page, and a server you can't manage says so. The
   top bar shows your name and avatar with a log out button, and a Log in

@@ -19,7 +19,13 @@ export { f } from "@asctane-dashboard/platform-discord"
 
 export interface CreateDashboardOptions {
   client?: unknown
-  discord: { clientId: string; clientSecret: string; redirectUri?: string }
+  // publicKey (or DISCORD_PUBLIC_KEY) lets the dashboard accept Discord's
+  // signed SKU purchase webhooks at /api/webhooks/discord.
+  discord: { clientId: string; clientSecret: string; redirectUri?: string; publicKey?: string }
+  // How billing webhooks are verified. Each falls back to its environment
+  // variable: STRIPE_WEBHOOK_SECRET, WEBHOOK_SECRET. A webhook with no way to
+  // verify it is refused.
+  billing?: { stripeWebhookSecret?: string; webhookSecret?: string }
   settings: SettingsDef
   // How settings persist. A custom store, "sqlite" for a durable local file
   // that survives restarts, or "memory" (the default) for ephemeral storage.
@@ -63,6 +69,7 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
     // Login ends on the first allowed origin. With the web app on this server
     // that is the server's own public origin, which the redirect uri names.
     const defaultOrigin = web ? new URL(redirectUri).origin : "http://localhost:3000"
+    const publicKey = opts.discord.publicKey ?? process.env.DISCORD_PUBLIC_KEY
     return {
       port: listenPort,
       cookieSecret: process.env.COOKIE_SECRET ?? "change-me-in-production",
@@ -74,8 +81,12 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
           clientId: opts.discord.clientId,
           clientSecret: opts.discord.clientSecret,
           redirectUri,
+          ...(publicKey ? { publicKey } : {}),
         }),
       ],
+      stripeWebhookSecret:
+        opts.billing?.stripeWebhookSecret ?? process.env.STRIPE_WEBHOOK_SECRET,
+      webhookSecret: opts.billing?.webhookSecret ?? process.env.WEBHOOK_SECRET,
     }
   }
 

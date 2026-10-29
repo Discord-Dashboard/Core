@@ -1,4 +1,4 @@
-import { WebSocketServer, type WebSocket } from "ws"
+import { WebSocketServer, type RawData, type WebSocket } from "ws"
 import crypto from "node:crypto"
 import type { Server } from "node:http"
 import {
@@ -50,6 +50,15 @@ export interface GatewayOptions {
   // A socket that does not authenticate within this window is dropped, so idle
   // unauthenticated connections cannot pile up.
   authTimeoutMs?: number
+  // The largest frame accepted, in bytes. ws allows 100 MiB by default, which
+  // lets an unauthenticated socket tie up that much memory per message.
+  maxPayload?: number
+}
+
+// Whether a parsed frame is a JSON object. JSON.parse also returns null,
+// numbers, strings and arrays, and none of those are frames.
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
 }
 
 export function startGateway(
@@ -59,7 +68,11 @@ export function startGateway(
 ): Gateway {
   const heartbeatMs = options.heartbeatMs ?? 30000
   const authTimeoutMs = options.authTimeoutMs ?? 10000
-  const wss = new WebSocketServer({ server, path: "/gateway" })
+  const wss = new WebSocketServer({
+    server,
+    path: "/gateway",
+    maxPayload: options.maxPayload ?? 1024 * 1024,
+  })
   const sessions = new Map<string, BotSession>()
   const listeners: EventListener[] = []
   const connectListeners: ((botId: string) => void)[] = []
@@ -90,25 +103,47 @@ export function startGateway(
       clearTimeout(authTimer)
     })
 
+    // ws reports a broken frame (bad UTF-8, a reserved opcode, a frame over
+    // maxPayload) as an "error" event and then closes the socket. Without a
+    // listener, Node treats it as an uncaught exception and exits.
+    socket.on("error", () => {})
+
     socket.send(
       JSON.stringify({ type: HandshakeType.Challenge, nonce, protocolVersion: PROTOCOL_VERSION })
     )
 
-    socket.on("message", async (raw) => {
-      let frame: Record<string, unknown>
+    // The handler is async, so a throw inside it would be an unhandled
+    // rejection, and Node exits on those. Anything a peer sends, before or after
+    // it authenticates, must never be able to take the whole server down.
+    // A frame that still fails is dropped. Before authentication the socket is
+    // closed too (1011, internal error), since nothing good can follow.
+    socket.on("message", (raw) => {
+      handleMessage(raw).catch(() => {
+        if (!session) socket.close(1011)
+      })
+    })
+
+    async function handleMessage(raw: RawData) {
+      let frame: unknown
       try {
         frame = JSON.parse(raw.toString())
       } catch {
         return
       }
+      if (!isObject(frame)) return
 
       if (!session) {
         if (frame.method !== HandshakeType.Hello) return
-        const params = frame.params as HelloParams
+        if (!isObject(frame.params)) return close(socket, ProtocolErrorCode.Unauthorized)
+        const params = frame.params as Partial<HelloParams>
+        if (typeof params.botId !== "string" || typeof params.nonceSig !== "string") {
+          return close(socket, ProtocolErrorCode.Unauthorized)
+        }
 
         // Reject a bot speaking an incompatible protocol major version.
         const major = (v: string) => v.split(".")[0]
-        if (major(params.protocolVersion ?? "") !== major(PROTOCOL_VERSION)) {
+        const version = typeof params.protocolVersion === "string" ? params.protocolVersion : ""
+        if (major(version) !== major(PROTOCOL_VERSION)) {
           return close(socket, ProtocolErrorCode.VersionMismatch)
         }
 
@@ -119,7 +154,7 @@ export function startGateway(
           .createHmac("sha256", secret)
           .update(nonce)
           .digest()
-        const got = Buffer.from(String(params.nonceSig ?? ""), "hex")
+        const got = Buffer.from(params.nonceSig, "hex")
         if (
           expected.length !== got.length ||
           !crypto.timingSafeEqual(expected, got)
@@ -128,8 +163,9 @@ export function startGateway(
         }
 
         clearTimeout(authTimer)
-        session = { botId: params.botId, socket, pending: new Map() }
-        sessions.set(params.botId, session)
+        const botId = params.botId
+        session = { botId, socket, pending: new Map() }
+        sessions.set(botId, session)
         socket.send(
           JSON.stringify({
             jsonrpc: JSONRPC_VERSION,
@@ -137,7 +173,7 @@ export function startGateway(
             result: { sessionId: crypto.randomUUID(), heartbeatMs },
           })
         )
-        for (const listener of connectListeners) listener(params.botId)
+        for (const listener of connectListeners) listener(botId)
         return
       }
 
@@ -163,7 +199,7 @@ export function startGateway(
         const event = { botId: session.botId, method: frame.method, params: frame.params }
         for (const listener of listeners) listener(event)
       }
-    })
+    }
 
     socket.on("close", () => {
       if (!session) return

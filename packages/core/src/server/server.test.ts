@@ -88,14 +88,13 @@ describe("api server (integration)", () => {
     expect(res.statusCode).toBe(401)
   })
 
-  it("accepts a discord entitlement webhook", async () => {
+  it("refuses a discord webhook it has no way to verify", async () => {
     const res = await app.inject({
       method: "POST",
       url: "/api/webhooks/discord",
       payload: { guild_id: "g", sku_id: "pro" },
     })
-    expect(res.statusCode).toBe(200)
-    expect(res.json()).toEqual({ received: true })
+    expect(res.statusCode).toBe(503)
   })
 })
 

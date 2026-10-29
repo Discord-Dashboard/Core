@@ -75,6 +75,11 @@ const prefix = await dash.get(guildId, "general.prefix")
   in memory, or pass your own `{ get, set }` store.
 - `web: false` serves only the API, and `web: { root }` serves your own build of
   the web app.
+- Billing webhooks are only accepted when they can be verified. Set
+  `discord.publicKey` (or `DISCORD_PUBLIC_KEY`) for Discord SKU purchases at
+  `/api/webhooks/discord`, and `billing.stripeWebhookSecret` (or
+  `STRIPE_WEBHOOK_SECRET`) for Stripe at `/api/webhooks/stripe`. Without them
+  those webhooks answer 503.
 - In production, set `NODE_ENV=production`, a strong `COOKIE_SECRET` and your
   own `discord.redirectUri`, and put the dashboard behind HTTPS.
 

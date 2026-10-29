@@ -87,3 +87,30 @@ def test_permissions_dispatch():
     adapter.on_permissions(lambda space_id, user_id: ["MANAGE_GUILD"] if user_id == "u1" else [])
     result = asyncio.run(adapter._dispatch("space.member.permissions", {"spaceId": "g", "userId": "u1"}))
     assert result == {"permissions": ["MANAGE_GUILD"]}
+
+
+class _FakeSocket:
+    def __init__(self):
+        self.sent = []
+
+    async def send(self, data):
+        self.sent.append(data)
+
+
+def test_a_failing_handler_answers_with_an_rpc_error():
+    import json
+
+    adapter = Adapter(bot_id="b", secret="s", gateway="ws://x")
+
+    def boom(space_id, name, payload):
+        raise ValueError("bad payload")
+
+    adapter.on_action(boom)
+    ws = _FakeSocket()
+    frame = {"jsonrpc": "2.0", "id": "1", "method": "action.invoke", "params": {"spaceId": "g", "name": "x"}}
+    asyncio.run(adapter._handle(ws, frame))
+    reply = json.loads(ws.sent[0])
+    assert reply["id"] == "1"
+    assert reply["error"]["code"] == -32603
+    assert reply["error"]["message"] == "bad payload"
+    assert "result" not in reply

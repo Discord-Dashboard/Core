@@ -28,9 +28,8 @@ describe("validateConfig", () => {
     const w = validateConfig({ ...full, platforms: [] })
     expect(w.some((m) => m.includes("No platforms"))).toBe(true)
   })
-  it("warns about an unauthenticated webhook in production", () => {
+  it("does not warn about webhooks, which are refused unless verifiable", () => {
     process.env.NODE_ENV = "production"
-    const w = validateConfig({ ...full, webhookSecret: undefined })
-    expect(w.some((m) => m.includes("WEBHOOK_SECRET"))).toBe(true)
+    expect(validateConfig({ ...full, webhookSecret: undefined })).toEqual([])
   })
 })

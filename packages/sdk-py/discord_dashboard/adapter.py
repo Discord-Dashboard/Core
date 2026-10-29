@@ -11,6 +11,9 @@ import websockets
 from .fields import PROTOCOL_VERSION, to_wire
 from .protocol import JSONRPC_VERSION, WIRE_VERSION, HandshakeType, RpcMethod
 
+# The JSON-RPC code for a failed handler, the protocol's InternalError.
+INTERNAL_ERROR = -32603
+
 
 class Adapter:
     def __init__(self, bot_id: str, secret: str, gateway: str, reconnect_ms: int = 1000):
@@ -87,7 +90,13 @@ class Adapter:
         async with websockets.connect(self.gateway) as ws:
             self._ws = ws
             async for raw in ws:
-                await self._handle(ws, json.loads(raw))
+                try:
+                    frame = json.loads(raw)
+                except ValueError:
+                    continue
+                # A frame must be a JSON object; null, lists and numbers are not.
+                if isinstance(frame, dict):
+                    await self._handle(ws, frame)
 
     async def _handle(self, ws, frame):
         if frame.get("type") == HandshakeType.CHALLENGE:
@@ -114,7 +123,22 @@ class Adapter:
 
         method = frame.get("method")
         if method and "id" in frame:
-            result = await self._dispatch(method, frame.get("params") or {})
+            params = frame.get("params")
+            try:
+                result = await self._dispatch(method, params if isinstance(params, dict) else {})
+            except Exception as err:
+                # A handler failed. Answer with a JSON-RPC error so the dashboard
+                # call fails at once, and keep the connection open for the next one.
+                await ws.send(
+                    json.dumps(
+                        {
+                            "jsonrpc": JSONRPC_VERSION,
+                            "id": frame["id"],
+                            "error": {"code": INTERNAL_ERROR, "message": str(err) or "handler failed"},
+                        }
+                    )
+                )
+                return
             await ws.send(
                 json.dumps({"jsonrpc": JSONRPC_VERSION, "id": frame["id"], "result": result})
             )
