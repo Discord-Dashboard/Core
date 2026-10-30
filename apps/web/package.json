@@ -1,6 +1,6 @@
 {
   "name": "@acstane/web",
-  "version": "3.1.0-beta.1",
+  "version": "3.1.0-beta.2",
   "description": "The prebuilt @acstane/dashboard web app: dashboard, page builder and landing page.",
   "type": "module",
   "main": "./index.js",

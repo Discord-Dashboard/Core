@@ -1,6 +1,6 @@
 {
   "name": "@acstane/protocol",
-  "version": "3.1.0-beta.1",
+  "version": "3.1.0-beta.2",
   "description": "Bot adapter protocol for @acstane/dashboard. Source of truth for wire types.",
   "type": "module",
   "main": "./src/index.ts",

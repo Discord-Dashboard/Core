@@ -1,6 +1,6 @@
 {
   "name": "@acstane/platform-discord",
-  "version": "3.1.0-beta.1",
+  "version": "3.1.0-beta.2",
   "description": "Discord support for @acstane/dashboard: OAuth login, the server list, discord.js pickers and the Discord field widgets.",
   "type": "module",
   "main": "./src/index.ts",

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.1.0-beta.2
 
 - Page builder: there's now an editor. People allowed to edit pages get a
   "New page" button and a drag and drop editor at `/builder/edit` (built on
@@ -25,6 +25,8 @@
   `storage: "sqlite"`.
 - The GitHub and Docs links in the dashboard point to this repository and the
   README.
+## 3.1.0-beta.1
+
 - Packages move to the Acstane npm org (ADR 12). The main package is
   `@acstane/dashboard` (was `asctane-dashboard`), the scaffolder is
   `npm init @acstane`, and every `@asctane-dashboard/<name>` package is now

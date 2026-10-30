@@ -1,6 +1,6 @@
 {
   "name": "@acstane/sdk-js",
-  "version": "3.1.0-beta.1",
+  "version": "3.1.0-beta.2",
   "description": "Bot adapter SDK for Node. Connects a bot to the dashboard gateway.",
   "type": "module",
   "main": "./src/index.ts",
