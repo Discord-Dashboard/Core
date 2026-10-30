@@ -25,6 +25,9 @@ import {
   type SessionData,
 } from "./auth/session.js"
 
+// How often an idle live stream gets a keep-alive comment.
+const SSE_HEARTBEAT_MS = 25_000
+
 export interface ServerDeps {
   def: DefSource
   adapter: BotAdapter
@@ -185,16 +188,30 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     if (!canManageSpace(session, platform, spaceId)) {
       return reply.code(403).send({ error: "no access to this space" })
     }
+    // The stream is written by hand, so Fastify must not send a reply of its own.
+    reply.hijack()
     reply.raw.writeHead(200, {
       "content-type": "text/event-stream",
-      "cache-control": "no-cache",
+      "cache-control": "no-cache, no-transform",
       connection: "keep-alive",
+      // Stops nginx and similar proxies from buffering the stream.
+      "x-accel-buffering": "no",
     })
+    reply.raw.flushHeaders()
+    // A browser only reports the stream as open once bytes arrive, so send a
+    // comment straight away, then one every so often so idle proxies and load
+    // balancers keep the connection.
+    reply.raw.write(": connected\n\n")
+    const heartbeat = setInterval(() => reply.raw.write(": ping\n\n"), SSE_HEARTBEAT_MS)
+    heartbeat.unref?.()
     const off = events.subscribe(
       (e) => reply.raw.write(`data: ${JSON.stringify(e)}\n\n`),
       spaceId
     )
-    req.raw.on("close", off)
+    req.raw.on("close", () => {
+      clearInterval(heartbeat)
+      off()
+    })
   })
 
   // The web app's pages and assets. A route is a folder with an index.html,

@@ -24,6 +24,8 @@ const dash = createDashboard({
     clientSecret: process.env.DISCORD_CLIENT_SECRET,
   },
   settings,
+  // Settings and logins are kept in data.sqlite, so they survive a restart.
+  storage: "sqlite",
 })
 
 await client.login(process.env.BOT_TOKEN)
@@ -63,7 +65,7 @@ export function scaffold(targetDir: string, opts: ScaffoldOptions = {}) {
       ) + "\n",
     ".env.example":
       "DISCORD_CLIENT_ID=\nDISCORD_CLIENT_SECRET=\nBOT_TOKEN=\nCOOKIE_SECRET=\n",
-    ".gitignore": "node_modules/\n.env\n",
+    ".gitignore": "node_modules/\n.env\ndata.sqlite*\n",
     "index.js": STARTER,
   }
   for (const [file, content] of Object.entries(files)) {

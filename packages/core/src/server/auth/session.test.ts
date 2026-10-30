@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest"
-import { SessionStore, canManageSpace, SESSION_COOKIE } from "./session.js"
+import { SessionStore, canManageSpace, SESSION_COOKIE, type SessionBackend } from "./session.js"
 
 describe("SessionStore", () => {
   it("expires pre auth entries after their short ttl", async () => {
@@ -33,6 +33,29 @@ describe("SessionStore", () => {
     expect(canManageSpace(session, "slack", "g1")).toBe(false)
     expect(canManageSpace({ spaces: [{ id: "g1" }] }, "discord", "g1")).toBe(false)
     expect(canManageSpace(undefined, "discord", "g1")).toBe(false)
+  })
+
+  it("keeps logged in sessions in a backend across store instances", () => {
+    const rows = new Map<string, { data: object; expiresAt: number }>()
+    const backend: SessionBackend = {
+      get: (id) => rows.get(id) as ReturnType<SessionBackend["get"]>,
+      set: (id, data, expiresAt) => void rows.set(id, { data, expiresAt }),
+      delete: (id) => void rows.delete(id),
+    }
+    const before = new SessionStore({ backend, sweepMs: 0 })
+    const preAuth = before.create()
+    const id = before.create()
+    before.set(id, { userId: "u1", platform: "discord" })
+    // A half finished login isn't worth persisting.
+    expect(rows.has(preAuth)).toBe(false)
+
+    // A new store, as after a restart, still knows the logged in session.
+    const after = new SessionStore({ backend, sweepMs: 0 })
+    expect(after.get(id)).toMatchObject({ userId: "u1" })
+    expect(after.get(preAuth)).toBeUndefined()
+
+    after.destroy(id)
+    expect(rows.has(id)).toBe(false)
   })
 
   it("uses a plain cookie name outside production", () => {

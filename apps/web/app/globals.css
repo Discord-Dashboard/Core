@@ -14,6 +14,9 @@
 html {
   color-scheme: var(--dd-color-scheme, dark);
   scroll-behavior: smooth;
+  /* Safari can still count the blurred background glows in the page's scroll
+     width; nothing in the app should scroll sideways. */
+  overflow-x: clip;
 }
 
 body {
@@ -40,6 +43,10 @@ body {
   inset: 0;
   z-index: -1;
   overflow: hidden;
+  /* overflow alone doesn't stop Safari from growing the scroll area with the
+     blur filter, so clip the layer as well. */
+  clip-path: inset(0);
+  contain: paint;
   pointer-events: none;
 }
 .dd-bg__glow {

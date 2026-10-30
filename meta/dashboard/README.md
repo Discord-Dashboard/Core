@@ -73,6 +73,9 @@ const prefix = await dash.get(guildId, "general.prefix")
 
 - `storage: "sqlite"` keeps settings in a local file. Leave it out to keep them
   in memory, or pass your own `{ get, set }` store.
+- Logins are kept in the same file when `storage` is `"sqlite"`, so restarting
+  the bot doesn't log anyone out. Set `sessions: "sqlite"` or `"memory"` to
+  choose yourself.
 - `web: false` serves only the API, and `web: { root }` serves your own build of
   the web app.
 - Billing webhooks are only accepted when they can be verified. Set

@@ -25,8 +25,8 @@ const nav = [
 ]
 
 const resources = [
-  { href: "https://github.com", label: "GitHub", icon: IconGitBranch },
-  { href: "/#features", label: "Docs", icon: IconDoc },
+  { href: "https://github.com/Discord-Dashboard/Core", label: "GitHub", icon: IconGitBranch },
+  { href: "https://github.com/Discord-Dashboard/Core/tree/v3/meta/dashboard#readme", label: "Docs", icon: IconDoc },
 ]
 
 function pageTitle(pathname: string): string {
@@ -61,7 +61,8 @@ function UserChip({ user }: { user: SessionUser }) {
 // slim centered header; app routes get the full sidebar + top bar shell.
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? "/"
-  const isMarketing = pathname === "/" || pathname.startsWith("/p/")
+  // Public builder pages live at /p?slug=..., so /p itself is public too.
+  const isMarketing = pathname === "/" || pathname === "/p" || pathname.startsWith("/p/")
   const session = useSession()
   // Every app page but the login page needs a login. The API refuses the data
   // anyway; this sends a logged out visitor to log in instead of an empty page.

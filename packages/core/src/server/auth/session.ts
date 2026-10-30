@@ -19,7 +19,21 @@ interface Entry {
   expiresAt: number
 }
 
+// Where logged in sessions are kept besides memory, so a restart doesn't log
+// everyone out. Only sessions with a user are stored; a half finished login is
+// cheap to redo. Calls are synchronous so a lookup never waits on a promise.
+export interface SessionBackend {
+  get(id: string): { data: SessionData; expiresAt: number } | undefined
+  set(id: string, data: SessionData, expiresAt: number): void
+  delete(id: string): void
+  // Removes every entry that expired before `now`.
+  sweep?(now: number): void
+}
+
 export interface SessionStoreOptions {
+  // Persists logged in sessions, such as SqliteSessionBackend from the db
+  // package. Without one, sessions live in memory only.
+  backend?: SessionBackend
   // How long a pre auth entry (just pkce + state, no user yet) lives.
   preAuthTtlMs?: number
   // How long a logged in session lives.
@@ -42,8 +56,10 @@ export class SessionStore {
   private readonly sessionTtl: number
   private readonly maxEntries: number
   private readonly timer?: ReturnType<typeof setInterval>
+  private readonly backend?: SessionBackend
 
   constructor(options: SessionStoreOptions = {}) {
+    this.backend = options.backend
     this.preAuthTtl = options.preAuthTtlMs ?? 10 * MINUTE
     this.sessionTtl = options.sessionTtlMs ?? 7 * 24 * 60 * MINUTE
     this.maxEntries = options.maxEntries ?? 100_000
@@ -67,25 +83,38 @@ export class SessionStore {
 
   get(id?: string): SessionData | undefined {
     if (!id) return undefined
-    const entry = this.map.get(id)
+    let entry = this.map.get(id)
+    if (!entry && this.backend) {
+      // Not in memory, for example after a restart: load it from the backend.
+      entry = this.backend.get(id)
+      if (entry) this.remember(id, entry)
+    }
     if (!entry) return undefined
     if (entry.expiresAt <= Date.now()) {
-      this.map.delete(id)
+      this.destroy(id)
       return undefined
     }
     return entry.data
   }
 
   set(id: string, data: SessionData) {
+    const entry = { data, expiresAt: Date.now() + this.ttlFor(data) }
+    this.remember(id, entry)
+    if (data.userId) this.backend?.set(id, data, entry.expiresAt)
+  }
+
+  destroy(id?: string) {
+    if (!id) return
+    this.map.delete(id)
+    this.backend?.delete(id)
+  }
+
+  private remember(id: string, entry: Entry) {
     // Evict something if we are at the cap and this is a new id.
     if (!this.map.has(id) && this.map.size >= this.maxEntries) {
       this.evictOne()
     }
-    this.map.set(id, { data, expiresAt: Date.now() + this.ttlFor(data) })
-  }
-
-  destroy(id?: string) {
-    if (id) this.map.delete(id)
+    this.map.set(id, entry)
   }
 
   get size(): number {
@@ -101,6 +130,7 @@ export class SessionStore {
     for (const [id, entry] of this.map) {
       if (entry.expiresAt <= t) this.map.delete(id)
     }
+    this.backend?.sweep?.(t)
   }
 
   private evictOne() {

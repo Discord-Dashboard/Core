@@ -36,6 +36,28 @@ describe("discordSourceFromClient", () => {
     const roles = await src.resources("g", "role")
     expect(roles).toEqual([{ label: "mod", value: "r1" }])
   })
+  it("hides roles at or above the bot's highest role with hideHigher", async () => {
+    const guild = {
+      channels: { cache: new Map() },
+      roles: {
+        cache: new Map([
+          ["g", { id: "g", name: "@everyone", position: 0 }],
+          ["low", { id: "low", name: "member", position: 1 }],
+          ["bot", { id: "bot", name: "Bot", position: 2, managed: true }],
+          ["high", { id: "high", name: "admin", position: 3 }],
+        ]),
+      },
+      members: { cache: new Map(), me: { roles: { highest: { position: 2 } } } },
+    }
+    const src = discordSourceFromClient({ guilds: { cache: new Map([["g", guild]]) } })
+    expect(await src.resources("g", "role", { hideHigher: true })).toEqual([
+      { label: "member", value: "low" },
+    ])
+    expect(await src.resources("g", "role")).toEqual([
+      { label: "member", value: "low" },
+      { label: "admin", value: "high" },
+    ])
+  })
   it("maps member permissions to an array", async () => {
     const src = discordSourceFromClient(fakeClient())
     const perms = await src.memberPermissions("g", "u1")
