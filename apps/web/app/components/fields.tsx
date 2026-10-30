@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, type ReactElement } from "react"
-import { discordWidgets } from "@asctane-dashboard/platform-discord/web"
+import { discordWidgets } from "@acstane/platform-discord/web"
 import { IconCheck, IconChevronDown, IconX } from "./icons"
 
 const API = process.env.NEXT_PUBLIC_API ?? ""

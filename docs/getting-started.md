@@ -4,7 +4,7 @@
 
 ```js
 import { Client } from "discord.js"
-import { createDashboard, defineSettings, f } from "asctane-dashboard"
+import { createDashboard, defineSettings, f } from "@acstane/dashboard"
 
 const client = new Client({ intents: [] })
 const settings = defineSettings((s) => ({
@@ -35,10 +35,10 @@ roles, autoresponder) each declare their own settings schema. Pick the ones you
 want and compose them into a single dashboard schema:
 
 ```js
-import { createDashboard } from "asctane-dashboard"
-import { composeModules } from "@asctane-dashboard/modules"
-import { leveling } from "@asctane-dashboard/module-leveling"
-import { tickets } from "@asctane-dashboard/module-tickets"
+import { createDashboard } from "@acstane/dashboard"
+import { composeModules } from "@acstane/modules"
+import { leveling } from "@acstane/module-leveling"
+import { tickets } from "@acstane/module-tickets"
 
 const settings = composeModules([leveling, tickets])
 const dash = createDashboard({ discord: { clientId, clientSecret }, settings })
@@ -53,7 +53,7 @@ Tickets and reaction roles are Discord only. Pass the platform to leave out the
 modules it cannot run, or filter a list with `modulesFor`:
 
 ```js
-import { composeModules, modulesFor, modules } from "@asctane-dashboard/modules"
+import { composeModules, modulesFor, modules } from "@acstane/modules"
 
 const settings = composeModules(modules, { platform: { id: "slack", resources: ["channel", "role"] } })
 const usable = modulesFor(modules, myPlatform) // a core Platform works here
@@ -61,7 +61,7 @@ const usable = modulesFor(modules, myPlatform) // a core Platform works here
 
 ## Any language (protocol mode)
 
-Run `@asctane-dashboard/core` as a service and connect your bot with an SDK.
+Run `@acstane/core` as a service and connect your bot with an SDK.
 See `examples/bot-dpy` for a Python bot that connects over the gateway.
 
 ## Pages and the builder

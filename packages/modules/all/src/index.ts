@@ -1,13 +1,13 @@
-import type { SettingsDef, CategoryDef } from "@asctane-dashboard/schema"
-import { leveling } from "@asctane-dashboard/module-leveling"
-import { automod } from "@asctane-dashboard/module-automod"
-import { tickets } from "@asctane-dashboard/module-tickets"
-import { giveaways } from "@asctane-dashboard/module-giveaways"
-import { onboarding } from "@asctane-dashboard/module-onboarding"
-import { reactionRoles } from "@asctane-dashboard/module-reaction-roles"
-import { autoresponder } from "@asctane-dashboard/module-autoresponder"
+import type { SettingsDef, CategoryDef } from "@acstane/schema"
+import { leveling } from "@acstane/module-leveling"
+import { automod } from "@acstane/module-automod"
+import { tickets } from "@acstane/module-tickets"
+import { giveaways } from "@acstane/module-giveaways"
+import { onboarding } from "@acstane/module-onboarding"
+import { reactionRoles } from "@acstane/module-reaction-roles"
+import { autoresponder } from "@acstane/module-autoresponder"
 
-// The reference modules that ship with asctane-dashboard.
+// The reference modules that ship with @acstane/dashboard.
 export const modules = [
   leveling,
   automod,

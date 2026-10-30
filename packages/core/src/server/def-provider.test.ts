@@ -4,8 +4,8 @@ import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
 import { InProcessAdapter, MemoryStore } from "../base.js"
-import { defineSettings, f, type SettingsDef } from "@asctane-dashboard/schema"
-import { discord } from "@asctane-dashboard/platform-discord"
+import { defineSettings, f, type SettingsDef } from "@acstane/schema"
+import { discord } from "@acstane/platform-discord"
 
 const config: ApiConfig = {
   port: 0,

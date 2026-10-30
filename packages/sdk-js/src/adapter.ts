@@ -8,8 +8,8 @@ import {
   ProtocolErrorCode,
   RpcMethod,
   type OptionListItem,
-} from "@asctane-dashboard/protocol"
-import { toWire, type SettingsDef } from "@asctane-dashboard/schema"
+} from "@acstane/protocol"
+import { toWire, type SettingsDef } from "@acstane/schema"
 
 // Whether a parsed frame is a JSON object rather than null, an array or a
 // primitive.

@@ -1,7 +1,7 @@
 {
-  "name": "@asctane-dashboard/platform-discord",
-  "version": "3.1.0-beta.0",
-  "description": "Discord support for asctane-dashboard: OAuth login, the server list, discord.js pickers and the Discord field widgets.",
+  "name": "@acstane/platform-discord",
+  "version": "3.1.0-beta.1",
+  "description": "Discord support for @acstane/dashboard: OAuth login, the server list, discord.js pickers and the Discord field widgets.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -29,8 +29,8 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@asctane-dashboard/core": "workspace:*",
-    "@asctane-dashboard/schema": "workspace:*",
+    "@acstane/core": "workspace:*",
+    "@acstane/schema": "workspace:*",
     "zod": "^4.4.3"
   },
   "peerDependencies": {

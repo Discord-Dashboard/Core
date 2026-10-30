@@ -1,4 +1,4 @@
-import { ProtocolEvent } from "@asctane-dashboard/protocol"
+import { ProtocolEvent } from "@acstane/protocol"
 import type { Gateway } from "./gateway/gateway.js"
 
 export interface BotStats {

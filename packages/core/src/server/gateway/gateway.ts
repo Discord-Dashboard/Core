@@ -7,7 +7,7 @@ import {
   HandshakeType,
   ProtocolErrorCode,
   type HelloParams,
-} from "@asctane-dashboard/protocol"
+} from "@acstane/protocol"
 
 interface Pending {
   resolve: (value: unknown) => void

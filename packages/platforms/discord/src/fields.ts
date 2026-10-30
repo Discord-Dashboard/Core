@@ -4,7 +4,7 @@ import {
   f as coreF,
   type BaseFieldOpts,
   type FieldFactory,
-} from "@asctane-dashboard/schema"
+} from "@acstane/schema"
 
 // The channel types a Discord channel picker can narrow to.
 export type DiscordChannelType =
@@ -50,7 +50,7 @@ const embed: FieldFactory = (opts = {}) =>
   defineField("embed", z.record(z.string(), z.unknown()).optional(), opts)
 
 // Core's fields plus the Discord ones, with channel and role pickers typed for
-// Discord. Import f from here instead of @asctane-dashboard/schema in a
+// Discord. Import f from here instead of @acstane/schema in a
 // Discord bot.
 export const f = {
   ...coreF,

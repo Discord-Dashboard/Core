@@ -5,7 +5,7 @@ import net from "node:net"
 import { WebSocket } from "ws"
 import { startGateway } from "./gateway.js"
 import { RemoteAdapter } from "./remote-adapter.js"
-import { Adapter, defineSettings } from "@asctane-dashboard/sdk-js"
+import { Adapter, defineSettings } from "@acstane/sdk-js"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()

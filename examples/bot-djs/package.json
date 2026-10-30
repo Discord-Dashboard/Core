@@ -7,7 +7,7 @@
     "start": "tsx src/index.ts"
   },
   "dependencies": {
-    "@asctane-dashboard/sdk-js": "workspace:*"
+    "@acstane/sdk-js": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.23.0"

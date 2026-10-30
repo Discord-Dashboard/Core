@@ -6,7 +6,7 @@ import {
   canManageSpace,
   type SessionStore,
 } from "../auth/session.js"
-import { ProtocolEvent } from "@asctane-dashboard/protocol"
+import { ProtocolEvent } from "@acstane/protocol"
 import type { AuditLog } from "../audit.js"
 import { DASHBOARD_SOURCE, type EventHub } from "../events-hub.js"
 

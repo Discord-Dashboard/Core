@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
-import { InProcessAdapter } from "@asctane-dashboard/core"
-import { SqliteKeyValueStore } from "@asctane-dashboard/db"
-import { defineSettings, f } from "@asctane-dashboard/schema"
+import { InProcessAdapter } from "@acstane/core"
+import { SqliteKeyValueStore } from "@acstane/db"
+import { defineSettings, f } from "@acstane/schema"
 
 // Proves the SQLite store works as the engine's persistence, so lite mode can
 // keep settings across restarts instead of losing them with the in memory store.

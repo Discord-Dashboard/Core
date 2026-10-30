@@ -1,6 +1,6 @@
 {
-  "name": "@asctane-dashboard/module-giveaways",
-  "version": "3.1.0-beta.0",
+  "name": "@acstane/module-giveaways",
+  "version": "3.1.0-beta.1",
   "description": "Giveaway module.",
   "type": "module",
   "main": "./src/index.ts",
@@ -25,7 +25,7 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@asctane-dashboard/schema": "workspace:*"
+    "@acstane/schema": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

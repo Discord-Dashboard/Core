@@ -5,7 +5,7 @@ import {
   type OptionListItem,
   type ChannelFilter,
   type RoleFilter,
-} from "@asctane-dashboard/protocol"
+} from "@acstane/protocol"
 import type { Gateway } from "./gateway.js"
 
 // A BotAdapter backed by a bot connected over the gateway. The bot may be

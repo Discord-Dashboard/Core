@@ -1,4 +1,4 @@
-import { fromWire, type FieldFactory, type SettingsDef } from "@asctane-dashboard/schema"
+import { fromWire, type FieldFactory, type SettingsDef } from "@acstane/schema"
 import type { BotAdapter } from "./adapter.js"
 import type { Platform } from "./platform.js"
 

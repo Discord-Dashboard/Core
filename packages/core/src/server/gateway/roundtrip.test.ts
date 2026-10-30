@@ -3,7 +3,7 @@ import { createServer } from "node:http"
 import { startGateway } from "./gateway.js"
 import { RemoteAdapter } from "./remote-adapter.js"
 import { SettingsService, AllowAll } from "../../base.js"
-import { Adapter, defineSettings, f } from "@asctane-dashboard/sdk-js"
+import { Adapter, defineSettings, f } from "@acstane/sdk-js"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()

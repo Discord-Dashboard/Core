@@ -1,4 +1,4 @@
-# @asctane-dashboard/core
+# @acstane/core
 
 The engine that binds the protocol, schema and entitlements together.
 

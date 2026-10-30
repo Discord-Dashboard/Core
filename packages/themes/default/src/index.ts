@@ -1,4 +1,4 @@
-import type { DashboardTheme } from "@asctane-dashboard/ui"
+import type { DashboardTheme } from "@acstane/dashboard-ui"
 
 // The default base theme every dashboard starts with. A deep, layered dark
 // theme tuned for Discord Dashboard: stacked surfaces for depth, a blurple to

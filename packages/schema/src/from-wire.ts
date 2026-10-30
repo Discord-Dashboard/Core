@@ -1,4 +1,4 @@
-import type { SchemaDescriptor, WireOption } from "@asctane-dashboard/protocol"
+import type { SchemaDescriptor, WireOption } from "@acstane/protocol"
 import { f, type Field, type BaseFieldOpts, type FieldFactory } from "./fields.js"
 import type { SettingsDef, CategoryDef } from "./define.js"
 

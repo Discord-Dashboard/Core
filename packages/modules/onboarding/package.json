@@ -1,6 +1,6 @@
 {
-  "name": "@asctane-dashboard/module-onboarding",
-  "version": "3.1.0-beta.0",
+  "name": "@acstane/module-onboarding",
+  "version": "3.1.0-beta.1",
   "description": "Welcome and onboarding module.",
   "type": "module",
   "main": "./src/index.ts",
@@ -25,7 +25,7 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@asctane-dashboard/schema": "workspace:*"
+    "@acstane/schema": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

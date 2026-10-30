@@ -1,6 +1,6 @@
 {
-  "name": "@asctane-dashboard/builder",
-  "version": "3.1.0-beta.0",
+  "name": "@acstane/builder",
+  "version": "3.1.0-beta.1",
   "description": "Drag and drop page builder and AI page generation.",
   "type": "module",
   "main": "./src/index.ts",

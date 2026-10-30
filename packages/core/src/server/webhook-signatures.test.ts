@@ -6,8 +6,8 @@ import type { ApiConfig } from "./config.js"
 import { verifyStripeSignature } from "./routes/billing.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
 import { InProcessAdapter, MemoryStore } from "../base.js"
-import { defineSettings, f } from "@asctane-dashboard/schema"
-import { discord } from "@asctane-dashboard/platform-discord"
+import { defineSettings, f } from "@acstane/schema"
+import { discord } from "@acstane/platform-discord"
 
 const def = defineSettings((s) => ({
   pro: s.category({ name: "Pro", entitlement: "pro", options: { color: f.text() } }),

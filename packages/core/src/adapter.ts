@@ -3,7 +3,7 @@ import type {
   OptionListItem,
   ChannelFilter,
   RoleFilter,
-} from "@asctane-dashboard/protocol"
+} from "@acstane/protocol"
 
 // Who is performing a settings operation. Threaded to the bot so it can key
 // per user data correctly and record who changed a setting (updated_by).

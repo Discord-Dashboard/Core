@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
-import { safeUrl } from "@asctane-dashboard/builder/url"
+import { safeUrl } from "@acstane/builder/url"
 import { IconArrowRight, IconCheck, IconDoc } from "../components/icons"
 
 const API = process.env.NEXT_PUBLIC_API ?? ""

@@ -1,6 +1,6 @@
 {
-  "name": "@asctane-dashboard/marketplace",
-  "version": "3.1.0-beta.0",
+  "name": "@acstane/marketplace",
+  "version": "3.1.0-beta.1",
   "description": "Registry of modules and themes.",
   "type": "module",
   "main": "./src/index.ts",

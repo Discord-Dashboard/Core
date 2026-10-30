@@ -1,6 +1,6 @@
 {
-  "name": "@asctane-dashboard/modules",
-  "version": "3.1.0-beta.0",
+  "name": "@acstane/modules",
+  "version": "3.1.0-beta.1",
   "description": "Bundle of the reference feature modules.",
   "type": "module",
   "main": "./src/index.ts",
@@ -25,14 +25,14 @@
     "lint": "echo \"no lint yet\""
   },
   "dependencies": {
-    "@asctane-dashboard/schema": "workspace:*",
-    "@asctane-dashboard/module-leveling": "workspace:*",
-    "@asctane-dashboard/module-automod": "workspace:*",
-    "@asctane-dashboard/module-tickets": "workspace:*",
-    "@asctane-dashboard/module-giveaways": "workspace:*",
-    "@asctane-dashboard/module-onboarding": "workspace:*",
-    "@asctane-dashboard/module-reaction-roles": "workspace:*",
-    "@asctane-dashboard/module-autoresponder": "workspace:*"
+    "@acstane/schema": "workspace:*",
+    "@acstane/module-leveling": "workspace:*",
+    "@acstane/module-automod": "workspace:*",
+    "@acstane/module-tickets": "workspace:*",
+    "@acstane/module-giveaways": "workspace:*",
+    "@acstane/module-onboarding": "workspace:*",
+    "@acstane/module-reaction-roles": "workspace:*",
+    "@acstane/module-autoresponder": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

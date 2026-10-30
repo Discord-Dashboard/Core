@@ -1,4 +1,4 @@
-import type { SpaceSource } from "@asctane-dashboard/core"
+import type { SpaceSource } from "@acstane/core"
 
 // Semantic channel type names (as used in schema field defs) mapped to the
 // numeric discord.js ChannelType values a channel actually carries. Without

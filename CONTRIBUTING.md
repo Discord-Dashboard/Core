@@ -29,7 +29,7 @@ one version.
 
 The release workflow refuses to publish when a package version does not match
 the tag. A tag with a prerelease part (`-beta.0`, `-rc.0`)
-publishes under that dist tag, so `npm install asctane-dashboard` keeps giving
+publishes under that dist tag, so `npm install @acstane/dashboard` keeps giving
 people the latest stable release.
 
 The workflow publishes with npm trusted publishing, so there is no npm token
@@ -37,7 +37,7 @@ in the repo: npm checks that the publish comes from `release.yml` in this
 repo, and adds provenance. Each package needs a trust link on npm for that to
 work, and npm only allows one for a package that already exists. So a new
 package goes out by hand once, from an npm account that can publish
-`asctane-dashboard` and the `@asctane-dashboard` scope:
+`@acstane/dashboard` and the `@acstane` scope:
 
 1. `pnpm build && pnpm smoke:pack --out .packs`
 2. `pnpm npm:publish-first` publishes every tarball under the version's dist

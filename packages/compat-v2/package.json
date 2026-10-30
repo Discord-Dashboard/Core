@@ -1,6 +1,6 @@
 {
-  "name": "@asctane-dashboard/compat-v2",
-  "version": "3.1.0-beta.0",
+  "name": "@acstane/compat-v2",
+  "version": "3.1.0-beta.1",
   "description": "Run v2 style settings on v3 without a rewrite.",
   "type": "module",
   "main": "./src/index.ts",
@@ -25,9 +25,9 @@
     "lint": "echo \"no lint yet\""
   },
   "dependencies": {
-    "@asctane-dashboard/core": "workspace:*",
-    "@asctane-dashboard/platform-discord": "workspace:*",
-    "@asctane-dashboard/schema": "workspace:*"
+    "@acstane/core": "workspace:*",
+    "@acstane/platform-discord": "workspace:*",
+    "@acstane/schema": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

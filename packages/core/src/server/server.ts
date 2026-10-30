@@ -6,7 +6,7 @@ import rateLimit from "@fastify/rate-limit"
 import fastifyStatic from "@fastify/static"
 import type { BotAdapter, DefSource } from "../base.js"
 import { createEntitlements } from "../billing/index.js"
-import { PROTOCOL_VERSION } from "@asctane-dashboard/protocol"
+import { PROTOCOL_VERSION } from "@acstane/protocol"
 import type { ApiConfig } from "./config.js"
 import { SessionStore } from "./auth/session.js"
 import { registerAuthRoutes } from "./auth/routes.js"
@@ -14,7 +14,7 @@ import { registerSettingsRoutes } from "./routes/settings.js"
 import { registerBillingRoutes } from "./routes/billing.js"
 import { registerPageRoutes } from "./routes/pages.js"
 import { MemoryPageStore, type PageStore } from "./pages/store.js"
-import type { LlmClient } from "@asctane-dashboard/builder/ai"
+import type { LlmClient } from "@acstane/builder/ai"
 import { MemoryGrantStore } from "./billing.js"
 import { StatsRegistry } from "./stats.js"
 import { EventHub } from "./events-hub.js"
@@ -47,7 +47,7 @@ export interface ServerDeps {
   // Extra gauges to expose on /metrics, for example the connected bot count.
   metrics?: () => Record<string, number>
   // Serves a prebuilt web app (a static export, such as webRoot from
-  // @asctane-dashboard/web) from this directory, on the API's own origin.
+  // @acstane/web) from this directory, on the API's own origin.
   web?: { root: string }
 }
 
@@ -137,7 +137,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     }
     return {
       openapi: "3.1.0",
-      info: { title: "asctane-dashboard", version: PROTOCOL_VERSION },
+      info: { title: "@acstane/dashboard", version: PROTOCOL_VERSION },
       paths,
     }
   })

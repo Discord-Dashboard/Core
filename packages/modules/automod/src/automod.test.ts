@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { automod } from "./index.js"
-import { toWire } from "@asctane-dashboard/schema"
+import { toWire } from "@acstane/schema"
 
 describe("automod module", () => {
   it("exposes an id and a settings schema", () => {

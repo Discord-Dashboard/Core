@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Packages move to the Acstane npm org (ADR 12). The main package is
+  `@acstane/dashboard` (was `asctane-dashboard`), the scaffolder is
+  `npm init @acstane`, and every `@asctane-dashboard/<name>` package is now
+  `@acstane/<name>`, except the component library, which is
+  `@acstane/dashboard-ui`. The old names stay at 3.1.0-beta.0 and are
+  deprecated. Replace them in your `package.json` and imports.
 - Security: the bot gateway no longer lets one malformed message or broken
   WebSocket frame stop the server, and frames are capped at 1 MiB
   (`maxPayload` option).

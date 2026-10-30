@@ -8,8 +8,8 @@ import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { SessionStore, SESSION_COOKIE } from "./auth/session.js"
 import { buildDefFromAdapter } from "../base.js"
-import { Adapter, defineSettings, f } from "@asctane-dashboard/sdk-js"
-import { discord } from "@asctane-dashboard/platform-discord"
+import { Adapter, defineSettings, f } from "@acstane/sdk-js"
+import { discord } from "@acstane/platform-discord"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()

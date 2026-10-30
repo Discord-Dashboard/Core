@@ -1,10 +1,10 @@
-# @asctane-dashboard/schema
+# @acstane/schema
 
-Declarative settings for asctane-dashboard. Define once, validate on the server,
+Declarative settings for @acstane/dashboard. Define once, validate on the server,
 render on the client, and serialize to a language neutral wire format.
 
 ```ts
-import { defineSettings, f, toWire, fromWire } from "@asctane-dashboard/schema"
+import { defineSettings, f, toWire, fromWire } from "@acstane/schema"
 
 const settings = defineSettings((s) => ({
   general: s.category({
@@ -32,7 +32,7 @@ is the platform's own: `{ types: ["text"] }` narrows Discord channels.
 
 Field types only one platform has live in that platform's package. Discord's
 `embed` field and its typed channel and role pickers come from
-`@asctane-dashboard/platform-discord`, which exports an extended `f`. Use
+`@acstane/platform-discord`, which exports an extended `f`. Use
 `defineField(type, zod, opts)` to make your own, and pass the factories to
 `fromWire(wire, fields)` so the dashboard can rebuild them.
 Labels and descriptions accept a plain string or a locale map for i18n.

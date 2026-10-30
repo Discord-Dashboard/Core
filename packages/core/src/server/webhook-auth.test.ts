@@ -3,8 +3,8 @@ import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { InProcessAdapter, MemoryStore } from "../base.js"
-import { defineSettings } from "@asctane-dashboard/schema"
-import { discord } from "@asctane-dashboard/platform-discord"
+import { defineSettings } from "@acstane/schema"
+import { discord } from "@acstane/platform-discord"
 
 const def = defineSettings(() => ({}))
 const config: ApiConfig = {

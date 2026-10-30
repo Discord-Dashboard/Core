@@ -6,16 +6,16 @@ import {
   type ApiConfig,
   type KeyValueStore,
   type LlmClient,
-} from "@asctane-dashboard/core"
-import type { SettingsDef } from "@asctane-dashboard/schema"
-import { SqliteKeyValueStore } from "@asctane-dashboard/db"
+} from "@acstane/core"
+import type { SettingsDef } from "@acstane/schema"
+import { SqliteKeyValueStore } from "@acstane/db"
 import type { FastifyInstance } from "fastify"
-import { discord, discordSourceFromClient } from "@asctane-dashboard/platform-discord"
-import { webRoot } from "@asctane-dashboard/web"
+import { discord, discordSourceFromClient } from "@acstane/platform-discord"
+import { webRoot } from "@acstane/web"
 
-export { defineSettings } from "@asctane-dashboard/schema"
+export { defineSettings } from "@acstane/schema"
 // The Discord flavored fields: typed channel and role pickers, plus embed.
-export { f } from "@asctane-dashboard/platform-discord"
+export { f } from "@acstane/platform-discord"
 
 export interface CreateDashboardOptions {
   client?: unknown
@@ -41,10 +41,10 @@ export interface CreateDashboardOptions {
   // Optional AI provider that powers page generation.
   ai?: LlmClient
   // Your own adapter instead of the in process store, such as the one fromV2
-  // from @asctane-dashboard/compat-v2 returns. storage is ignored then.
+  // from @acstane/compat-v2 returns. storage is ignored then.
   adapter?: BotAdapter
   // The web dashboard served on the same port as the API. Defaults to the
-  // prebuilt app from @asctane-dashboard/web. Pass the root of your own static
+  // prebuilt app from @acstane/web. Pass the root of your own static
   // build to serve that instead, or false to serve only the API.
   web?: { root: string } | false
 }

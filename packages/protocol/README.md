@@ -1,4 +1,4 @@
-# @asctane-dashboard/protocol
+# @acstane/protocol
 
 The bot adapter protocol. This package is the source of truth for the wire
 types shared by the dashboard and every SDK.

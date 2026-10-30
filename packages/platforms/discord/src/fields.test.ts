@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
-import { buildDefFromAdapter, type BotAdapter } from "@asctane-dashboard/core"
-import { defineSettings, toWire } from "@asctane-dashboard/schema"
+import { buildDefFromAdapter, type BotAdapter } from "@acstane/core"
+import { defineSettings, toWire } from "@acstane/schema"
 import { discord, f } from "./index.js"
 
 const settings = defineSettings((s) => ({
