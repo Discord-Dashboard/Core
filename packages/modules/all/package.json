@@ -1,6 +1,6 @@
 {
   "name": "@acstane/modules",
-  "version": "3.1.0-beta.1",
+  "version": "3.1.0-beta.2",
   "description": "Bundle of the reference feature modules.",
   "type": "module",
   "main": "./src/index.ts",
