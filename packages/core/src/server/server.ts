@@ -40,7 +40,8 @@ export interface ServerDeps {
   // never exposed to an arbitrary authenticated user who guesses its id.
   botAccess?: (session: SessionData, botId: string) => boolean | Promise<boolean>
   // Where builder pages live, and who may edit them. Editing defaults to deny.
-  pages?: PageStore
+  // false turns the page builder off: no page routes, and the web app hides it.
+  pages?: PageStore | false
   canEditPages?: (session: SessionData) => boolean | Promise<boolean>
   // Optional AI provider for the page generation endpoint.
   llm?: LlmClient
@@ -72,7 +73,7 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
   const grants = new MemoryGrantStore()
   const stats = deps.stats ?? new StatsRegistry()
   const events = deps.events ?? new EventHub()
-  const pages = deps.pages ?? new MemoryPageStore()
+  const pages = deps.pages === false ? undefined : (deps.pages ?? new MemoryPageStore())
   const audit = deps.audit ?? new AuditLog()
   const entitlements = createEntitlements(grants)
 
@@ -259,12 +260,17 @@ export async function buildServer(config: ApiConfig, deps: ServerDeps) {
     { stripeWebhookSecret: config.stripeWebhookSecret, webhookSecret: config.webhookSecret },
     config.platforms
   )
-  await registerPageRoutes(app, {
-    pages,
-    sessions,
-    canEditPages: deps.canEditPages,
-    llm: deps.llm,
-  })
+  if (pages) {
+    await registerPageRoutes(app, {
+      pages,
+      sessions,
+      canEditPages: deps.canEditPages,
+      llm: deps.llm,
+    })
+  } else {
+    // The web app still asks, so it can hide the builder.
+    app.get("/api/builder/access", async () => ({ enabled: false, canEdit: false, ai: false }))
+  }
 
   return app
 }

@@ -83,6 +83,8 @@ const prefix = await dash.get(guildId, "general.prefix")
   `/api/webhooks/discord`, and `billing.stripeWebhookSecret` (or
   `STRIPE_WEBHOOK_SECRET`) for Stripe at `/api/webhooks/stripe`. Without them
   those webhooks answer 503.
+- Lite mode has no page builder, since its pages would only live in memory.
+  Run `@acstane/core` as a service for the builder.
 - In production, set `NODE_ENV=production`, a strong `COOKIE_SECRET` and your
   own `discord.redirectUri`, and put the dashboard behind HTTPS.
 

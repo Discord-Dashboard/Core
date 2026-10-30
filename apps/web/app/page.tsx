@@ -13,6 +13,7 @@ import {
   IconUsers,
   IconActivity,
 } from "./components/icons"
+import { BuilderOnly } from "./components/builder"
 
 const features = [
   {
@@ -23,6 +24,7 @@ const features = [
   {
     icon: IconWand,
     title: "Drag and drop builder",
+    builder: true,
     body: "Compose custom pages from safe, whitelisted components, or generate them with AI. Pages are validated data, never code.",
   },
   {
@@ -76,9 +78,11 @@ export default function Home() {
             Log in
             <IconArrowRight size={17} />
           </a>
-          <a className="dd-btn dd-btn--lg" href="/builder">
-            Open the builder
-          </a>
+          <BuilderOnly>
+            <a className="dd-btn dd-btn--lg" href="/builder">
+              Open the builder
+            </a>
+          </BuilderOnly>
         </div>
         <div className="dd-hero__meta">
           <span>
@@ -181,7 +185,7 @@ export default function Home() {
         <div className="dd-features">
           {features.map((f) => {
             const Icon = f.icon
-            return (
+            const card = (
               <article className="dd-feature" key={f.title}>
                 <span className="dd-card__icon" aria-hidden>
                   <Icon size={17} />
@@ -190,6 +194,8 @@ export default function Home() {
                 <p>{f.body}</p>
               </article>
             )
+            // Only advertise the builder where this server has it.
+            return f.builder ? <BuilderOnly key={f.title}>{card}</BuilderOnly> : card
           })}
         </div>
       </section>
@@ -215,7 +221,9 @@ export default function Home() {
           <span>© {new Date().getFullYear()} @acstane/dashboard — MIT licensed</span>
           <nav className="dd-footer__links" aria-label="Footer">
             <a href="/#features">Features</a>
-            <a href="/builder">Builder</a>
+            <BuilderOnly>
+              <a href="/builder">Builder</a>
+            </BuilderOnly>
             <a href="/manage">Servers</a>
             <a href="https://github.com/Discord-Dashboard/Core">GitHub</a>
           </nav>

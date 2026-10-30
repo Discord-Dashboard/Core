@@ -28,29 +28,22 @@ describe("lite mode end to end", () => {
     await app.close()
   })
 
-  it("wires the page routes in lite mode", async () => {
-    const settings = defineSettings(() => ({}))
+  it("has no page builder in lite mode", async () => {
     const dash = createDashboard({
       discord: { clientId: "c", clientSecret: "s" },
-      settings,
-      pageEditors: ["u1"],
+      settings: defineSettings(() => ({})),
       port: 0,
     })
     const app = (await dash.listen(0)) as FastifyInstance
     const port = (app.server.address() as { port: number }).port
 
-    // Public listing works and starts empty.
-    const list = await fetch(`http://127.0.0.1:${port}/api/pages`)
-    expect((await list.json() as { pages: unknown[] }).pages).toEqual([])
+    // The web app is told the builder is off, so it can hide it.
+    const access = await fetch(`http://127.0.0.1:${port}/api/builder/access`)
+    expect(await access.json()).toEqual({ enabled: false, canEdit: false, ai: false })
 
-    // Editing requires a logged in user.
-    const post = await fetch(`http://127.0.0.1:${port}/api/pages/home`, {
-      method: "POST",
-      // The web app posts from the server's own origin.
-      headers: { "content-type": "application/json", origin: `http://127.0.0.1:${port}` },
-      body: JSON.stringify({ content: { version: 1, root: { title: "x" }, content: [] } }),
-    })
-    expect(post.status).toBe(401)
+    // And the page routes don't exist.
+    const list = await fetch(`http://127.0.0.1:${port}/api/pages`)
+    expect(list.status).toBe(404)
 
     await app.close()
   })

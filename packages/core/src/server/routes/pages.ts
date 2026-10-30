@@ -37,23 +37,50 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
     return true
   }
 
+  // The newest published version of a page. Saving a draft on top of it
+  // doesn't take the live page down.
+  const published = (slug: string) =>
+    deps.pages.history(slug).find((p) => p.status === PageStatus.Published)
+
   // Public: the slugs of published pages.
   app.get("/api/pages", async () => {
     return {
       pages: deps.pages
         .list()
-        .filter((p) => p.status === PageStatus.Published)
+        .map((p) => published(p.slug))
+        .filter((p) => p !== undefined)
         .map((p) => ({ slug: p.slug, version: p.version })),
+    }
+  })
+
+  // Whether the current user may edit pages, and whether AI generation is set
+  // up, so the web app knows what to offer. Never an error: a visitor just
+  // gets false.
+  app.get("/api/builder/access", async (req) => {
+    const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
+    const canEdit =
+      session?.userId && deps.canEditPages ? Boolean(await deps.canEditPages(session)) : false
+    return { enabled: true, canEdit, ai: canEdit && Boolean(deps.llm) }
+  })
+
+  // Editor: every page, drafts included, with its current status.
+  app.get("/api/builder/pages", async (req, reply) => {
+    if (!(await requireEditor(req, reply))) return
+    return {
+      pages: deps.pages.list().map((p) => ({
+        slug: p.slug,
+        version: p.version,
+        status: p.status,
+        live: published(p.slug) !== undefined,
+      })),
     }
   })
 
   // Public: a published page, for rendering the landing or a custom page.
   app.get("/api/pages/:slug", async (req, reply) => {
     const { slug } = req.params as { slug: string }
-    const page = deps.pages.get(slug)
-    if (!page || page.status !== PageStatus.Published) {
-      return reply.code(404).send({ error: "not found" })
-    }
+    const page = published(slug)
+    if (!page) return reply.code(404).send({ error: "not found" })
     return { slug: page.slug, version: page.version, content: page.content }
   })
 

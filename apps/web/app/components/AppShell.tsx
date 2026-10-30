@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation"
 import { useEffect, type ReactNode } from "react"
 import { ThemeSwitcher } from "../ThemeSwitcher"
 import { avatarUrl, logout, useSession, type SessionUser } from "./session"
+import { BuilderOnly, useBuilderAccess } from "./builder"
 import {
   IconLogo,
   IconHome,
@@ -32,6 +33,7 @@ const resources = [
 function pageTitle(pathname: string): string {
   if (pathname.startsWith("/manage")) return "Servers"
   if (pathname.startsWith("/dashboard")) return "Server settings"
+  if (pathname.startsWith("/builder/edit")) return "Page editor"
   if (pathname.startsWith("/builder")) return "Page builder"
   if (pathname.startsWith("/login")) return "Log in"
   return "Overview"
@@ -64,6 +66,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   // Public builder pages live at /p?slug=..., so /p itself is public too.
   const isMarketing = pathname === "/" || pathname === "/p" || pathname.startsWith("/p/")
   const session = useSession()
+  const builder = useBuilderAccess()
   // Every app page but the login page needs a login. The API refuses the data
   // anyway; this sends a logged out visitor to log in instead of an empty page.
   const needsLogin = !isMarketing && !pathname.startsWith("/login")
@@ -85,7 +88,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </a>
           <nav className="dd-mktnav__links" aria-label="Primary">
             <a href="/#features">Features</a>
-            <a href="/builder">Builder</a>
+            <BuilderOnly>
+              <a href="/builder">Builder</a>
+            </BuilderOnly>
             <a href="/manage">Servers</a>
           </nav>
           <div className="dd-mktnav__actions">
@@ -116,6 +121,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         <nav className="dd-sidebar__nav" aria-label="Primary">
           <p className="dd-sidebar__heading">Workspace</p>
           {nav.map((item) => {
+            // Servers without the page builder (lite mode) don't list it.
+            if (item.href === "/builder" && !builder?.enabled) return null
             const active = item.exact
               ? pathname === item.href
               : pathname.startsWith(item.href) ||
