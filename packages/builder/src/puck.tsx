@@ -1,9 +1,13 @@
-import type { Config } from "@measured/puck"
+import type { Config, Data } from "@puckeditor/core"
+import type { Page } from "./schema.js"
 import { safeUrl } from "./url.js"
 
 // The whitelist of components a page may use. Rendering only goes through this
 // map, so a page can never introduce raw markup or scripts.
 export const puckConfig: Config = {
+  root: {
+    fields: { title: { type: "text", label: "Page title" } },
+  },
   components: {
     Hero: {
       fields: { title: { type: "text" }, subtitle: { type: "text" } },
@@ -87,4 +91,34 @@ export const puckConfig: Config = {
       ),
     },
   },
+}
+
+// A stored page and the editor's data differ a little: the editor keeps the
+// page title in root props and gives every block an id. These convert between
+// the two. The server validates the result of fromPuckData like any other page.
+interface Block {
+  type: string
+  props: Record<string, unknown>
+}
+
+export function toPuckData(page: Page): Data {
+  return {
+    root: { props: { title: page.root.title } },
+    content: (page.content as Block[]).map((block, i) => ({
+      type: block.type,
+      props: { ...block.props, id: `${block.type}-${i}` },
+    })),
+  }
+}
+
+export function fromPuckData(data: Partial<Data>, fallbackTitle = "Untitled"): Page {
+  const title = (data.root?.props as { title?: unknown } | undefined)?.title
+  return {
+    version: 1,
+    root: { title: typeof title === "string" && title.trim() ? title : fallbackTitle },
+    content: (data.content ?? []).map((block) => {
+      const { id: _id, ...props } = block.props as Record<string, unknown>
+      return { type: block.type, props }
+    }),
+  }
 }

@@ -179,6 +179,59 @@ describe("page routes", () => {
     await app.close()
   })
 
+  it("keeps the published version live while a newer draft is saved", async () => {
+    await app.inject({
+      method: "POST",
+      url: "/api/pages/home",
+      headers: { ...origin, cookie },
+      payload: { content: validPage, status: "published" },
+    })
+    const edited = { ...validPage, root: { title: "Home v2" } }
+    await app.inject({
+      method: "POST",
+      url: "/api/pages/home",
+      headers: { ...origin, cookie },
+      payload: { content: edited },
+    })
+    const live = await app.inject({ method: "GET", url: "/api/pages/home" })
+    expect(live.statusCode).toBe(200)
+    expect((live.json() as { content: { root: { title: string } } }).content.root.title).toBe(
+      "Home"
+    )
+    const editorList = await app.inject({
+      method: "GET",
+      url: "/api/builder/pages",
+      headers: { cookie },
+    })
+    expect(editorList.json()).toEqual({
+      pages: [{ slug: "home", version: 2, status: "draft", live: true }],
+    })
+    await app.close()
+  })
+
+  it("tells the web app who may edit and whether ai is set up", async () => {
+    const anon = await app.inject({ method: "GET", url: "/api/builder/access" })
+    expect(anon.json()).toEqual({ canEdit: false, ai: false })
+    const editor = await app.inject({
+      method: "GET",
+      url: "/api/builder/access",
+      headers: { cookie },
+    })
+    expect(editor.json()).toEqual({ canEdit: true, ai: false })
+    await app.close()
+
+    const withAi = await make(true, { complete: async () => "{}" })
+    const res = await withAi.app.inject({
+      method: "GET",
+      url: "/api/builder/access",
+      headers: { cookie: withAi.cookie },
+    })
+    expect(res.json()).toEqual({ canEdit: true, ai: true })
+    const anonList = await withAi.app.inject({ method: "GET", url: "/api/builder/pages" })
+    expect(anonList.statusCode).toBe(401)
+    await withAi.app.close()
+  })
+
   it("rejects a page with an unsafe url", async () => {
     const res = await app.inject({
       method: "POST",

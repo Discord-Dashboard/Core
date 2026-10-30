@@ -32,6 +32,7 @@ const resources = [
 function pageTitle(pathname: string): string {
   if (pathname.startsWith("/manage")) return "Servers"
   if (pathname.startsWith("/dashboard")) return "Server settings"
+  if (pathname.startsWith("/builder/edit")) return "Page editor"
   if (pathname.startsWith("/builder")) return "Page builder"
   if (pathname.startsWith("/login")) return "Log in"
   return "Overview"

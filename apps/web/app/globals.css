@@ -1764,3 +1764,33 @@ input.dd-color {
   height: 32px;
   padding: 2px;
 }
+
+/* ------------------------------------------------------- page builder --- */
+
+.dd-newpage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.dd-newpage input {
+  flex: 1 1 240px;
+  max-width: 360px;
+}
+.dd-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  border: 1px solid var(--dd-color-border);
+  border-radius: var(--dd-radius);
+  overflow: hidden;
+}
+.dd-editor__notice {
+  margin: 0;
+  padding: 8px 14px;
+  font-size: 0.86rem;
+  color: var(--dd-color-text);
+  background: var(--dd-color-primary-soft);
+  border-bottom: 1px solid var(--dd-color-primary-border);
+}

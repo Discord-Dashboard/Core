@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Page builder: there's now an editor. People allowed to edit pages get a
+  "New page" button and a drag and drop editor at `/builder/edit` (built on
+  `@puckeditor/core`, which replaces `@measured/puck` as the builder's peer
+  dependency). They can save drafts, publish, and, when an LLM is configured,
+  generate a page from a prompt. The "AI assisted" badge only shows when
+  generation is available. A newer draft no longer hides the published page.
 - Web dashboard: live sync connects again. The stream now flushes its headers,
   sends a comment as soon as it opens, and a keep-alive every 25 seconds.
 - Web dashboard: no more sideways scrolling into empty space in Safari, caused

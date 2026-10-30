@@ -32,10 +32,11 @@
   },
   "devDependencies": {
     "@acstane/builder": "workspace:*",
+    "@acstane/dashboard-ui": "workspace:*",
     "@acstane/platform-discord": "workspace:*",
     "@acstane/schema": "workspace:*",
     "@acstane/theme-default": "workspace:*",
-    "@acstane/dashboard-ui": "workspace:*",
+    "@puckeditor/core": "^0.23.0",
     "@types/react": "^19.2.17",
     "next": "^16.2.10",
     "react": "^19.2.7",
