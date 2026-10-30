@@ -217,7 +217,7 @@ export default function Home() {
             <a href="/#features">Features</a>
             <a href="/builder">Builder</a>
             <a href="/manage">Servers</a>
-            <a href="https://github.com">GitHub</a>
+            <a href="https://github.com/Discord-Dashboard/Core">GitHub</a>
           </nav>
         </div>
       </footer>

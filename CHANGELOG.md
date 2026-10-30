@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- Web dashboard: live sync connects again. The stream now flushes its headers,
+  sends a comment as soon as it opens, and a keep-alive every 25 seconds.
+- Web dashboard: no more sideways scrolling into empty space in Safari, caused
+  by the blurred background.
+- Discord role pickers honor `hideHigher`: roles at or above the bot's highest
+  role are hidden.
+- Lite mode keeps logins in SQLite when `storage` is `"sqlite"` (or with
+  `sessions: "sqlite"`), so a restart no longer logs everyone out. Only a hash
+  of each session id is stored. New projects from `npm init @acstane` use
+  `storage: "sqlite"`.
+- The GitHub and Docs links in the dashboard point to this repository and the
+  README.
 - Packages move to the Acstane npm org (ADR 12). The main package is
   `@acstane/dashboard` (was `asctane-dashboard`), the scaffolder is
   `npm init @acstane`, and every `@asctane-dashboard/<name>` package is now

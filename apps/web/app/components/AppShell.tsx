@@ -25,8 +25,8 @@ const nav = [
 ]
 
 const resources = [
-  { href: "https://github.com", label: "GitHub", icon: IconGitBranch },
-  { href: "/#features", label: "Docs", icon: IconDoc },
+  { href: "https://github.com/Discord-Dashboard/Core", label: "GitHub", icon: IconGitBranch },
+  { href: "https://github.com/Discord-Dashboard/Core/tree/v3/meta/dashboard#readme", label: "Docs", icon: IconDoc },
 ]
 
 function pageTitle(pathname: string): string {

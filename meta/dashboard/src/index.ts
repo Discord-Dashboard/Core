@@ -6,9 +6,10 @@ import {
   type ApiConfig,
   type KeyValueStore,
   type LlmClient,
+  SessionStore,
 } from "@acstane/core"
 import type { SettingsDef } from "@acstane/schema"
-import { SqliteKeyValueStore } from "@acstane/db"
+import { SqliteKeyValueStore, SqliteSessionBackend } from "@acstane/db"
 import type { FastifyInstance } from "fastify"
 import { discord, discordSourceFromClient } from "@acstane/platform-discord"
 import { webRoot } from "@acstane/web"
@@ -32,8 +33,13 @@ export interface CreateDashboardOptions {
   // This covers settings; builder pages and the audit trail stay in memory in
   // lite mode.
   storage?: KeyValueStore | "memory" | "sqlite"
-  // The SQLite file path when storage is "sqlite". Defaults to data.sqlite.
+  // The SQLite file path when storage or sessions is "sqlite". Defaults to
+  // data.sqlite.
   sqlitePath?: string
+  // Where logged in sessions are kept. "sqlite" keeps them in the SQLite file,
+  // so restarting the bot doesn't log everyone out. Defaults to "sqlite" when
+  // storage is "sqlite", otherwise "memory".
+  sessions?: "memory" | "sqlite"
   port?: number
   // Discord user ids allowed to edit builder pages. Empty means page editing
   // stays closed.
@@ -98,6 +104,11 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
     return new MemoryStore()
   }
 
+  const sessionMode = opts.sessions ?? (opts.storage === "sqlite" ? "sqlite" : "memory")
+  const sessions = new SessionStore(
+    sessionMode === "sqlite" ? { backend: new SqliteSessionBackend(opts.sqlitePath) } : {}
+  )
+
   const source = opts.client ? discordSourceFromClient(opts.client) : undefined
   const adapter = opts.adapter ?? new InProcessAdapter(opts.settings, resolveStorage(), source)
 
@@ -115,6 +126,7 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
       const app = await buildServer(configFor(listenPort), {
         def: opts.settings,
         adapter,
+        sessions,
         canEditPages,
         llm: opts.ai,
         web,

@@ -25,6 +25,7 @@ interface ChannelFilter {
   onlyNsfw?: boolean
 }
 interface RoleFilter {
+  hideHigher?: boolean
   includeBots?: boolean
 }
 
@@ -54,14 +55,26 @@ export function discordSourceFromClient(client: any): SpaceSource {
   async function roles(spaceId: string, filter?: RoleFilter) {
     const guild = guildOf(spaceId)
     if (!guild) return []
+    // The bot can only assign roles below its own highest role.
+    const ceiling = filter?.hideHigher ? botTopPosition(guild) : undefined
     const out: { label: string; value: string }[] = []
     guild.roles.cache.forEach((r: any) => {
       // The @everyone role shares the guild's id.
       if (r.id === spaceId) return
       if (r.managed && !filter?.includeBots) return
+      if (ceiling !== undefined && r.position >= ceiling) return
       out.push({ label: r.name, value: r.id })
     })
     return out
+  }
+
+  // The position of the bot's highest role in a guild. Unknown (for example
+  // when the bot's member isn't cached) hides every role, rather than offering
+  // roles the bot may not be able to assign.
+  function botTopPosition(guild: any): number {
+    const me = guild.members?.me ?? guild.members?.cache?.get(client.user?.id)
+    const position = me?.roles?.highest?.position
+    return typeof position === "number" ? position : 0
   }
 
   return {
