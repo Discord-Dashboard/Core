@@ -211,13 +211,13 @@ describe("page routes", () => {
 
   it("tells the web app who may edit and whether ai is set up", async () => {
     const anon = await app.inject({ method: "GET", url: "/api/builder/access" })
-    expect(anon.json()).toEqual({ canEdit: false, ai: false })
+    expect(anon.json()).toEqual({ enabled: true, canEdit: false, ai: false })
     const editor = await app.inject({
       method: "GET",
       url: "/api/builder/access",
       headers: { cookie },
     })
-    expect(editor.json()).toEqual({ canEdit: true, ai: false })
+    expect(editor.json()).toEqual({ enabled: true, canEdit: true, ai: false })
     await app.close()
 
     const withAi = await make(true, { complete: async () => "{}" })
@@ -226,7 +226,7 @@ describe("page routes", () => {
       url: "/api/builder/access",
       headers: { cookie: withAi.cookie },
     })
-    expect(res.json()).toEqual({ canEdit: true, ai: true })
+    expect(res.json()).toEqual({ enabled: true, canEdit: true, ai: true })
     const anonList = await withAi.app.inject({ method: "GET", url: "/api/builder/pages" })
     expect(anonList.statusCode).toBe(401)
     await withAi.app.close()

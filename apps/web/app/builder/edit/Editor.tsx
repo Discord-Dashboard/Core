@@ -13,6 +13,7 @@ type Load =
   | { state: "loading" }
   | { state: "ready"; data: Data; ai: boolean }
   | { state: "denied" }
+  | { state: "off" }
   | { state: "error"; message: string }
 
 async function save(slug: string, data: Partial<Data>, status: "draft" | "published") {
@@ -43,7 +44,11 @@ export function Editor() {
       fetch(`${API}/api/builder/access`, opts).then((r) => r.json()),
       fetch(`${API}/api/pages/${encodeURIComponent(slug)}/draft`, opts),
     ])
-      .then(async ([access, draft]: [{ canEdit?: boolean; ai?: boolean }, Response]) => {
+      .then(async ([access, draft]: [{ enabled?: boolean; canEdit?: boolean; ai?: boolean }, Response]) => {
+        if (access.enabled === false) {
+          setLoad({ state: "off" })
+          return
+        }
         if (!access.canEdit || draft.status === 401 || draft.status === 403) {
           setLoad({ state: "denied" })
           return
@@ -66,9 +71,12 @@ export function Editor() {
     return (
       <Message
         title="You can't edit pages"
-        body="Ask the bot's owner to add your user id to pageEditors."
+        body="Ask the dashboard's owner for page editing access."
       />
     )
+  }
+  if (load.state === "off") {
+    return <Message title="The page builder is off" body="This dashboard runs without the page builder." />
   }
   if (load.state === "error") return <Message title="Something went wrong" body={load.message} />
 

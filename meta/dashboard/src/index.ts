@@ -5,7 +5,6 @@ import {
   MemoryStore,
   type ApiConfig,
   type KeyValueStore,
-  type LlmClient,
   SessionStore,
 } from "@acstane/core"
 import type { SettingsDef } from "@acstane/schema"
@@ -30,8 +29,7 @@ export interface CreateDashboardOptions {
   settings: SettingsDef
   // How settings persist. A custom store, "sqlite" for a durable local file
   // that survives restarts, or "memory" (the default) for ephemeral storage.
-  // This covers settings; builder pages and the audit trail stay in memory in
-  // lite mode.
+  // This covers settings; the audit trail stays in memory in lite mode.
   storage?: KeyValueStore | "memory" | "sqlite"
   // The SQLite file path when storage or sessions is "sqlite". Defaults to
   // data.sqlite.
@@ -41,11 +39,6 @@ export interface CreateDashboardOptions {
   // storage is "sqlite", otherwise "memory".
   sessions?: "memory" | "sqlite"
   port?: number
-  // Discord user ids allowed to edit builder pages. Empty means page editing
-  // stays closed.
-  pageEditors?: string[]
-  // Optional AI provider that powers page generation.
-  ai?: LlmClient
   // Your own adapter instead of the in process store, such as the one fromV2
   // from @acstane/compat-v2 returns. storage is ignored then.
   adapter?: BotAdapter
@@ -112,12 +105,6 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
   const source = opts.client ? discordSourceFromClient(opts.client) : undefined
   const adapter = opts.adapter ?? new InProcessAdapter(opts.settings, resolveStorage(), source)
 
-  const editors = new Set(opts.pageEditors ?? [])
-  const canEditPages = editors.size
-    ? (session: { userId?: string }) =>
-        Boolean(session.userId && editors.has(session.userId))
-    : undefined
-
   return {
     async listen(listenPort = port) {
       // Build the config for the port we actually bind, so a default OAuth
@@ -127,8 +114,9 @@ export function createDashboard(opts: CreateDashboardOptions): Dashboard {
         def: opts.settings,
         adapter,
         sessions,
-        canEditPages,
-        llm: opts.ai,
+        // Lite mode has no page builder: pages would only live in memory and
+        // be lost on every restart. Run @acstane/core for the builder.
+        pages: false,
         web,
       })
       await app.listen({ port: listenPort, host: "0.0.0.0" })

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { IconExternal, IconLayout, IconWand } from "../components/icons"
+import { loadBuilderAccess, type BuilderAccess } from "../components/builder"
 
 const API = process.env.NEXT_PUBLIC_API ?? ""
 
@@ -11,11 +12,6 @@ interface PageSummary {
   // Set on the editor's list, which includes drafts.
   status?: "draft" | "published"
   live?: boolean
-}
-
-interface Access {
-  canEdit: boolean
-  ai: boolean
 }
 
 // Turns a page name into a slug for its url: lowercase letters, digits and dashes.
@@ -32,24 +28,38 @@ function toSlug(name: string): string {
 // new page. Pages are validated data, never code, so they render safely.
 export default function BuilderPage() {
   const [pages, setPages] = useState<PageSummary[] | null>(null)
-  const [access, setAccess] = useState<Access>({ canEdit: false, ai: false })
+  const [access, setAccess] = useState<BuilderAccess>({ enabled: true, canEdit: false, ai: false })
   const [name, setName] = useState("")
 
   useEffect(() => {
     const opts = { credentials: "include" as const }
-    fetch(`${API}/api/builder/access`, opts)
-      .then((r) => (r.ok ? r.json() : { canEdit: false, ai: false }))
-      .catch(() => ({ canEdit: false, ai: false }))
-      .then((a: Access) => {
+    loadBuilderAccess()
+      .then((a) => {
         setAccess(a)
-        return fetch(`${API}/api/${a.canEdit ? "builder/pages" : "pages"}`, opts)
+        if (!a.enabled) return { pages: [] }
+        return fetch(`${API}/api/${a.canEdit ? "builder/pages" : "pages"}`, opts).then((r) =>
+          r.ok ? r.json() : { pages: [] }
+        )
       })
-      .then((r) => (r.ok ? r.json() : { pages: [] }))
       .then((data) => setPages(data.pages ?? []))
       .catch(() => setPages([]))
   }, [])
 
   const slug = toSlug(name)
+
+  if (!access.enabled) {
+    return (
+      <main className="dd-stack">
+        <div className="dd-empty">
+          <span className="dd-empty__icon" aria-hidden>
+            <IconLayout size={20} />
+          </span>
+          <h2>The page builder is off</h2>
+          <p>This dashboard runs without the page builder.</p>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="dd-stack">

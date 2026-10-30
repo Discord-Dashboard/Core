@@ -60,7 +60,7 @@ export async function registerPageRoutes(app: FastifyInstance, deps: PageDeps) {
     const session = deps.sessions.get(req.cookies[SESSION_COOKIE])
     const canEdit =
       session?.userId && deps.canEditPages ? Boolean(await deps.canEditPages(session)) : false
-    return { canEdit, ai: canEdit && Boolean(deps.llm) }
+    return { enabled: true, canEdit, ai: canEdit && Boolean(deps.llm) }
   })
 
   // Editor: every page, drafts included, with its current status.

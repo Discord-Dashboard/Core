@@ -8,6 +8,11 @@
   dependency). They can save drafts, publish, and, when an LLM is configured,
   generate a page from a prompt. The "AI assisted" badge only shows when
   generation is available. A newer draft no longer hides the published page.
+- Breaking: lite mode (`createDashboard`) no longer has the page builder, since
+  its pages were only kept in memory and lost on every restart. The
+  `pageEditors` and `ai` options are gone, and the web dashboard hides the
+  builder when the server runs without it (`buildServer` with `pages: false`).
+  Run `@acstane/core` as a service for the builder.
 - Web dashboard: live sync connects again. The stream now flushes its headers,
   sends a comment as soon as it opens, and a keep-alive every 25 seconds.
 - Web dashboard: no more sideways scrolling into empty space in Safari, caused
