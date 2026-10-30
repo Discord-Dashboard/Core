@@ -1,4 +1,4 @@
-import { defineSettings } from "@asctane-dashboard/schema"
+import { defineSettings } from "@acstane/schema"
 
 export const tickets = {
   id: "tickets",

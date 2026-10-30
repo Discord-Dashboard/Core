@@ -1,6 +1,6 @@
 {
-  "name": "@asctane-dashboard/sdk-js",
-  "version": "3.1.0-beta.0",
+  "name": "@acstane/sdk-js",
+  "version": "3.1.0-beta.1",
   "description": "Bot adapter SDK for Node. Connects a bot to the dashboard gateway.",
   "type": "module",
   "main": "./src/index.ts",
@@ -25,8 +25,8 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@asctane-dashboard/protocol": "workspace:*",
-    "@asctane-dashboard/schema": "workspace:*",
+    "@acstane/protocol": "workspace:*",
+    "@acstane/schema": "workspace:*",
     "ws": "^8.21.0"
   },
   "devDependencies": {

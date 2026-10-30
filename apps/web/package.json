@@ -1,7 +1,7 @@
 {
-  "name": "@asctane-dashboard/web",
-  "version": "3.1.0-beta.0",
-  "description": "The prebuilt asctane-dashboard web app: dashboard, page builder and landing page.",
+  "name": "@acstane/web",
+  "version": "3.1.0-beta.1",
+  "description": "The prebuilt @acstane/dashboard web app: dashboard, page builder and landing page.",
   "type": "module",
   "main": "./index.js",
   "types": "./index.d.ts",
@@ -31,11 +31,11 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@asctane-dashboard/builder": "workspace:*",
-    "@asctane-dashboard/platform-discord": "workspace:*",
-    "@asctane-dashboard/schema": "workspace:*",
-    "@asctane-dashboard/theme-default": "workspace:*",
-    "@asctane-dashboard/ui": "workspace:*",
+    "@acstane/builder": "workspace:*",
+    "@acstane/platform-discord": "workspace:*",
+    "@acstane/schema": "workspace:*",
+    "@acstane/theme-default": "workspace:*",
+    "@acstane/dashboard-ui": "workspace:*",
     "@types/react": "^19.2.17",
     "next": "^16.2.10",
     "react": "^19.2.7",

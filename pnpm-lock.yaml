@@ -38,13 +38,13 @@ importers:
 
   apps/server:
     dependencies:
-      '@asctane-dashboard/core':
+      '@acstane/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@asctane-dashboard/platform-discord':
+      '@acstane/platform-discord':
         specifier: workspace:*
         version: link:../../packages/platforms/discord
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../packages/schema
     devDependencies:
@@ -54,21 +54,21 @@ importers:
 
   apps/web:
     devDependencies:
-      '@asctane-dashboard/builder':
+      '@acstane/builder':
         specifier: workspace:*
         version: link:../../packages/builder
-      '@asctane-dashboard/platform-discord':
-        specifier: workspace:*
-        version: link:../../packages/platforms/discord
-      '@asctane-dashboard/schema':
-        specifier: workspace:*
-        version: link:../../packages/schema
-      '@asctane-dashboard/theme-default':
-        specifier: workspace:*
-        version: link:../../packages/themes/default
-      '@asctane-dashboard/ui':
+      '@acstane/dashboard-ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@acstane/platform-discord':
+        specifier: workspace:*
+        version: link:../../packages/platforms/discord
+      '@acstane/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
+      '@acstane/theme-default':
+        specifier: workspace:*
+        version: link:../../packages/themes/default
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17
@@ -87,7 +87,7 @@ importers:
 
   examples/bot-djs:
     dependencies:
-      '@asctane-dashboard/sdk-js':
+      '@acstane/sdk-js':
         specifier: workspace:*
         version: link:../../packages/sdk-js
     devDependencies:
@@ -95,21 +95,21 @@ importers:
         specifier: ^4.23.0
         version: 4.23.0
 
-  meta/asctane-dashboard:
+  meta/dashboard:
     dependencies:
-      '@asctane-dashboard/core':
+      '@acstane/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@asctane-dashboard/db':
+      '@acstane/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@asctane-dashboard/platform-discord':
+      '@acstane/platform-discord':
         specifier: workspace:*
         version: link:../../packages/platforms/discord
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../packages/schema
-      '@asctane-dashboard/web':
+      '@acstane/web':
         specifier: workspace:*
         version: link:../../apps/web
       discord.js:
@@ -137,28 +137,28 @@ importers:
 
   packages/compat-v2:
     dependencies:
-      '@asctane-dashboard/core':
+      '@acstane/core':
         specifier: workspace:*
         version: link:../core
-      '@asctane-dashboard/platform-discord':
+      '@acstane/platform-discord':
         specifier: workspace:*
         version: link:../platforms/discord
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../schema
 
   packages/core:
     dependencies:
-      '@asctane-dashboard/builder':
+      '@acstane/builder':
         specifier: workspace:*
         version: link:../builder
-      '@asctane-dashboard/db':
+      '@acstane/db':
         specifier: workspace:*
         version: link:../db
-      '@asctane-dashboard/protocol':
+      '@acstane/protocol':
         specifier: workspace:*
         version: link:../protocol
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../schema
       '@fastify/cookie':
@@ -209,79 +209,79 @@ importers:
 
   packages/modules/all:
     dependencies:
-      '@asctane-dashboard/module-automod':
+      '@acstane/module-automod':
         specifier: workspace:*
         version: link:../automod
-      '@asctane-dashboard/module-autoresponder':
+      '@acstane/module-autoresponder':
         specifier: workspace:*
         version: link:../autoresponder
-      '@asctane-dashboard/module-giveaways':
+      '@acstane/module-giveaways':
         specifier: workspace:*
         version: link:../giveaways
-      '@asctane-dashboard/module-leveling':
+      '@acstane/module-leveling':
         specifier: workspace:*
         version: link:../leveling
-      '@asctane-dashboard/module-onboarding':
+      '@acstane/module-onboarding':
         specifier: workspace:*
         version: link:../onboarding
-      '@asctane-dashboard/module-reaction-roles':
+      '@acstane/module-reaction-roles':
         specifier: workspace:*
         version: link:../reaction-roles
-      '@asctane-dashboard/module-tickets':
+      '@acstane/module-tickets':
         specifier: workspace:*
         version: link:../tickets
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/automod:
     dependencies:
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/autoresponder:
     dependencies:
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/giveaways:
     dependencies:
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/leveling:
     dependencies:
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/onboarding:
     dependencies:
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/reaction-roles:
     dependencies:
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/modules/tickets:
     dependencies:
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../schema
 
   packages/platforms/discord:
     dependencies:
-      '@asctane-dashboard/core':
+      '@acstane/core':
         specifier: workspace:*
         version: link:../../core
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../../schema
       zod:
@@ -299,7 +299,7 @@ importers:
 
   packages/schema:
     dependencies:
-      '@asctane-dashboard/protocol':
+      '@acstane/protocol':
         specifier: workspace:*
         version: link:../protocol
       zod:
@@ -308,10 +308,10 @@ importers:
 
   packages/sdk-js:
     dependencies:
-      '@asctane-dashboard/protocol':
+      '@acstane/protocol':
         specifier: workspace:*
         version: link:../protocol
-      '@asctane-dashboard/schema':
+      '@acstane/schema':
         specifier: workspace:*
         version: link:../schema
       ws:
@@ -324,7 +324,7 @@ importers:
 
   packages/themes/default:
     dependencies:
-      '@asctane-dashboard/ui':
+      '@acstane/dashboard-ui':
         specifier: workspace:*
         version: link:../../ui
 

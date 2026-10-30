@@ -1,4 +1,4 @@
-import type { SettingsDef } from "@asctane-dashboard/schema"
+import type { SettingsDef } from "@acstane/schema"
 import type { BotAdapter } from "./adapter.js"
 import { SubjectType, type Entitlements } from "./entitlements.js"
 

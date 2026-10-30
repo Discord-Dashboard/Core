@@ -1,4 +1,4 @@
-# asctane-dashboard
+# @acstane/dashboard
 
 The batteries included way to add a web dashboard to a discord.js bot. One call
 sets up Discord login, sessions, the settings API, the web dashboard and an in
@@ -21,7 +21,7 @@ You need Node.js 20.6 or later and a Discord application.
 2. Scaffold a bot:
 
    ```bash
-   npm init @asctane-dashboard@beta my-bot
+   npm init @acstane@beta my-bot
    cd my-bot
    npm install
    ```
@@ -34,12 +34,12 @@ You need Node.js 20.6 or later and a Discord application.
 ## Add it to an existing bot
 
 ```bash
-npm install asctane-dashboard@beta
+npm install @acstane/dashboard@beta
 ```
 
 ```js
 import { Client, GatewayIntentBits } from "discord.js"
-import { createDashboard, defineSettings, f } from "asctane-dashboard"
+import { createDashboard, defineSettings, f } from "@acstane/dashboard"
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
@@ -85,11 +85,11 @@ const prefix = await dash.get(guildId, "general.prefix")
 
 ## Coming from v2
 
-`@asctane-dashboard/compat-v2` runs a v2 settings array, `getActualSet` and
+`@acstane/compat-v2` runs a v2 settings array, `getActualSet` and
 `setNew` included:
 
 ```js
-import { fromV2 } from "@asctane-dashboard/compat-v2"
+import { fromV2 } from "@acstane/compat-v2"
 
 const { def, adapter } = fromV2(v2Settings)
 const dash = createDashboard({ client, discord, settings: def, adapter })
@@ -100,8 +100,8 @@ changed.
 
 ## Other languages
 
-For bots that aren't written with discord.js, run `@asctane-dashboard/core` as a
-service and connect the bot with `@asctane-dashboard/sdk-js` or the Python SDK.
+For bots that aren't written with discord.js, run `@acstane/core` as a
+service and connect the bot with `@acstane/sdk-js` or the Python SDK.
 
 ## License
 

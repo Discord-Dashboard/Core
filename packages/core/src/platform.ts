@@ -1,5 +1,5 @@
-import type { OptionListItem } from "@asctane-dashboard/protocol"
-import type { FieldFactory } from "@asctane-dashboard/schema"
+import type { OptionListItem } from "@acstane/protocol"
+import type { FieldFactory } from "@acstane/schema"
 import type { EntitlementSubject } from "./entitlements.js"
 
 // A space is where a bot's settings apply: a Discord server, a Slack

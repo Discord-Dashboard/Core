@@ -1,7 +1,7 @@
-import "@asctane-dashboard/ui"
+import "@acstane/dashboard-ui"
 import "./globals.css"
-import { themeToCss } from "@asctane-dashboard/ui"
-import { defaultTheme } from "@asctane-dashboard/theme-default"
+import { themeToCss } from "@acstane/dashboard-ui"
+import { defaultTheme } from "@acstane/theme-default"
 import { AppShell } from "./components/AppShell"
 import type { ReactNode } from "react"
 

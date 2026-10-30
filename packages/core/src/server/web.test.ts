@@ -6,7 +6,7 @@ import type { FastifyInstance } from "fastify"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { InProcessAdapter, MemoryStore } from "../base.js"
-import { defineSettings, f } from "@asctane-dashboard/schema"
+import { defineSettings, f } from "@acstane/schema"
 
 const config: ApiConfig = {
   port: 0,

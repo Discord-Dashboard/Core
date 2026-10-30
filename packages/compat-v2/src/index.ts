@@ -1,6 +1,6 @@
-import { defineSettings, type Field } from "@asctane-dashboard/schema"
-import type { BotAdapter, SpaceSource } from "@asctane-dashboard/core"
-import { f } from "@asctane-dashboard/platform-discord"
+import { defineSettings, type Field } from "@acstane/schema"
+import type { BotAdapter, SpaceSource } from "@acstane/core"
+import { f } from "@acstane/platform-discord"
 
 // What a v2 DBD.formTypes helper returned. Lists carry their labels in keys
 // and the stored values in values.
@@ -114,7 +114,7 @@ export function fromV2(settings: V2Category[], options: FromV2Options = {}) {
 
   const adapter: BotAdapter = {
     async describeSchema(locale?: string) {
-      const { toWire } = await import("@asctane-dashboard/schema")
+      const { toWire } = await import("@acstane/schema")
       return toWire(def, locale)
     },
     async getChannels(spaceId, filter) {

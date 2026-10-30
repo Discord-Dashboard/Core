@@ -1,6 +1,6 @@
 {
-  "name": "asctane-dashboard",
-  "version": "3.1.0-beta.0",
+  "name": "@acstane/dashboard",
+  "version": "3.1.0-beta.1",
   "description": "Batteries included dashboard for discord.js bots.",
   "type": "module",
   "main": "./src/index.ts",
@@ -12,9 +12,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Discord-Dashboard/Core.git",
-    "directory": "meta/asctane-dashboard"
+    "directory": "meta/dashboard"
   },
-  "homepage": "https://github.com/Discord-Dashboard/Core/tree/v3/meta/asctane-dashboard#readme",
+  "homepage": "https://github.com/Discord-Dashboard/Core/tree/v3/meta/dashboard#readme",
   "bugs": {
     "url": "https://github.com/Discord-Dashboard/Core/issues"
   },
@@ -25,11 +25,11 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@asctane-dashboard/core": "workspace:*",
-    "@asctane-dashboard/db": "workspace:*",
-    "@asctane-dashboard/platform-discord": "workspace:*",
-    "@asctane-dashboard/schema": "workspace:*",
-    "@asctane-dashboard/web": "workspace:*",
+    "@acstane/core": "workspace:*",
+    "@acstane/db": "workspace:*",
+    "@acstane/platform-discord": "workspace:*",
+    "@acstane/schema": "workspace:*",
+    "@acstane/web": "workspace:*",
     "fastify": "^5.10.0"
   },
   "peerDependencies": {

@@ -1,4 +1,4 @@
-# asctane-dashboard
+# @acstane/dashboard
 
 Open source dashboard framework for Discord bots.
 
@@ -23,32 +23,32 @@ manage the bot per guild.
 
 | Package | Role |
 | --- | --- |
-| `asctane-dashboard` | Batteries included lite mode for discord.js self host |
-| `@asctane-dashboard/core` | Engine: HTTP API, OAuth, bot gateway, settings, entitlements and billing |
-| `@asctane-dashboard/platform-discord` | Discord login, server list, discord.js pickers and SKU purchases |
-| `@asctane-dashboard/schema` | Declarative settings schema (Zod) |
-| `@asctane-dashboard/protocol` | Bot adapter protocol, source of truth |
-| `@asctane-dashboard/sdk-js` | Bot adapter SDK for Node |
+| `@acstane/dashboard` | Batteries included lite mode for discord.js self host |
+| `@acstane/core` | Engine: HTTP API, OAuth, bot gateway, settings, entitlements and billing |
+| `@acstane/platform-discord` | Discord login, server list, discord.js pickers and SKU purchases |
+| `@acstane/schema` | Declarative settings schema (Zod) |
+| `@acstane/protocol` | Bot adapter protocol, source of truth |
+| `@acstane/sdk-js` | Bot adapter SDK for Node |
 | `discord-dashboard` (PyPI) | Bot adapter SDK for Python, in `packages/sdk-py` |
-| `@asctane-dashboard/web` | The prebuilt web dashboard that lite mode serves |
-| `@asctane-dashboard/create` | Project scaffolder (`npm init @asctane-dashboard@beta`) |
-| `@asctane-dashboard/ui` | Component library and themes |
-| `@asctane-dashboard/builder` | Page builder (Puck) and AI generation |
-| `@asctane-dashboard/db` | Drizzle schema and SQLite storage |
-| `@asctane-dashboard/compat-v2` | Adapter for v2 settings, for migration |
-| `@asctane-dashboard/marketplace` | Module and theme registry |
-| `@asctane-dashboard/modules` | Reference feature modules (`module-leveling`, `module-tickets`, `module-automod` and more), one package each or all together |
+| `@acstane/web` | The prebuilt web dashboard that lite mode serves |
+| `@acstane/create` | Project scaffolder (`npm init @acstane@beta`) |
+| `@acstane/dashboard-ui` | Component library and themes |
+| `@acstane/builder` | Page builder (Puck) and AI generation |
+| `@acstane/db` | Drizzle schema and SQLite storage |
+| `@acstane/compat-v2` | Adapter for v2 settings, for migration |
+| `@acstane/marketplace` | Module and theme registry |
+| `@acstane/modules` | Reference feature modules (`module-leveling`, `module-tickets`, `module-automod` and more), one package each or all together |
 
 ## Status
 
 Public beta. Install with `@beta`:
 
 ```bash
-npm init @asctane-dashboard@beta my-bot   # a new bot with a dashboard
-npm install asctane-dashboard@beta        # or add it to an existing bot
+npm init @acstane@beta my-bot   # a new bot with a dashboard
+npm install @acstane/dashboard@beta        # or add it to an existing bot
 ```
 
-The [`asctane-dashboard` README](meta/asctane-dashboard/README.md) has the
+The [`@acstane/dashboard` README](meta/dashboard/README.md) has the
 quick start. Expect some changes before 3.1.0. Report bugs and feedback in
 [GitHub issues](https://github.com/Discord-Dashboard/Core/issues) or the
 [support Discord](https://discord.gg/6Yv5U9V3ux). Decisions behind v3 are in

@@ -6,7 +6,7 @@ export interface ScaffoldOptions {
 }
 
 const STARTER = `import { Client, GatewayIntentBits } from "discord.js"
-import { createDashboard, defineSettings, f } from "asctane-dashboard"
+import { createDashboard, defineSettings, f } from "@acstane/dashboard"
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
@@ -54,7 +54,7 @@ export function scaffold(targetDir: string, opts: ScaffoldOptions = {}) {
           scripts: { start: "node --env-file=.env index.js" },
           engines: { node: ">=20.6" },
           dependencies: {
-            "asctane-dashboard": "^3.1.0-beta.0",
+            "@acstane/dashboard": "^3.1.0-beta.1",
             "discord.js": "^14.26.4",
           },
         },

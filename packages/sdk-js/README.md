@@ -1,9 +1,9 @@
-# @asctane-dashboard/sdk-js
+# @acstane/sdk-js
 
-Connect a Node bot to the asctane-dashboard gateway.
+Connect a Node bot to the @acstane/dashboard gateway.
 
 ```ts
-import { Adapter, defineSettings, f } from "@asctane-dashboard/sdk-js"
+import { Adapter, defineSettings, f } from "@acstane/sdk-js"
 
 const store = new Map()
 

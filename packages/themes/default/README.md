@@ -1,12 +1,12 @@
-# @asctane-dashboard/theme-default
+# @acstane/theme-default
 
-The default base theme for asctane-dashboard, shipped as a module.
+The default base theme for @acstane/dashboard, shipped as a module.
 
-Most bots get this through `asctane-dashboard` and don't need to install it on its own.
+Most bots get this through `@acstane/dashboard` and don't need to install it on its own.
 
-Part of [asctane-dashboard](https://github.com/Discord-Dashboard/Core), now in
+Part of [@acstane/dashboard](https://github.com/Discord-Dashboard/Core), now in
 public beta. Install with `@beta`, for example
-`npm install @asctane-dashboard/theme-default@beta`.
+`npm install @acstane/theme-default@beta`.
 
 ## License
 

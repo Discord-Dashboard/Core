@@ -1,4 +1,4 @@
-import { Adapter, defineSettings, f } from "@asctane-dashboard/sdk-js"
+import { Adapter, defineSettings, f } from "@acstane/sdk-js"
 
 // Tiny in memory store standing in for the bot database.
 const store = new Map<string, unknown>()

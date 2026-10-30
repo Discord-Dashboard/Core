@@ -1,12 +1,12 @@
-# @asctane-dashboard/module-onboarding
+# @acstane/module-onboarding
 
 Welcome and onboarding module.
 
-One of the reference modules. Install a single module, or `@asctane-dashboard/modules` for all of them.
+One of the reference modules. Install a single module, or `@acstane/modules` for all of them.
 
-Part of [asctane-dashboard](https://github.com/Discord-Dashboard/Core), now in
+Part of [@acstane/dashboard](https://github.com/Discord-Dashboard/Core), now in
 public beta. Install with `@beta`, for example
-`npm install @asctane-dashboard/module-onboarding@beta`.
+`npm install @acstane/module-onboarding@beta`.
 
 ## License
 

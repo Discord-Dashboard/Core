@@ -3,11 +3,11 @@ import { PHASE_DEVELOPMENT_SERVER } from "next/constants.js"
 const API = process.env.API_URL ?? "http://localhost:3001"
 
 const transpilePackages = [
-  "@asctane-dashboard/ui",
-  "@asctane-dashboard/schema",
-  "@asctane-dashboard/builder",
-  "@asctane-dashboard/theme-default",
-  "@asctane-dashboard/platform-discord",
+  "@acstane/dashboard-ui",
+  "@acstane/schema",
+  "@acstane/builder",
+  "@acstane/theme-default",
+  "@acstane/platform-discord",
 ]
 
 // Resolve ESM style .js imports to their .ts source in transpiled packages.

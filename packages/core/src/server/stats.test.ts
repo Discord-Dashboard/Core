@@ -5,8 +5,8 @@ import { StatsRegistry, wireStats } from "./stats.js"
 import { buildServer } from "./server.js"
 import type { ApiConfig } from "./config.js"
 import { InProcessAdapter, MemoryStore } from "../base.js"
-import { Adapter, defineSettings } from "@asctane-dashboard/sdk-js"
-import { discord } from "@asctane-dashboard/platform-discord"
+import { Adapter, defineSettings } from "@acstane/sdk-js"
+import { discord } from "@acstane/platform-discord"
 
 async function waitFor(check: () => boolean, ms = 4000) {
   const start = Date.now()

@@ -5,7 +5,7 @@ export interface ApiConfig {
   cookieSecret: string
   allowedOrigins: string[]
   // The platforms people can log in with. The host builds these, for example
-  // discord() from @asctane-dashboard/platform-discord; core never imports a
+  // discord() from @acstane/platform-discord; core never imports a
   // platform package itself.
   platforms: Platform[]
   rateLimit?: { max: number; timeWindow: string | number }

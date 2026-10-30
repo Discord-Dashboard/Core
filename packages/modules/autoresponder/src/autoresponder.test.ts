@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { autoresponder } from "./index.js"
-import { toWire } from "@asctane-dashboard/schema"
+import { toWire } from "@acstane/schema"
 
 describe("autoresponder module", () => {
   it("has an id and settings", () => {

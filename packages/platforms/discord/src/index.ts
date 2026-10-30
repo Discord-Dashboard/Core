@@ -1,4 +1,4 @@
-import { definePlatform, type Platform } from "@asctane-dashboard/core"
+import { definePlatform, type Platform } from "@acstane/core"
 import {
   buildAuthorizeUrl,
   exchangeCode,

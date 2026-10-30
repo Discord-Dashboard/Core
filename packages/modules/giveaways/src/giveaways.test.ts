@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { giveaways } from "./index.js"
-import { toWire } from "@asctane-dashboard/schema"
+import { toWire } from "@acstane/schema"
 
 describe("giveaways module", () => {
   it("exposes an id and a settings schema", () => {

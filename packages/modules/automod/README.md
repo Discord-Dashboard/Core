@@ -1,12 +1,12 @@
-# @asctane-dashboard/module-automod
+# @acstane/module-automod
 
 AI assisted moderation module.
 
-One of the reference modules. Install a single module, or `@asctane-dashboard/modules` for all of them.
+One of the reference modules. Install a single module, or `@acstane/modules` for all of them.
 
-Part of [asctane-dashboard](https://github.com/Discord-Dashboard/Core), now in
+Part of [@acstane/dashboard](https://github.com/Discord-Dashboard/Core), now in
 public beta. Install with `@beta`, for example
-`npm install @asctane-dashboard/module-automod@beta`.
+`npm install @acstane/module-automod@beta`.
 
 ## License
 

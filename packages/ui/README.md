@@ -1,12 +1,12 @@
-# @asctane-dashboard/ui
+# @acstane/dashboard-ui
 
-Component library, design tokens and themes for asctane-dashboard.
+Component library, design tokens and themes for @acstane/dashboard.
 
-Most bots get this through `asctane-dashboard` and don't need to install it on its own.
+Most bots get this through `@acstane/dashboard` and don't need to install it on its own.
 
-Part of [asctane-dashboard](https://github.com/Discord-Dashboard/Core), now in
+Part of [@acstane/dashboard](https://github.com/Discord-Dashboard/Core), now in
 public beta. Install with `@beta`, for example
-`npm install @asctane-dashboard/ui@beta`.
+`npm install @acstane/dashboard-ui@beta`.
 
 ## License
 

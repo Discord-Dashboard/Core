@@ -4,7 +4,7 @@ import {
   type PlatformBilling,
   type PlatformGrant,
   type WebhookRequest,
-} from "@asctane-dashboard/core"
+} from "@acstane/core"
 
 // The parts of a Discord entitlement object that matter here.
 interface DiscordEntitlement {

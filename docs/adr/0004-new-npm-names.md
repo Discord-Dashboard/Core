@@ -1,6 +1,6 @@
 # ADR 4: New npm names
 
-- Status: Accepted
+- Status: Superseded by [ADR 12](0012-packages-move-to-the-acstane-npm-org.md)
 - Date: 2026-10-22
 
 **Context.** `discord-dashboard` on npm carries v2 and old 3.0.x prereleases, and a range such as `^3.0.0-alpha.0` resolves to one of those old betas. v3 is also no longer Discord only (ADR 1).
